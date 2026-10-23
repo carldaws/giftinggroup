@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         resource :sign_in_link, only: :show, module: :memberships
       end
       resources :dependants, only: %i[ new create ]
+      resources :occasions, only: %i[ new create edit update destroy ]
       resource :join_code, only: :update
     end
   end

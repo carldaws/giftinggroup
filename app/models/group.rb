@@ -4,6 +4,7 @@ class Group < ApplicationRecord
 
   has_many :memberships, dependent: :destroy
   has_many :members, through: :memberships, source: :user
+  has_many :occasions, dependent: :destroy
 
   normalizes :join_code, with: ->(join_code) { join_code.upcase.gsub(/[^A-Z0-9]/, "") }
 

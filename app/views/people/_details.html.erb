@@ -22,6 +22,19 @@
         </div>
       </fieldset>
 
+      <fieldset class="mt-6" aria-describedby="birthday-hint">
+        <legend class="label"><%= t(".birthday") %></legend>
+        <div class="grid grid-cols-[6.5rem_1fr_6rem] gap-2">
+          <%= form.label :birthday_day, t(".day"), class: "sr-only" %>
+          <%= form.select :birthday_day, 1..31, { include_blank: t(".day") }, class: "input" %>
+          <%= form.label :birthday_month, t(".month"), class: "sr-only" %>
+          <%= form.select :birthday_month, (1..12).map { [ l(Date.new(2000, it, 1), format: "%B"), it ] }, { include_blank: t(".month") }, class: "input" %>
+          <%= form.label :birth_year, t(".year"), class: "sr-only" %>
+          <%= form.number_field :birth_year, placeholder: t(".year"), min: 1900, max: Date.current.year, inputmode: "numeric", class: "input" %>
+        </div>
+        <p id="birthday-hint" class="hint"><%= yours ? t(".birthday_hint_yours") : t(".birthday_hint", name: person.name) %></p>
+      </fieldset>
+
       <% if yours %>
         <div class="mt-6">
           <%= form.label :email_address, t(".email_address"), class: "label" %>

@@ -164,11 +164,42 @@ en:
     join_codes:
       update:
         regenerated: Done. The old link and code no longer work.
+    coming_up:
+      heading: Coming up
+      add: Add an occasion
+      edit: Edit
+      edit_label: Edit %{name}
+      empty: Nothing coming up yet. Add Christmas, a party or anything else. Birthdays appear here on their own once people add them.
+    occasions:
+      form:
+        name: What's the occasion?
+        name_placeholder: For example, Christmas 2026
+        date: Date
+      new:
+        title: Add an occasion
+        back: Back to %{group}
+        heading: Add an occasion
+        intro: Something everyone in the group is giving for. Birthdays are added for you.
+        submit: Add the occasion
+      edit:
+        title: Edit occasion
+        back: Back to %{group}
+        heading: Edit occasion
+        submit: Save
+        remove: Remove the occasion
+        remove_confirm: Remove %{name}?
+      create:
+        added: "%{name} added."
+      update:
+        saved: "%{name} saved."
+      destroy:
+        removed: "%{name} removed."
 
   people:
     show:
       this_is_you: This is you. Everyone in your groups can see this page.
       you_look_after: You look after %{name}, so you can add and change things.
+      birthday: Birthday %{date} · %{countdown}
       your_list: Your list
       their_list: "%{name}'s list"
       surprise_note: You'll never see who's getting what from your list, so the surprise stays a surprise.
@@ -192,6 +223,12 @@ en:
       their_details: "%{name}'s details"
       name: Name
       colour: Colour
+      birthday: Birthday
+      day: Day
+      month: Month
+      year: Year
+      birthday_hint_yours: Optional, and the year is too. Without a birthday, your groups won't get a birthday occasion for you.
+      birthday_hint: Optional, and the year is too. Without a birthday, %{name}'s groups won't get a birthday occasion for them.
       tones:
         clay: Terracotta
         sage: Green
@@ -319,6 +356,22 @@ en:
     create:
       joined: Welcome to %{group}!
       not_found: That code didn't match a group. Check it and try again.
+
+  occasions:
+    countdown:
+      today: Today
+      tomorrow: Tomorrow
+      days:
+        one: In 1 day
+        other: In %{count} days
+      weeks:
+        one: In 1 week
+        other: In %{count} weeks
+      months:
+        one: In 1 month
+        other: In %{count} months
+    birthday: "%{name}'s birthday"
+    birthday_with_age: "%{name}'s %{ordinal} birthday"
 
   activerecord:
     attributes:

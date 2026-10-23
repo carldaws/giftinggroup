@@ -1,0 +1,14 @@
+<%# locals: (occasion:, url:, submit:) %>
+<%= form_with model: occasion, url: do |form| %>
+  <%= render "shared/errors", record: occasion %>
+
+  <%= form.label :name, t("groups.occasions.form.name"), class: "label" %>
+  <%= form.text_field :name, required: true, autofocus: occasion.new_record?, placeholder: t("groups.occasions.form.name_placeholder"), class: "input" %>
+
+  <div class="mt-6">
+    <%= form.label :date, t("groups.occasions.form.date"), class: "label" %>
+    <%= form.date_field :date, required: true, class: "input" %>
+  </div>
+
+  <%= form.submit submit, class: "button mt-6 w-full sm:w-auto" %>
+<% end %>

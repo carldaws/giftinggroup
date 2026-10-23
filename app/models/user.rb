@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include Birthday
+
   has_many :sessions, dependent: :destroy
   has_many :memberships, dependent: :destroy
   has_many :groups, through: :memberships

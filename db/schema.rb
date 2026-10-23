@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_140622) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_144216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -104,6 +104,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_140622) do
     t.index ["subject_id"], name: "index_messages_on_subject_id"
   end
 
+  create_table "occasions", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.bigint "person_id"
+    t.bigint "creator_id"
+    t.string "name"
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_occasions_on_creator_id"
+    t.index ["group_id", "date"], name: "index_occasions_on_group_id_and_date"
+    t.index ["group_id", "person_id", "date"], name: "index_occasions_on_group_id_and_person_id_and_date", unique: true, where: "(person_id IS NOT NULL)"
+    t.index ["person_id"], name: "index_occasions_on_person_id"
+  end
+
   create_table "reservations", force: :cascade do |t|
     t.bigint "item_id", null: false
     t.bigint "user_id", null: false
@@ -139,6 +153,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_140622) do
     t.datetime "updated_at", null: false
     t.string "password_digest"
     t.integer "avatar_tone"
+    t.integer "birthday_month"
+    t.integer "birthday_day"
+    t.integer "birth_year"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
@@ -153,6 +170,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_140622) do
   add_foreign_key "memberships", "users"
   add_foreign_key "messages", "memberships", column: "subject_id"
   add_foreign_key "messages", "users", column: "author_id"
+  add_foreign_key "occasions", "groups"
+  add_foreign_key "occasions", "users", column: "creator_id", on_delete: :nullify
+  add_foreign_key "occasions", "users", column: "person_id"
   add_foreign_key "reservations", "items"
   add_foreign_key "reservations", "users"
   add_foreign_key "sessions", "users"
