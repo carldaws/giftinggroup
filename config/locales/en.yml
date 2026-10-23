@@ -77,9 +77,6 @@ en:
       rate_limited: Too many tries. Please wait a few minutes and try again.
 
   groups:
-    gifts_to_choose:
-      label: Gifts still to choose for %{occasion}
-      still_to_choose_html: You haven't picked anything yet for %{names}.
     shopping_list:
       heading: Your shopping list
       intro: Everything you've said you'll get, across all your groups.
@@ -199,7 +196,7 @@ en:
     coming_up:
       for_people: For %{names}
       for_no_one_yet: Choose who it's for
-      holidays: Holidays
+      holidays: Manage holidays
       heading: Coming up
       add: Add an occasion
       edit: Edit
@@ -439,6 +436,10 @@ en:
     birthday_with_age: "%{name}'s %{ordinal} birthday"
     your_birthday: Your birthday
     your_birthday_with_age: Your %{ordinal} birthday
+    gifts_to_choose:
+      label: Gifts still to choose for %{occasion}
+      still_to_choose: Still to choose for
+      progress: You've picked for %{chosen} of %{total}
 
   activerecord:
     attributes:

@@ -61,7 +61,9 @@ class HolidaysTest < ActionDispatch::IntegrationTest
       sign_in_as users(:bob)
       get root_path
 
-      assert_select "section[aria-label] p.text-lg", text: /\A#{Holiday.find("christmas_day").name} ·/
+      assert_select "section[aria-label=?]", I18n.t("occasions.gifts_to_choose.label", occasion: Holiday.find("christmas_day").name) do
+        assert_select "p", text: groups(:hollies).name, count: 0
+      end
     end
   end
 end

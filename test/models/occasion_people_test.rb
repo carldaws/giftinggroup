@@ -119,4 +119,24 @@ class OccasionPeopleTest < ActiveSupport::TestCase
 
     assert_equal occasions(:christmas), occasion
   end
+
+  test "a group's reminders only cover its own occasions" do
+    ivies_party = groups(:ivies).occasions.create!(name: "Party", date: 1.week.from_now.to_date)
+
+    assert_equal [ ivies_party ], users(:carol).gifts_to_choose(in_group: groups(:ivies)).map(&:first)
+    assert_not_includes users(:carol).gifts_to_choose(in_group: groups(:hollies)).map(&:first), ivies_party
+  end
+
+  test "a group's reminder for a holiday only names people in that group" do
+    groups(:hollies).celebrate([ "christmas_day" ])
+    groups(:ivies).celebrate([ "christmas_day" ])
+
+    travel_to Holiday.find("christmas_day").next_date - 2.weeks do
+      everywhere = users(:carol).gifts_to_choose.find { |occasion, _| occasion.holiday? }.second
+      in_ivies = users(:carol).gifts_to_choose(in_group: groups(:ivies)).find { |occasion, _| occasion.holiday? }.second
+
+      assert_includes everywhere, users(:alice)
+      assert_equal [ users(:erin) ], in_ivies
+    end
+  end
 end

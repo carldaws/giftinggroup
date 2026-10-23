@@ -69,27 +69,24 @@ class User < ApplicationRecord
     dated.sort_by { [ it.occasion.date, it.item.owner.name.downcase ] } + undated.sort_by { it.item.owner.name.downcase }
   end
 
-  def gifts_to_choose(within: 6.weeks)
-    Occasion.visible_to(self).upcoming.soonest_first.includes(:group, :person, :recipients)
+  def gifts_to_choose(within: 6.weeks, in_group: nil)
+    occasions = Occasion.visible_to(self)
+    occasions = occasions.for_group(in_group) if in_group.present?
+    visible_ids = User.visible_to(self).ids
+
+    occasions.upcoming.soonest_first.includes(:group, :person, :recipients)
       .lazy
-      .select { |occasion| gift_recipients_for(occasion).any? }
+      .map { |occasion| [ occasion, gift_recipients_for(occasion, in_group:, visible_ids:) ] }
+      .select { |_, recipients| recipients.any? }
       .with_index
-      .take_while { |occasion, index| index.zero? || occasion.date <= Date.current + within }
-      .map { |occasion, _| [ occasion, people_still_to_choose_for(occasion) ] }
-      .select { |_, people| people.any? }
+      .take_while { |(occasion, _), index| index.zero? || occasion.date <= Date.current + within }
+      .map { |(occasion, recipients), _| [ occasion, recipients - people_chosen_for(occasion), recipients ] }
+      .select { |_, still_to_choose, _| still_to_choose.any? }
       .to_a
   end
 
-  def gift_recipients_for(occasion)
-    occasion.people_for(self).select { it != self && it.visible_to?(self) }
-  end
-
-  def people_still_to_choose_for(occasion)
-    gift_recipients_for(occasion).reject { chosen_a_gift_for?(it, occasion) }
-  end
-
-  def chosen_a_gift_for?(person, occasion)
-    reservations.where(occasion:).joins(:item).exists?(items: { owner_id: person.id })
+  def people_chosen_for(occasion)
+    User.where(id: reservations.where(occasion:).joins(:item).select("items.owner_id"))
   end
 
   def build_item(attributes, by:)
@@ -106,6 +103,11 @@ class User < ApplicationRecord
   end
 
   private
+    def gift_recipients_for(occasion, in_group:, visible_ids:)
+      people = in_group.present? ? occasion.people_in(in_group) : occasion.people_for(self)
+      people.select { it != self && visible_ids.include?(it.id) }
+    end
+
     def stop_being_looked_after
       guardianships_as_dependant.destroy_all
     end
