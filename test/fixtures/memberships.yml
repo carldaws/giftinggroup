@@ -1,0 +1,25 @@
+alice_in_hollies:
+  group: hollies
+  user: alice
+  admin: true
+
+bob_in_hollies:
+  group: hollies
+  user: bob
+
+carol_in_hollies:
+  group: hollies
+  user: carol
+
+dan_in_hollies:
+  group: hollies
+  user: dan
+
+carol_in_ivies:
+  group: ivies
+  user: carol
+  admin: true
+
+erin_in_ivies:
+  group: ivies
+  user: erin

@@ -1,0 +1,7 @@
+alice_looks_after_dan:
+  guardian: alice
+  dependant: dan
+
+bob_looks_after_dan:
+  guardian: bob
+  dependant: dan
