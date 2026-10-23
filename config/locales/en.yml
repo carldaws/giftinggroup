@@ -208,18 +208,14 @@ en:
     interests:
       heading: Things %{name} loves
       heading_yours: Things I love
-      intro_manager: Interests, favourite things, what's being read at the moment. It all helps with ideas.
-      intro: What %{name} is into, to help with ideas.
-      empty: "%{name} hasn't added any yet."
+      intro: Interests, favourite things, what's being read at the moment. It all helps with ideas.
       add_label: Add something you love
       placeholder: For example, David Bowie or dark chocolate
       add: Add
       remove: Remove %{name}
     sizes:
       heading: Sizes
-      intro_manager: So nobody has to ask.
-      intro: So you don't have to ask %{name}.
-      empty: "%{name} hasn't added any yet."
+      intro: So nobody has to ask.
       label: What
       label_placeholder: For example, shoes
       value: Size

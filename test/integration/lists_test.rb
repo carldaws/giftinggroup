@@ -47,6 +47,28 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_select "h3", text: items(:scarf_gloves_suggestion).name
   end
 
+  test "on someone else's page, things they love and sizes only show when they've added some" do
+    sign_in_as users(:carol)
+
+    get person_path(users(:alice))
+    assert_select "#things-i-love"
+    assert_select "#sizes"
+    assert_select "#things-i-love p", text: I18n.t("people.interests.intro"), count: 0
+
+    get person_path(users(:bob))
+    assert_select "#things-i-love", count: 0
+    assert_select "#sizes", count: 0
+  end
+
+  test "on your own page, things you love and sizes always show, ready to fill in" do
+    sign_in_as users(:bob)
+
+    get person_path(users(:bob))
+
+    assert_select "#things-i-love form"
+    assert_select "#sizes form"
+  end
+
   test "the list can be filtered to little things" do
     sign_in_as users(:carol)
 

@@ -1,31 +1,33 @@
 <%# locals: (person:, yours:, manages:) %>
-<section id="things-i-love" aria-labelledby="interests-heading" class="mb-10">
-  <h2 id="interests-heading" class="text-2xl font-semibold"><%= yours ? t(".heading_yours") : t(".heading", name: person.name) %></h2>
-  <p class="mb-4 text-muted"><%= manages ? t(".intro_manager") : t(".intro", name: person.name) %></p>
-
-  <% if person.interests.any? %>
-    <ul class="flex flex-wrap gap-2">
-      <% person.interests.order(:created_at).each do |interest| %>
-        <li class="inline-flex items-center gap-1 rounded-full border border-line bg-card py-1.5 pl-4 font-medium <%= manages ? "pr-1.5" : "pr-4" %>">
-          <%= interest.name %>
-          <% if manages %>
-            <%= button_to person_interest_path(person, interest), method: :delete, class: "inline-flex size-8 items-center justify-center rounded-full text-muted hover:bg-paper hover:text-ink",
-                  aria: { label: t(".remove", name: interest.name) } do %>
-              <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
-            <% end %>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  <% elsif !manages %>
-    <p class="text-muted"><%= t(".empty", name: person.name) %></p>
-  <% end %>
-
-  <% if manages %>
-    <%= form_with model: Interest.new, url: person_interests_path(person), class: "mt-4 flex gap-2" do |form| %>
-      <%= form.label :name, t(".add_label"), class: "sr-only" %>
-      <%= form.text_field :name, required: true, placeholder: t(".placeholder"), class: "input" %>
-      <%= form.submit t(".add"), class: "button shrink-0" %>
+<% if manages || person.interests.any? %>
+  <section id="things-i-love" aria-labelledby="interests-heading" class="mb-10">
+    <h2 id="interests-heading" class="text-2xl font-semibold <%= "mb-4" unless manages %>"><%= yours ? t(".heading_yours") : t(".heading", name: person.name) %></h2>
+    <% if manages %>
+      <p class="mb-4 text-muted"><%= t(".intro") %></p>
     <% end %>
-  <% end %>
-</section>
+
+    <% if person.interests.any? %>
+      <ul class="flex flex-wrap gap-2">
+        <% person.interests.order(:created_at).each do |interest| %>
+          <li class="inline-flex items-center gap-1 rounded-full border border-line bg-card py-1.5 pl-4 font-medium <%= manages ? "pr-1.5" : "pr-4" %>">
+            <%= interest.name %>
+            <% if manages %>
+              <%= button_to person_interest_path(person, interest), method: :delete, class: "inline-flex size-8 items-center justify-center rounded-full text-muted hover:bg-paper hover:text-ink",
+                    aria: { label: t(".remove", name: interest.name) } do %>
+                <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% if manages %>
+      <%= form_with model: Interest.new, url: person_interests_path(person), class: "mt-4 flex gap-2" do |form| %>
+        <%= form.label :name, t(".add_label"), class: "sr-only" %>
+        <%= form.text_field :name, required: true, placeholder: t(".placeholder"), class: "input" %>
+        <%= form.submit t(".add"), class: "button shrink-0" %>
+      <% end %>
+    <% end %>
+  </section>
+<% end %>
