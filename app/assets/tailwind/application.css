@@ -9,6 +9,9 @@
   --clay: #b5482a;
   --clay-hover: #9c3d23;
   --on-clay: #ffffff;
+  --clay-tint: #f6e2da;
+  --clay-tint-hover: #f0d3c8;
+  --clay-ink: #8f3820;
   --sage: #3f6b4e;
   --sage-tint: #e3eee5;
   --sage-ink: #2f5a3d;
@@ -32,6 +35,9 @@
     --clay: #f08a66;
     --clay-hover: #f5a184;
     --on-clay: #1e1a17;
+    --clay-tint: #3d2820;
+    --clay-tint-hover: #4a3027;
+    --clay-ink: #f6b49b;
     --sage: #94c4a3;
     --sage-tint: #233229;
     --sage-ink: #b6dcc1;
@@ -55,6 +61,9 @@
   --color-clay: var(--clay);
   --color-clay-hover: var(--clay-hover);
   --color-on-clay: var(--on-clay);
+  --color-clay-tint: var(--clay-tint);
+  --color-clay-tint-hover: var(--clay-tint-hover);
+  --color-clay-ink: var(--clay-ink);
   --color-sage: var(--sage);
   --color-sage-tint: var(--sage-tint);
   --color-sage-ink: var(--sage-ink);
@@ -100,7 +109,7 @@
   }
 
   .button--quiet {
-    @apply bg-transparent text-ink ring-1 ring-line hover:bg-card;
+    @apply bg-clay-tint text-clay-ink hover:bg-clay-tint-hover;
   }
 
   .input {
