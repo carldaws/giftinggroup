@@ -17,7 +17,7 @@ class Item < ApplicationRecord
 
   validates :name, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
-  validates :url, format: { with: %r{\Ahttps?://}i }, allow_nil: true
+  validate :url_is_a_web_address, if: -> { url.present? }
   validate :suggester_can_see_the_owner, :suggester_does_not_manage_the_list, if: -> { suggestion? && owner.present? }
   validate :photos_are_acceptable
 
@@ -73,6 +73,13 @@ class Item < ApplicationRecord
   end
 
   private
+    def url_is_a_web_address
+      uri = URI.parse(url)
+      errors.add(:url, :invalid) unless uri.is_a?(URI::HTTP) && uri.host.present?
+    rescue URI::InvalidURIError
+      errors.add(:url, :invalid)
+    end
+
     def suggester_can_see_the_owner
       errors.add(:suggested_by, :cannot_see_the_list) unless owner.visible_to?(suggested_by)
     end

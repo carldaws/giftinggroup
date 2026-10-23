@@ -81,9 +81,17 @@ class ItemTest < ActiveSupport::TestCase
   end
 
   test "links must be web addresses" do
-    items(:scarf).url = "javascript:alert(1)"
+    [ "javascript:alert(1)", "https://", "https://exa mple.com", "ftp://example.com/file", "https://example.com\njavascript:alert(1)" ].each do |url|
+      items(:scarf).url = url
 
-    assert_not items(:scarf).valid?
+      assert_not items(:scarf).valid?, url
+    end
+  end
+
+  test "web addresses are fine" do
+    items(:scarf).url = "https://www.example.com/scarves?colour=green"
+
+    assert items(:scarf).valid?
   end
 
   test "quantity must be positive" do
