@@ -13,8 +13,10 @@ class Group < ApplicationRecord
 
   before_validation :assign_join_code, on: :create
 
-  def self.generate_join_code
-    Array.new(JOIN_CODE_LENGTH) { JOIN_CODE_ALPHABET.sample(random: SecureRandom) }.join
+  class << self
+    def generate_join_code
+      Array.new(JOIN_CODE_LENGTH) { JOIN_CODE_ALPHABET.sample(random: SecureRandom) }.join
+    end
   end
 
   def add(user, admin: false)
