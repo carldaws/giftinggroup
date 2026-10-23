@@ -10,14 +10,16 @@
 <% content_for :title, @person.name %>
 
 <div class="mt-6 mb-10">
-  <div class="flex items-start justify-between gap-4">
-    <%= avatar_tag @person, size: "size-16 text-xl" %>
+  <div class="mb-2 flex items-center justify-between gap-4">
+    <div class="flex min-w-0 items-center gap-3">
+      <%= avatar_tag @person %>
+      <h1 class="min-w-0 text-4xl font-semibold break-words"><%= @person.name %></h1>
+    </div>
     <% if manages %>
-      <% details = yours ? t(".your_details") : t(".their_details", name: @person.name) %>
+      <% details = yours ? t(".your_details") : t(".edit_details") %>
       <%= link_to details, edit_person_profile_path(@person), class: "button button--quiet min-h-10 shrink-0 px-4 text-base no-underline" %>
     <% end %>
   </div>
-  <h1 class="mt-4 text-4xl font-semibold break-words"><%= @person.name %></h1>
   <% if manages && !yours %>
     <p class="text-muted"><%= t(".you_look_after", name: @person.name) %></p>
   <% end %>

@@ -52,7 +52,7 @@ class OccasionsTest < ActionDispatch::IntegrationTest
 
     get person_path(users(:carol))
 
-    assert_select "h1 ~ p", text: /#{I18n.l(users(:carol).next_birthday, format: "%-d %B")}/
+    assert_select "p.text-muted", text: /#{I18n.l(users(:carol).next_birthday, format: "%-d %B")}/
   end
 
   test "anyone in the group can add an occasion" do

@@ -234,7 +234,7 @@ en:
   people:
     show:
       your_details: Your details
-      their_details: "%{name}'s details"
+      edit_details: Edit details
       you_look_after: You look after %{name}, so you can add and change things.
       birthday: Birthday %{date} · %{countdown}
       your_list: Your list
