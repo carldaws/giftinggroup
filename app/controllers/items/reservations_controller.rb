@@ -5,9 +5,9 @@ class Items::ReservationsController < ApplicationController
     reservation = @item.reserve_for(Current.user)
 
     if reservation.persisted?
-      redirect_to_list
+      redirect_back_or_to_list
     else
-      redirect_to_list alert: reservation.errors.full_messages.to_sentence
+      redirect_back_or_to_list alert: reservation.errors.full_messages.to_sentence
     end
   end
 
@@ -15,14 +15,14 @@ class Items::ReservationsController < ApplicationController
     reservation = Current.user.reservations.find_by!(item: @item)
 
     if reservation.update(params.expect(reservation: [ :occasion_id ]))
-      redirect_to_list
+      redirect_back_or_to_list
     else
-      redirect_to_list alert: reservation.errors.full_messages.to_sentence
+      redirect_back_or_to_list alert: reservation.errors.full_messages.to_sentence
     end
   end
 
   def destroy
     Current.user.reservations.find_by!(item: @item).destroy
-    redirect_to_list
+    redirect_back_or_to_list
   end
 end

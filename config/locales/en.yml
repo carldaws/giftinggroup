@@ -77,9 +77,24 @@ en:
       rate_limited: Too many tries. Please wait a few minutes and try again.
 
   groups:
+    shopping_list:
+      heading: Your shopping list
+      intro: Everything you've said you'll get, across all your groups.
+      for: For %{name}
+      for_occasion: For %{name} · %{occasion}, %{countdown}
+      their_occasion: "%{occasion}, %{countdown}"
+      already_has: "%{name} has ticked this off, so they may already have it."
+      bought: Bought
+      let_go: Let it go
+      all_bought: You've bought everything on your list.
+      bought_count:
+        one: 1 bought
+        other: "%{count} bought"
+      put_back: Put back
     index:
       title: Your groups
       heading: Hello, %{name}
+      groups_heading: Your groups
       people:
         one: 1 person
         other: "%{count} people"

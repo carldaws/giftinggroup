@@ -14,7 +14,7 @@ module ItemScoped
       head :forbidden unless @item.editable_by?(Current.user)
     end
 
-    def redirect_to_list(**flash)
-      redirect_to person_path(@item.owner), **flash
+    def redirect_back_or_to_list(**flash)
+      redirect_back_or_to person_path(@item.owner), **flash
     end
 end

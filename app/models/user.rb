@@ -62,6 +62,13 @@ class User < ApplicationRecord
     user == self || dependants.to_a.include?(user)
   end
 
+  def shopping_list
+    reservations = Reservation.visible_to(self).where(user: self).includes(occasion: :person, item: :owner)
+    dated, undated = reservations.partition { it.occasion.present? }
+
+    dated.sort_by { [ it.occasion.date, it.item.owner.name.downcase ] } + undated.sort_by { it.item.owner.name.downcase }
+  end
+
   def build_item(attributes, by:)
     items.build(attributes).tap do |item|
       item.suggested_by = by unless by.looks_after?(self)

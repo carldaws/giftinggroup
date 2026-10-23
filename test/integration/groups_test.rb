@@ -26,8 +26,8 @@ class GroupsTest < ActionDispatch::IntegrationTest
 
     get root_path
 
-    assert_select "h2", text: groups(:hollies).name
-    assert_select "h2", text: groups(:ivies).name
+    assert_select "h3", text: groups(:hollies).name
+    assert_select "h3", text: groups(:ivies).name
   end
 
   test "the group page lists its people and its invite link" do

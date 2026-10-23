@@ -10,7 +10,7 @@ class Items::ReceiptsController < ApplicationController
 
   def destroy
     @item.unreceive
-    redirect_to_list
+    redirect_back_or_to_list
   end
 
   private

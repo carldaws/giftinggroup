@@ -2,13 +2,17 @@
 
 <h1 class="mt-6 mb-8 text-4xl font-semibold"><%= t(".heading", name: Current.user.name) %></h1>
 
+<%= render "groups/shopping_list" %>
+
+<h2 class="mb-4 text-2xl font-semibold"><%= t(".groups_heading") %></h2>
+
 <% if @groups.any? %>
   <ul class="grid gap-4">
     <% @groups.each do |group| %>
       <li class="min-w-0">
         <%= link_to group, class: "card flex items-center justify-between gap-4 no-underline transition-colors hover:border-clay/40" do %>
           <div class="min-w-0">
-            <h2 class="text-2xl font-semibold break-words"><%= group.name %></h2>
+            <h3 class="text-xl font-semibold break-words"><%= group.name %></h3>
             <p class="text-muted"><%= t(".people", count: group.members.size) %></p>
           </div>
           <div class="flex shrink-0 -space-x-3">
