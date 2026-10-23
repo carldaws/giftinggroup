@@ -2,29 +2,33 @@
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 <% setting_up = @user.email_address_in_database.blank? %>
 
-<h1 class="mb-3 text-center text-4xl font-semibold leading-tight">
-  <%= setting_up ? t(".set_up_heading", name: @user.name) : t(".reset_heading", name: @user.name) %>
-</h1>
-<p class="mb-8 text-center text-muted"><%= setting_up ? t(".set_up_intro") : t(".reset_intro") %></p>
+<div class="page page--compact">
+  <%= page_header (setting_up ? t(".set_up_heading", name: @user.name) : t(".reset_heading", name: @user.name)),
+        subtitle: (setting_up ? t(".set_up_intro") : t(".reset_intro")) %>
 
-<div class="card">
-  <%= form_with model: @user, url: password_path(params[:token]), method: :patch do |form| %>
-    <%= render "shared/errors", record: @user %>
+  <div class="card">
+    <%= form_with model: @user, url: password_path(params[:token]), method: :patch do |form| %>
+      <%= render "shared/errors", record: @user %>
 
-    <%= form.label :email_address, t(".email_address"), class: "label" %>
-    <% if setting_up %>
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", class: "input",
-            aria: { describedby: "email_address-hint" } %>
-      <p id="email_address-hint" class="hint"><%= t(".email_address_hint") %></p>
-    <% else %>
-      <%= form.email_field :email_address, readonly: true, autocomplete: "username", class: "input bg-paper text-muted" %>
+      <div class="fields">
+        <div class="field">
+          <%= form.label :email_address, t(".email_address"), class: "label" %>
+          <% if setting_up %>
+            <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", class: "input",
+                  aria: { describedby: "email_address-hint" } %>
+            <p id="email_address-hint" class="hint"><%= t(".email_address_hint") %></p>
+          <% else %>
+            <%= form.email_field :email_address, readonly: true, autocomplete: "username", class: "input" %>
+          <% end %>
+        </div>
+
+        <%= render "shared/password_field", form:, field: :password, autocomplete: "new-password",
+              label: t(".password"), hint: t(".password_hint") %>
+      </div>
+
+      <div class="form-actions">
+        <%= form.submit t(".submit"), class: "button w-full" %>
+      </div>
     <% end %>
-
-    <div class="mt-6">
-      <%= render "shared/password_field", form:, field: :password, autocomplete: "new-password",
-            label: t(".password"), hint: t(".password_hint") %>
-    </div>
-
-    <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
-  <% end %>
+  </div>
 </div>

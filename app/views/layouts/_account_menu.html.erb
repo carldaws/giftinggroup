@@ -1,0 +1,12 @@
+<details class="relative" data-controller="menu" data-action="toggle->menu#toggled">
+  <summary class="icon-button list-none [&::-webkit-details-marker]:hidden" aria-label="<%= t(".label") %>">
+    <%= avatar_tag Current.user, size: :sm, tooltip: false, ring: false %>
+  </summary>
+
+  <div class="menu">
+    <%= link_to t(".your_page"), person_path(Current.user), class: "menu-item" %>
+    <%= link_to t(".your_details"), edit_person_profile_path(Current.user), class: "menu-item" %>
+    <div class="menu-divider"></div>
+    <%= button_to t(".sign_out"), session_path, method: :delete, form: { data: { turbo: false } }, class: "menu-item" %>
+  </div>
+</details>

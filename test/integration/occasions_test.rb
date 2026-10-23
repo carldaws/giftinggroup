@@ -52,7 +52,7 @@ class OccasionsTest < ActionDispatch::IntegrationTest
 
     get person_path(users(:carol))
 
-    assert_select "p.text-muted", text: /#{I18n.l(users(:carol).next_birthday, format: "%-d %B")}/
+    assert_select ".page-subtitle", text: /#{I18n.l(users(:carol).next_birthday, format: "%-d %B")}/
   end
 
   test "anyone in the group can add an occasion" do
@@ -87,8 +87,8 @@ class OccasionsTest < ActionDispatch::IntegrationTest
 
     get root_path
 
-    assert_select "section[aria-label=?]", I18n.t("occasions.gifts_to_choose.label", occasion: occasions(:christmas).name) do
-      assert_select "p", text: groups(:hollies).name
+    assert_select "article[aria-label=?]", I18n.t("occasions.gifts_to_choose.label", occasion: occasions(:christmas).name) do
+      assert_select "p", text: /#{groups(:hollies).name}/
       assert_select "a", text: /#{users(:carol).name}/
     end
   end
@@ -103,7 +103,7 @@ class OccasionsTest < ActionDispatch::IntegrationTest
       assert_select "a", text: /#{users(:bob).name}/
       assert_select "a", text: /#{users(:erin).name}/, count: 0
     end
-    assert_select "section[aria-label]", count: 0
+    assert_select "article[aria-label]", count: 0
   end
 
   test "an occasion needs a name and a date" do

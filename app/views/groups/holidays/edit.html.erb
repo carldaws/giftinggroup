@@ -3,52 +3,53 @@
 <% celebrated = @group.group_holidays.includes(:recipients).index_by(&:key) %>
 <% content_for :title, t(".title") %>
 
-<div class="mt-6">
-  <% unless welcome %>
-    <%= link_to t(".back", group: @group.name), @group, class: "text-muted underline" %>
-  <% end %>
-
-  <h1 class="mt-4 mb-3 text-4xl font-semibold"><%= welcome ? t(".welcome_heading", group: @group.name) : t(".heading") %></h1>
-  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+<div class="page page--narrow">
+  <%= page_header (welcome ? t(".welcome_heading", group: @group.name) : t(".heading")),
+        crumbs: (welcome ? [] : [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ]), subtitle: t(".intro") %>
 
   <%= form_with url: group_holidays_path(@group, welcome: (1 if welcome)), method: :patch do |form| %>
     <%= hidden_field_tag "keys[]", "" %>
 
-    <ul class="grid gap-3">
-      <% Holiday.all.each do |holiday| %>
-        <% group_holiday = celebrated[holiday.key] %>
-        <% checked = group_holiday.present? || (welcome && celebrated.empty? && holiday.key == "christmas_day") %>
-        <li class="card p-0 sm:p-0">
-          <label class="flex cursor-pointer items-center gap-4 px-5 py-4 sm:px-6">
-            <%= check_box_tag "keys[]", holiday.key, checked, id: "holiday_#{holiday.key}", class: "size-5 accent-clay" %>
-            <span class="min-w-0 flex-1">
-              <span class="block font-semibold"><%= holiday.name %></span>
-              <span class="block text-base text-muted"><%= l(holiday.next_date, format: "%A %-d %B %Y") %></span>
-            </span>
-          </label>
+    <div class="card card--flush">
+      <ul class="list">
+        <% Holiday.all.each do |holiday| %>
+          <% group_holiday = celebrated[holiday.key] %>
+          <% checked = group_holiday.present? || (welcome && celebrated.empty? && holiday.key == "christmas_day") %>
+          <li class="group/holiday">
+            <label class="row row--link cursor-pointer">
+              <%= check_box_tag "keys[]", holiday.key, checked, id: "holiday_#{holiday.key}", class: "checkbox holiday-toggle mt-0" %>
+              <span class="min-w-0 flex-1">
+                <span class="row-title block"><%= holiday.name %></span>
+                <span class="row-meta block"><%= l(holiday.next_date, format: "%A %-d %B %Y") %></span>
+              </span>
+            </label>
 
-          <% unless holiday.for_everyone? %>
-            <fieldset class="border-t border-line px-5 py-4 sm:px-6">
-              <legend class="sr-only"><%= t(".who_for", holiday: holiday.name) %></legend>
-              <p class="mb-2 text-base text-muted"><%= t(".who_for", holiday: holiday.name) %></p>
-              <div class="flex flex-wrap gap-2">
-                <% members.each do |member| %>
-                  <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-paper py-1 pr-3 pl-1 has-[:checked]:border-clay has-[:checked]:bg-clay-tint has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-clay">
-                    <%= check_box_tag "people[#{holiday.key}][]", member.id, group_holiday.present? && group_holiday.recipients.include?(member),
-                          id: "holiday_#{holiday.key}_#{member.id}", class: "sr-only" %>
-                    <%= avatar_tag member, size: "size-7 text-xs ring-0" %>
-                    <span class="text-base font-medium"><%= member.name %></span>
-                  </label>
-                <% end %>
-              </div>
-            </fieldset>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
+            <% unless holiday.for_everyone? %>
+              <fieldset class="hidden px-5 pb-4 group-has-[.holiday-toggle:checked]/holiday:block sm:px-6">
+                <legend class="sr-only"><%= t(".who_for", holiday: holiday.name) %></legend>
+                <p class="mb-2 text-base text-muted" aria-hidden="true"><%= t(".who_for", holiday: holiday.name) %></p>
+                <div class="flex flex-wrap gap-2">
+                  <% members.each do |member| %>
+                    <label class="chip chip--toggle">
+                      <%= check_box_tag "people[#{holiday.key}][]", member.id, group_holiday.present? && group_holiday.recipients.include?(member),
+                            id: "holiday_#{holiday.key}_#{member.id}", class: "sr-only" %>
+                      <%= avatar_tag member, size: :sm, tooltip: false, ring: false %>
+                      <%= member.name %>
+                    </label>
+                  <% end %>
+                </div>
+              </fieldset>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
 
-    <p class="hint mt-6"><%= t(".custom_hint") %></p>
-
-    <%= form.submit welcome ? t(".continue") : t(".save"), class: "button mt-6 w-full sm:w-auto" %>
+      <div class="card-footer">
+        <p class="hint"><%= t(".custom_hint") %></p>
+        <div class="form-actions mt-4">
+          <%= form.submit welcome ? t(".continue") : t(".save"), class: "button button--wide" %>
+        </div>
+      </div>
+    </div>
   <% end %>
 </div>

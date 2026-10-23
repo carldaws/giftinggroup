@@ -2,39 +2,45 @@
 <%= form_with model: occasion, url: do |form| %>
   <%= render "shared/errors", record: occasion %>
 
-  <%= form.label :name, t("groups.occasions.form.name"), class: "label" %>
-  <%= form.text_field :name, required: true, autofocus: occasion.new_record?, placeholder: t("groups.occasions.form.name_placeholder"), class: "input" %>
+  <div class="fields">
+    <div class="field">
+      <%= form.label :name, t("groups.occasions.form.name"), class: "label" %>
+      <%= form.text_field :name, required: true, autofocus: occasion.new_record?, placeholder: t("groups.occasions.form.name_placeholder"), class: "input" %>
+    </div>
 
-  <div class="mt-6">
-    <%= form.label :date, t("groups.occasions.form.date"), class: "label" %>
-    <%= form.date_field :date, required: true, class: "input" %>
-  </div>
+    <div class="field">
+      <%= form.label :date, t("groups.occasions.form.date"), class: "label" %>
+      <%= form.date_field :date, required: true, class: "input" %>
+    </div>
 
-  <fieldset class="mt-6" data-controller="checkboxes"
-            data-checkboxes-select-all-value="<%= t("groups.occasions.form.select_all") %>"
-            data-checkboxes-clear-all-value="<%= t("groups.occasions.form.clear_all") %>">
-    <legend class="label"><%= t("groups.occasions.form.people") %></legend>
-    <p class="hint mt-0 mb-3"><%= t("groups.occasions.form.people_hint") %></p>
-    <button type="button" class="button button--quiet button--small mb-3" data-checkboxes-target="toggle" data-action="checkboxes#toggleAll">
-      <%= t("groups.occasions.form.clear_all") %>
-    </button>
+    <fieldset class="field" data-controller="checkboxes"
+              data-checkboxes-select-all-value="<%= t("groups.occasions.form.select_all") %>"
+              data-checkboxes-clear-all-value="<%= t("groups.occasions.form.clear_all") %>">
+      <legend class="label mb-2"><%= t("groups.occasions.form.people") %></legend>
+      <p class="hint"><%= t("groups.occasions.form.people_hint") %></p>
+      <div>
+        <button type="button" class="button button--secondary button--small" data-checkboxes-target="toggle" data-action="checkboxes#toggleAll">
+          <%= t("groups.occasions.form.clear_all") %>
+        </button>
+      </div>
 
-    <%= hidden_field_tag "occasion[member_ids][]", "" %>
-    <% chosen = occasion.chosen_member_ids %>
-    <ul class="card divide-y divide-line p-0 sm:p-0">
-      <% occasion.group.memberships.by_name.includes(:user).each do |membership| %>
-        <li>
-          <label class="flex cursor-pointer items-center gap-4 px-5 py-3 sm:px-6">
+      <%= hidden_field_tag "occasion[member_ids][]", "" %>
+      <% chosen = occasion.chosen_member_ids %>
+      <div class="choice-list mt-1">
+        <% occasion.group.memberships.by_name.includes(:user).each do |membership| %>
+          <label>
             <%= check_box_tag "occasion[member_ids][]", membership.user_id, chosen.include?(membership.user_id),
-                  id: "occasion_member_#{membership.user_id}", class: "size-5 accent-clay",
+                  id: "occasion_member_#{membership.user_id}", class: "checkbox mt-0",
                   data: { checkboxes_target: "checkbox", action: "checkboxes#update" } %>
-            <%= avatar_tag membership.user, size: "size-9 text-sm" %>
+            <%= avatar_tag membership.user, size: :sm, tooltip: false %>
             <span class="font-medium"><%= membership.user.name %></span>
           </label>
-        </li>
-      <% end %>
-    </ul>
-  </fieldset>
+        <% end %>
+      </div>
+    </fieldset>
+  </div>
 
-  <%= form.submit submit, class: "button mt-6 w-full sm:w-auto" %>
+  <div class="form-actions">
+    <%= form.submit submit, class: "button button--wide" %>
+  </div>
 <% end %>

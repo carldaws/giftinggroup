@@ -1,34 +1,39 @@
 <% content_for :title, t(".title") %>
 
-<h1 class="mb-3 text-center text-4xl font-semibold leading-tight"><%= t(".heading") %></h1>
-<p class="mb-8 text-center text-muted"><%= t(".intro") %></p>
+<div class="page page--compact">
+  <%= page_header t(".heading"), subtitle: t(".intro") %>
 
-<div class="card">
-  <%= form_with model: @user, url: registration_path do |form| %>
-    <%= render "shared/errors", record: @user %>
+  <div class="card">
+    <%= form_with model: @user, url: registration_path do |form| %>
+      <%= render "shared/errors", record: @user %>
 
-    <%= form.label :name, t(".name"), class: "label" %>
-    <%= form.text_field :name, required: true, autofocus: true, autocomplete: "given-name", class: "input",
-          aria: { describedby: "name-hint" } %>
-    <p id="name-hint" class="hint"><%= t(".name_hint") %></p>
+      <div class="fields">
+        <div class="field">
+          <%= form.label :name, t(".name"), class: "label" %>
+          <%= form.text_field :name, required: true, autofocus: true, autocomplete: "given-name", class: "input",
+                aria: { describedby: "name-hint" } %>
+          <p id="name-hint" class="hint"><%= t(".name_hint") %></p>
+        </div>
 
-    <div class="mt-6">
-      <%= form.label :email_address, t(".email_address"), class: "label" %>
-      <%= form.email_field :email_address, required: true, autocomplete: "username", class: "input",
-            aria: { describedby: "email_address-hint" } %>
-      <p id="email_address-hint" class="hint"><%= t(".email_address_hint") %></p>
-    </div>
+        <div class="field">
+          <%= form.label :email_address, t(".email_address"), class: "label" %>
+          <%= form.email_field :email_address, required: true, autocomplete: "username", class: "input",
+                aria: { describedby: "email_address-hint" } %>
+          <p id="email_address-hint" class="hint"><%= t(".email_address_hint") %></p>
+        </div>
 
-    <div class="mt-6">
-      <%= render "shared/password_field", form:, field: :password, autocomplete: "new-password",
-            label: t(".password"), hint: t(".password_hint") %>
-    </div>
+        <%= render "shared/password_field", form:, field: :password, autocomplete: "new-password",
+              label: t(".password"), hint: t(".password_hint") %>
+      </div>
 
-    <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
-  <% end %>
+      <div class="form-actions">
+        <%= form.submit t(".submit"), class: "button w-full" %>
+      </div>
+    <% end %>
+  </div>
+
+  <p class="mt-6 text-center text-base text-muted">
+    <%= t(".have_account") %>
+    <%= link_to t(".sign_in"), new_session_path, class: "link" %>
+  </p>
 </div>
-
-<p class="mt-8 text-center">
-  <%= t(".have_account") %>
-  <%= link_to t(".sign_in"), new_session_path, class: "font-semibold text-clay underline" %>
-</p>

@@ -1,5 +1,5 @@
-<%# locals: (date:, tone: "bg-clay-tint text-clay-ink") %>
-<div class="flex size-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl <%= tone %>">
+<%# locals: (date:) %>
+<div class="date-badge">
   <span class="text-lg/none font-semibold"><%= date.day %></span>
   <span class="text-xs/none font-semibold uppercase"><%= l(date, format: "%b") %></span>
 </div>

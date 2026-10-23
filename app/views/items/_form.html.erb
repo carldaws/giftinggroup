@@ -2,50 +2,61 @@
 <%= form_with model: item, url: do |form| %>
   <%= render "shared/errors", record: item %>
 
-  <%= form.label :name, t("items.form.name"), class: "label" %>
-  <%= form.text_field :name, required: true, autofocus: item.new_record?, class: "input" %>
-
-  <div class="mt-6">
-    <%= form.label :url, t("items.form.url"), class: "label" %>
-    <%= form.url_field :url, placeholder: "https://", inputmode: "url", class: "input", aria: { describedby: "item-url-hint" } %>
-    <p id="item-url-hint" class="hint"><%= t("items.form.url_hint") %></p>
-  </div>
-
-  <div class="mt-6 grid gap-6 sm:grid-cols-2">
-    <div>
-      <%= form.label :price, t("items.form.price"), class: "label" %>
-      <%= form.text_field :price, placeholder: t("items.form.price_placeholder"), class: "input" %>
+  <div class="fields">
+    <div class="field">
+      <%= form.label :name, t("items.form.name"), class: "label" %>
+      <%= form.text_field :name, required: true, autofocus: item.new_record?, class: "input" %>
     </div>
-    <div>
-      <%= form.label :quantity, t("items.form.quantity"), class: "label" %>
-      <%= form.number_field :quantity, min: 1, inputmode: "numeric", class: "input", aria: { describedby: "item-quantity-hint" } %>
-      <p id="item-quantity-hint" class="hint"><%= t("items.form.quantity_hint") %></p>
+
+    <div class="field">
+      <%= form.label :url, t("items.form.url"), class: "label" %>
+      <%= form.url_field :url, placeholder: "https://", inputmode: "url", class: "input", aria: { describedby: "item-url-hint" } %>
+      <p id="item-url-hint" class="hint"><%= t("items.form.url_hint") %></p>
+    </div>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="field content-start">
+        <%= form.label :price, t("items.form.price"), class: "label" %>
+        <%= form.text_field :price, placeholder: t("items.form.price_placeholder"), class: "input" %>
+      </div>
+      <div class="field content-start">
+        <%= form.label :quantity, t("items.form.quantity"), class: "label" %>
+        <%= form.number_field :quantity, min: 1, inputmode: "numeric", class: "input", aria: { describedby: "item-quantity-hint" } %>
+        <p id="item-quantity-hint" class="hint"><%= t("items.form.quantity_hint") %></p>
+      </div>
+    </div>
+
+    <div class="field">
+      <%= form.label :notes, t("items.form.notes"), class: "label" %>
+      <%= form.text_area :notes, rows: 3, placeholder: t("items.form.notes_placeholder"), class: "input" %>
+    </div>
+
+    <div class="field">
+      <%= form.label :photos, (item.photos.attached? ? t("items.form.more_photos") : t("items.form.photos")), class: "label" %>
+      <%= form.file_field :photos, multiple: true, include_hidden: false, accept: Item::PHOTO_CONTENT_TYPES.join(","),
+            class: "input", aria: { describedby: "item-photos-hint" } %>
+      <p id="item-photos-hint" class="hint"><%= t("items.form.photos_hint", count: Item::PHOTO_MAX_COUNT) %></p>
+    </div>
+
+    <div class="grid gap-4">
+      <label class="choice">
+        <%= form.check_box :most_wanted, class: "checkbox" %>
+        <span>
+          <span class="block font-semibold"><%= t("items.form.most_wanted") %></span>
+          <span class="hint block"><%= t("items.form.most_wanted_hint") %></span>
+        </span>
+      </label>
+      <label class="choice">
+        <%= form.check_box :little, class: "checkbox" %>
+        <span>
+          <span class="block font-semibold"><%= t("items.form.little") %></span>
+          <span class="hint block"><%= t("items.form.little_hint") %></span>
+        </span>
+      </label>
     </div>
   </div>
 
-  <div class="mt-6">
-    <%= form.label :notes, t("items.form.notes"), class: "label" %>
-    <%= form.text_area :notes, rows: 3, placeholder: t("items.form.notes_placeholder"), class: "input" %>
+  <div class="form-actions">
+    <%= form.submit submit, class: "button button--wide" %>
   </div>
-
-  <div class="mt-6">
-    <%= form.label :photos, t("items.form.photos"), class: "label" %>
-    <%= form.file_field :photos, multiple: true, include_hidden: false, accept: Item::PHOTO_CONTENT_TYPES.join(","),
-          class: "block w-full text-base text-muted file:mr-4 file:rounded-full file:border-0 file:bg-clay/15 file:px-5 file:py-2.5 file:font-semibold file:text-clay",
-          aria: { describedby: "item-photos-hint" } %>
-    <p id="item-photos-hint" class="hint"><%= t("items.form.photos_hint", count: Item::PHOTO_MAX_COUNT) %></p>
-  </div>
-
-  <div class="mt-6 grid gap-3">
-    <label class="flex items-start gap-3">
-      <%= form.check_box :most_wanted, class: "mt-1 size-5 accent-clay" %>
-      <span><span class="font-semibold"><%= t("items.form.most_wanted") %></span><br><span class="text-base text-muted"><%= t("items.form.most_wanted_hint") %></span></span>
-    </label>
-    <label class="flex items-start gap-3">
-      <%= form.check_box :little, class: "mt-1 size-5 accent-clay" %>
-      <span><span class="font-semibold"><%= t("items.form.little") %></span><br><span class="text-base text-muted"><%= t("items.form.little_hint") %></span></span>
-    </label>
-  </div>
-
-  <%= form.submit submit, class: "button mt-8 w-full" %>
 <% end %>

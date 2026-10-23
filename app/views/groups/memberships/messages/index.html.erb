@@ -1,63 +1,59 @@
 <% person = @membership.user %>
 <% messages = @membership.messages_about.includes(:author).chronologically %>
 <% first_unread = @membership.messages_about.unread_by(Current.user).chronologically.first %>
+<% readers = @membership.chat_readers.to_a %>
 <% content_for :title, t(".title", name: person.name) %>
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 <%= turbo_stream_from @membership %>
 
-<div class="mt-6 mb-8">
-  <%= link_to t(".back", name: person.name), person_path(person), class: "text-muted underline" %>
-  <div class="mt-4 flex items-center gap-3">
-    <%= avatar_tag person %>
-    <div class="min-w-0">
-      <h1 class="text-4xl font-semibold break-words"><%= t(".heading", name: person.name) %></h1>
-      <% readers = @membership.chat_readers.to_a %>
-      <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted">
-        <span><%= @group.name %></span>
-        <span class="flex -space-x-2" role="img" aria-label="<%= t(".readers", names: readers.map(&:name).to_sentence) %>">
-          <% readers.first(8).each do |reader| %>
-            <%= avatar_tag reader, size: "size-7 text-xs" %>
-          <% end %>
-          <% if readers.size > 8 %>
-            <span class="inline-flex size-7 items-center justify-center rounded-full bg-line text-xs font-semibold text-ink ring-2 ring-card">+<%= readers.size - 8 %></span>
-          <% end %>
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="card overflow-clip p-0 sm:p-0">
-  <div class="p-4 sm:p-6">
-    <% if messages.any? %>
-      <ol class="grid gap-3">
-        <% messages.each do |message| %>
-          <% if message == first_unread %>
-            <li id="new" class="flex scroll-mt-24 items-center gap-3 text-sm font-semibold text-clay">
-              <span class="h-px flex-1 bg-clay/30"></span>
-              <%= t(".new") %>
-              <span class="h-px flex-1 bg-clay/30"></span>
-            </li>
-          <% end %>
-          <%= render "messages/message", message: %>
+<div class="page page--narrow">
+  <% subtitle = capture do %>
+    <span class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <span><%= @group.name %></span>
+      <span class="flex gap-1" role="img" aria-label="<%= t(".readers", names: readers.map(&:name).to_sentence) %>">
+        <% readers.first(8).each do |reader| %>
+          <%= avatar_tag reader, size: :xs %>
         <% end %>
-      </ol>
-    <% else %>
-      <p class="py-6 text-center text-muted"><%= t(".empty") %></p>
-    <% end %>
-  </div>
+        <% if readers.size > 8 %>
+          <span class="inline-flex size-6 items-center justify-center rounded-full bg-line text-[0.625rem] font-semibold text-ink ring-2 ring-surface">+<%= readers.size - 8 %></span>
+        <% end %>
+      </span>
+    </span>
+  <% end %>
 
-  <div id="latest" class="sticky bottom-0 border-t border-line bg-card p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4">
-    <%= render "shared/errors", record: @message %>
+  <%= page_header t(".heading", name: person.name), subtitle:, avatar: avatar_tag(person, tooltip: false),
+        crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ], [ person.name, person_path(person) ] ] %>
 
-    <%= form_with model: @message, url: group_membership_messages_path(@group, @membership),
-          class: "flex items-end gap-2 rounded-[1.5rem] border border-line bg-paper py-1.5 pr-1.5 pl-4 focus-within:border-clay focus-within:ring-2 focus-within:ring-clay/30",
-          data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" } do |form| %>
-      <%= form.label :body, t(".label", name: person.name), class: "sr-only" %>
-      <%= form.text_area :body, rows: 1, required: true, maxlength: 2000, placeholder: t(".placeholder"),
-            class: "max-h-48 min-h-11 flex-1 resize-none bg-transparent py-2.5 text-ink placeholder:text-muted focus:outline-none [field-sizing:content]",
-            data: { turbo_permanent: true } %>
-      <%= form.submit t(".send"), class: "button button--small shrink-0" %>
-    <% end %>
+  <div class="card card--flush">
+    <div class="p-4 sm:p-6">
+      <% if messages.any? %>
+        <ol class="grid gap-3">
+          <% messages.each do |message| %>
+            <% if message == first_unread %>
+              <li id="new" class="flex scroll-mt-24 items-center gap-3 text-sm font-semibold text-clay">
+                <span class="h-px flex-1 bg-clay/30"></span>
+                <%= t(".new") %>
+                <span class="h-px flex-1 bg-clay/30"></span>
+              </li>
+            <% end %>
+            <%= render "messages/message", message: %>
+          <% end %>
+        </ol>
+      <% else %>
+        <p class="empty py-6 text-center"><%= t(".empty") %></p>
+      <% end %>
+    </div>
+
+    <div id="latest" class="card-footer sticky bottom-0 bg-card pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <%= render "shared/errors", record: @message %>
+
+      <%= form_with model: @message, url: group_membership_messages_path(@group, @membership), class: "flex items-center gap-2",
+            data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" } do |form| %>
+        <%= form.label :body, t(".label", name: person.name), class: "sr-only" %>
+        <%= form.text_field :body, required: true, maxlength: 2000, autocomplete: "off", placeholder: t(".placeholder"),
+              class: "input", data: { turbo_permanent: true } %>
+        <%= form.submit t(".send"), class: "button" %>
+      <% end %>
+    </div>
   </div>
 </div>

@@ -1,13 +1,14 @@
 <% content_for :title, t(".title") %>
 
-<div class="mt-6">
-  <%= link_to t(".back", group: @group.name), @group, class: "text-muted underline" %>
-  <h1 class="mt-4 mb-8 text-4xl font-semibold"><%= t(".heading") %></h1>
+<div class="page page--narrow">
+  <%= page_header t(".heading"), crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ] %>
 
   <div class="card">
     <%= render "groups/occasions/form", occasion: @occasion, url: group_occasion_path(@group, @occasion), submit: t(".submit") %>
   </div>
 
-  <%= button_to t(".remove"), group_occasion_path(@group, @occasion), method: :delete, class: "button button--quiet button--small mt-6",
-        form: { data: { turbo_confirm: t(".remove_confirm", name: @occasion.title) } } %>
+  <div class="mt-6">
+    <%= button_to t(".remove"), group_occasion_path(@group, @occasion), method: :delete, class: "button button--danger button--wide",
+          form: { data: { turbo_confirm: t(".remove_confirm", name: @occasion.title) } } %>
+  </div>
 </div>

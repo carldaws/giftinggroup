@@ -1,0 +1,18 @@
+<% groups = Current.user.groups.order(:name) %>
+<details class="relative" data-controller="menu" data-action="toggle->menu#toggled">
+  <summary class="button button--secondary button--small list-none border-transparent bg-transparent [&::-webkit-details-marker]:hidden">
+    <%= t(".groups") %>
+    <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg>
+  </summary>
+
+  <div class="menu">
+    <% groups.each do |group| %>
+      <%= link_to group.name, group, class: "menu-item" %>
+    <% end %>
+    <% if groups.any? %>
+      <div class="menu-divider"></div>
+    <% end %>
+    <%= link_to t(".start"), new_group_path, class: "menu-item" %>
+    <%= link_to t(".join"), new_join_path, class: "menu-item" %>
+  </div>
+</details>

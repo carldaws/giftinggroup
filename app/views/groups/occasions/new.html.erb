@@ -1,9 +1,7 @@
 <% content_for :title, t(".title") %>
 
-<div class="mt-6">
-  <%= link_to t(".back", group: @group.name), @group, class: "text-muted underline" %>
-  <h1 class="mt-4 mb-3 text-4xl font-semibold"><%= t(".heading") %></h1>
-  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+<div class="page page--narrow">
+  <%= page_header t(".heading"), crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ], subtitle: t(".intro") %>
 
   <div class="card">
     <%= render "groups/occasions/form", occasion: @occasion, url: group_occasions_path(@group), submit: t(".submit") %>

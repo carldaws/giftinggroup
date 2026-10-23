@@ -5,8 +5,20 @@ en:
     name_tail: .group
 
   layouts:
-    application:
-      you: You
+    header:
+      home: Home
+    groups_menu:
+      groups: Groups
+      start: Start a group
+      join: Join with a code
+    account_menu:
+      label: Your account
+      your_page: Your page
+      your_details: Your details
+      sign_out: Sign out
+    signed_out_nav:
+      sign_in: Sign in
+      register: Create an account
     footer:
       credit_html: Free and %{open_source}, by %{author}. %{greeting}
       open_source: open source
@@ -20,6 +32,8 @@ en:
     everyday: Happy gifting 🎁
 
   shared:
+    page_header:
+      breadcrumb: Breadcrumb
     password_field:
       show: Show
       hide: Hide
@@ -344,6 +358,7 @@ en:
       notes: Notes for whoever gets it
       notes_placeholder: Size, colour, where to buy, anything that helps
       photos: Photos
+      more_photos: Add more photos
       photos_hint: Optional, up to %{count}. Handy for showing the exact colour or style.
       most_wanted: Most wanted
       most_wanted_hint: Shows at the top, with a label.
@@ -451,6 +466,7 @@ en:
     your_birthday: Your birthday
     your_birthday_with_age: Your %{ordinal} birthday
     gifts_to_choose:
+      heading: Gifts to choose
       label: Gifts still to choose for %{occasion}
     still_to_choose:
       label: People you haven't picked a gift for yet

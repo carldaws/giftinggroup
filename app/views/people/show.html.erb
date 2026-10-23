@@ -7,110 +7,105 @@
 <% reservations = yours ? {} : Reservation.visible_to(Current.user).where(item: shown).includes(:user, occasion: :person).group_by(&:item_id) %>
 <% still_wanted, given = shown.partition { !it.given_with?(reservations.fetch(it.id, [])) } %>
 <% occasion_choices = yours ? [] : Occasion.for_gifts_to(@person, from: Current.user).upcoming.soonest_first.includes(:person).to_a %>
-<% content_for :title, @person.name %>
+<% birthday = (t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) if @person.birthday?) %>
 
-<div class="mt-6 mb-10">
-  <div class="mb-2 flex items-center justify-between gap-4">
-    <div class="flex min-w-0 items-center gap-3">
-      <%= avatar_tag @person %>
-      <h1 class="min-w-0 text-4xl font-semibold break-words"><%= @person.name %></h1>
-    </div>
+<% sidebar = manages || @person.interests.exists? || @person.sizes.exists? %>
+<div class="<%= class_names("page", "page--narrow": !sidebar) %>">
+  <%= page_header @person.name, crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: birthday,
+        avatar: avatar_tag(@person, size: :lg, tooltip: false) do %>
     <% if yours %>
-      <%= link_to t(".your_details"), edit_person_profile_path(@person), class: "button button--quiet min-h-10 shrink-0 px-4 text-base no-underline" %>
+      <%= link_to t(".your_details"), edit_person_profile_path(@person), class: "button button--secondary" %>
     <% else %>
-      <div class="flex shrink-0 items-center gap-2">
-        <%= render "people/chats", person: @person %>
-        <% if manages %>
-          <%= link_to edit_person_profile_path(@person), class: "round-button group", aria: { label: t(".edit_details") } do %>
-            <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5Z"/></svg>
-            <span class="tooltip" aria-hidden="true"><%= t(".edit_details") %></span>
-          <% end %>
+      <%= render "people/chats", person: @person %>
+      <% if manages %>
+        <%= link_to edit_person_profile_path(@person), class: "icon-button icon-button--outlined group", aria: { label: t(".edit_details") } do %>
+          <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5Z"/></svg>
+          <span class="tooltip" aria-hidden="true"><%= t(".edit_details") %></span>
         <% end %>
-      </div>
-    <% end %>
-  </div>
-  <% if @person.birthday? %>
-    <p class="text-muted"><%= t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) %></p>
-  <% end %>
-</div>
-
-<%= render "people/interests", person: @person, yours:, manages: %>
-<%= render "people/sizes", person: @person, manages: %>
-
-<section id="list" aria-labelledby="list-heading" class="mb-10">
-  <h2 id="list-heading" class="mb-5 text-2xl font-semibold"><%= yours ? t(".your_list") : t(".their_list", name: @person.name) %></h2>
-
-  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-    <nav aria-label="<%= t(".filter") %>" class="inline-flex gap-1 rounded-full bg-line/50 p-1">
-      <%= link_to person_path(@person, anchor: "list"), class: "tab", aria: { current: ("page" unless little_only) } do %>
-        <%= t(".everything") %> <span class="text-muted"><%= wanted.size %></span>
       <% end %>
-      <%= link_to person_path(@person, show: "little", anchor: "list"), class: "tab", aria: { current: ("page" if little_only) } do %>
-        <%= t(".little_things") %> <span class="text-muted"><%= wanted.little.size %></span>
-      <% end %>
-    </nav>
-
-    <%= link_to (manages ? t(".add_item") : t(".suggest_item")), new_person_item_path(@person, little: (1 if little_only)), class: "button button--small" %>
-  </div>
-
-  <% if little_only %>
-    <p class="mb-4 text-muted"><%= t(".little_things_intro") %></p>
-  <% end %>
-
-  <% if manages %>
-    <% passed = Occasion.applying_to(@person).recent.order(date: :desc).first %>
-    <% if passed.present? %>
-      <p class="mb-5 rounded-2xl bg-honey-tint px-5 py-4 text-honey-ink">
-        <% if yours %>
-          <%= passed.birthday? ? t(".birthday_passed") : t(".occasion_passed", name: passed.title) %>
-        <% else %>
-          <%= t(".occasion_passed_for", occasion: passed.title, name: @person.name) %>
-        <% end %>
-      </p>
     <% end %>
   <% end %>
 
-  <% if shown.any? %>
-    <ul class="grid gap-4">
-      <% still_wanted.each do |item| %>
-        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, occasion_choices: %>
+  <div class="<%= class_names("columns": sidebar) %>">
+    <section id="list" aria-labelledby="list-heading" class="section min-w-0">
+      <%= section_header (yours ? t(".your_list") : t(".their_list", name: @person.name)), id: "list-heading" do %>
+        <%= link_to (manages ? t(".add_item") : t(".suggest_item")), new_person_item_path(@person, little: (1 if little_only)), class: "button button--small" %>
       <% end %>
-    </ul>
 
-    <% if given.any? %>
-      <details class="mt-6">
-        <summary class="cursor-pointer text-lg font-semibold"><%= t(".given", count: given.size) %></summary>
-        <ul class="mt-4 grid gap-4">
-          <% given.each do |item| %>
+      <nav aria-label="<%= t(".filter") %>" class="tabs mb-4">
+        <%= link_to person_path(@person, anchor: "list"), class: "tab", aria: { current: ("page" unless little_only) } do %>
+          <%= t(".everything") %> <span class="text-muted"><%= wanted.size %></span>
+        <% end %>
+        <%= link_to person_path(@person, show: "little", anchor: "list"), class: "tab", aria: { current: ("page" if little_only) } do %>
+          <%= t(".little_things") %> <span class="text-muted"><%= wanted.little.size %></span>
+        <% end %>
+      </nav>
+
+      <% if little_only %>
+        <p class="mb-4 text-base text-muted"><%= t(".little_things_intro") %></p>
+      <% end %>
+
+      <% if manages %>
+        <% passed = Occasion.applying_to(@person).recent.order(date: :desc).first %>
+        <% if passed.present? %>
+          <p class="notice notice--honey mb-4">
+            <% if yours %>
+              <%= passed.birthday? ? t(".birthday_passed") : t(".occasion_passed", name: passed.title) %>
+            <% else %>
+              <%= t(".occasion_passed_for", occasion: passed.title, name: @person.name) %>
+            <% end %>
+          </p>
+        <% end %>
+      <% end %>
+
+      <% if shown.any? %>
+        <ul class="grid gap-4">
+          <% still_wanted.each do |item| %>
             <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, occasion_choices: %>
           <% end %>
         </ul>
-      </details>
-    <% end %>
-  <% elsif little_only %>
-    <p class="card text-muted"><%= manages ? t(".little_empty_yours") : t(".little_empty", name: @person.name) %></p>
-  <% elsif yours %>
-    <p class="card text-muted"><%= t(".list_empty_yours") %></p>
-  <% elsif manages %>
-    <p class="card text-muted"><%= t(".list_empty_looked_after", name: @person.name) %></p>
-  <% else %>
-    <p class="card text-muted"><%= t(".list_empty", name: @person.name) %></p>
-  <% end %>
-</section>
 
-<% if manages %>
-  <% received = items.received.where(suggested_by: nil) %>
-  <% if received.any? %>
-    <details class="mb-10">
-      <summary class="cursor-pointer text-lg font-semibold"><%= t(".received", count: received.size) %></summary>
-      <ul class="mt-4 grid gap-2">
-        <% received.each do |item| %>
-          <li class="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card px-5 py-3">
-            <span class="text-muted line-through"><%= item.name %></span>
-            <%= button_to t(".put_back"), item_receipt_path(item), method: :delete, class: "button button--quiet button--small" %>
-          </li>
+        <% if given.any? %>
+          <details class="card card--flush mt-4">
+            <summary class="row row--link cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden"><%= t(".given", count: given.size) %></summary>
+            <ul class="grid gap-4 border-t border-line p-4">
+              <% given.each do |item| %>
+                <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, occasion_choices: %>
+              <% end %>
+            </ul>
+          </details>
         <% end %>
-      </ul>
-    </details>
-  <% end %>
-<% end %>
+      <% elsif little_only %>
+        <p class="card empty"><%= manages ? t(".little_empty_yours") : t(".little_empty", name: @person.name) %></p>
+      <% elsif yours %>
+        <p class="card empty"><%= t(".list_empty_yours") %></p>
+      <% elsif manages %>
+        <p class="card empty"><%= t(".list_empty_looked_after", name: @person.name) %></p>
+      <% else %>
+        <p class="card empty"><%= t(".list_empty", name: @person.name) %></p>
+      <% end %>
+    </section>
+
+    <aside class="min-w-0">
+      <%= render "people/interests", person: @person, yours:, manages: %>
+      <%= render "people/sizes", person: @person, manages: %>
+
+      <% if manages %>
+        <% received = items.received.where(suggested_by: nil) %>
+        <% if received.any? %>
+          <section aria-labelledby="received-heading" class="section">
+            <%= section_header t(".received", count: received.size), id: "received-heading" %>
+            <ul class="card card--flush list">
+              <% received.each do |item| %>
+                <li class="row">
+                  <span class="min-w-0 flex-1 text-muted line-through"><%= item.name %></span>
+                  <%= button_to t(".put_back"), item_receipt_path(item), method: :delete, class: "button button--secondary button--small" %>
+                </li>
+              <% end %>
+            </ul>
+          </section>
+        <% end %>
+      <% end %>
+    </aside>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<%# locals: (title:, crumbs:, subtitle:, avatar:, actions:) %>
+<header class="page-header">
+  <% if crumbs.any? %>
+    <nav aria-label="<%= t(".breadcrumb") %>" class="crumbs">
+      <% crumbs.each do |label, path| %>
+        <%= link_to label, path %>
+        <span aria-hidden="true">›</span>
+      <% end %>
+      <span class="sr-only"><%= title %></span>
+    </nav>
+  <% end %>
+
+  <div class="flex items-center justify-between gap-4">
+    <div class="flex min-w-0 items-center gap-3">
+      <%= avatar %>
+      <div class="min-w-0">
+        <h1 class="page-title"><%= title %></h1>
+        <% if subtitle.present? %>
+          <div class="page-subtitle"><%= subtitle %></div>
+        <% end %>
+      </div>
+    </div>
+    <% if actions.present? %>
+      <div class="flex shrink-0 items-center gap-2"><%= actions %></div>
+    <% end %>
+  </div>
+</header>

@@ -1,20 +1,9 @@
 <% suggesting = @item.suggestion? %>
 <% content_for :title, suggesting ? t(".suggest_title", name: @person.name) : t(".title") %>
+<% heading = if suggesting then t(".suggest_heading", name: @person.name) elsif @item.little? then t(".little_heading") else t(".heading") end %>
 
-<div class="mt-6">
-  <%= link_to t(".back", name: @person == Current.user ? t(".your_list") : t(".their_list", name: @person.name)), person_path(@person), class: "text-muted underline" %>
-
-  <h1 class="mt-4 mb-3 text-4xl font-semibold">
-    <% if suggesting %>
-      <%= t(".suggest_heading", name: @person.name) %>
-    <% elsif @item.little? %>
-      <%= t(".little_heading") %>
-    <% else %>
-      <%= t(".heading") %>
-    <% end %>
-  </h1>
-
-  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+<div class="page page--narrow">
+  <%= page_header heading, crumbs: [ [ t("layouts.header.home"), root_path ], [ @person.name, person_path(@person) ] ], subtitle: t(".intro") %>
 
   <div class="card">
     <%= render "items/form", item: @item, url: person_items_path(@person), submit: suggesting ? t(".suggest_submit") : t(".submit") %>

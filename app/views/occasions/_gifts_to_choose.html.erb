@@ -1,22 +1,27 @@
 <% gifts_to_choose = Current.user.gifts_to_choose %>
 
 <% if gifts_to_choose.any? %>
-  <div class="mb-10 grid gap-4">
-    <% gifts_to_choose.each do |occasion, people, everyone| %>
-      <section aria-label="<%= t(".label", occasion: occasion_title(occasion)) %>" class="card border-honey/40 p-5 sm:p-6">
-        <div class="flex items-center gap-4">
-          <%= render "occasions/date_badge", date: occasion.date, tone: "bg-honey-tint text-honey-ink" %>
-          <div class="min-w-0 flex-1">
-            <% if occasion.custom? %>
-              <p class="text-sm font-semibold tracking-wide text-muted uppercase"><%= occasion.group.name %></p>
-            <% end %>
-            <p class="text-lg leading-snug font-semibold break-words"><%= occasion_title(occasion) %></p>
-            <p class="text-base text-muted"><%= countdown_to(occasion.date) %></p>
-          </div>
-        </div>
+  <section aria-labelledby="gifts-to-choose-heading" class="section">
+    <%= section_header t(".heading"), id: "gifts-to-choose-heading" %>
 
-        <%= render "occasions/still_to_choose", people:, everyone: %>
-      </section>
-    <% end %>
-  </div>
+    <ul class="card card--flush list">
+      <% gifts_to_choose.each do |occasion, people, everyone| %>
+        <li>
+          <article aria-label="<%= t(".label", occasion: occasion_title(occasion)) %>" class="px-5 py-4 sm:px-6">
+            <div class="flex items-center gap-4">
+              <%= render "occasions/date_badge", date: occasion.date %>
+              <div class="min-w-0 flex-1">
+                <p class="row-title"><%= occasion_title(occasion) %></p>
+                <p class="row-meta">
+                  <%= countdown_to(occasion.date) %><% if occasion.custom? %> · <%= occasion.group.name %><% end %>
+                </p>
+              </div>
+            </div>
+
+            <%= render "occasions/still_to_choose", people:, everyone: %>
+          </article>
+        </li>
+      <% end %>
+    </ul>
+  </section>
 <% end %>

@@ -1,7 +1,12 @@
 <% content_for :title, t(".title") %>
 
-<div class="text-center">
-  <h1 class="mb-3 text-4xl font-semibold leading-tight"><%= t(".heading") %></h1>
-  <p class="mb-8 text-muted"><%= t(".body") %></p>
-  <%= link_to t(".sign_in"), new_session_path, class: "button w-full" %>
+<div class="page page--compact">
+  <%= page_header t(".heading") %>
+
+  <div class="card">
+    <p class="text-muted"><%= t(".body") %></p>
+    <div class="form-actions">
+      <%= link_to t(".sign_in"), new_session_path, class: "button w-full" %>
+    </div>
+  </div>
 </div>

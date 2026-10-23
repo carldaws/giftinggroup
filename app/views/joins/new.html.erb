@@ -1,16 +1,19 @@
 <% content_for :title, t(".title") %>
 
-<div class="mt-6">
-  <h1 class="mb-3 text-4xl font-semibold"><%= t(".heading") %></h1>
-  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+<div class="page page--compact">
+  <%= page_header t(".heading"), crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: t(".intro") %>
 
   <div class="card">
     <%= form_with url: joins_path do |form| %>
-      <%= form.label :join_code, t(".code"), class: "label" %>
-      <%= form.text_field :join_code, required: true, autofocus: true, autocomplete: "off", autocapitalize: "characters",
-            spellcheck: false, placeholder: "ABCD-2345", class: "input text-center font-mono text-2xl uppercase tracking-widest" %>
+      <div class="field">
+        <%= form.label :join_code, t(".code"), class: "label" %>
+        <%= form.text_field :join_code, required: true, autofocus: true, autocomplete: "off", autocapitalize: "characters",
+              spellcheck: false, placeholder: "ABCD-2345", class: "input text-center font-mono text-2xl uppercase tracking-widest" %>
+      </div>
 
-      <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
+      <div class="form-actions">
+        <%= form.submit t(".submit"), class: "button w-full" %>
+      </div>
     <% end %>
   </div>
 </div>

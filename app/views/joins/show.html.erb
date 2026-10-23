@@ -1,33 +1,37 @@
 <% content_for :title, t(".title") %>
 
-<div class="mt-6 text-center">
-  <% if @group.nil? %>
-    <h1 class="mb-3 text-4xl font-semibold"><%= t(".not_found_heading") %></h1>
-    <p class="mb-8 text-muted"><%= t(".not_found") %></p>
-    <% if authenticated? %>
-      <%= link_to t(".try_code"), new_join_path, class: "button w-full" %>
-    <% end %>
-  <% else %>
-    <div class="mb-6 flex justify-center -space-x-3">
-      <% @group.members.first(5).each do |member| %>
-        <%= avatar_tag member, size: "size-14 text-lg" %>
+<div class="page page--compact mt-6 sm:mt-8">
+  <div class="card text-center">
+    <% if @group.nil? %>
+      <h1 class="page-title"><%= t(".not_found_heading") %></h1>
+      <p class="mt-2 text-muted"><%= t(".not_found") %></p>
+      <% if authenticated? %>
+        <div class="form-actions">
+          <%= link_to t(".try_code"), new_join_path, class: "button w-full" %>
+        </div>
       <% end %>
-    </div>
-
-    <p class="text-muted"><%= t(".invited") %></p>
-    <h1 class="mb-2 text-4xl font-semibold break-words"><%= @group.name %></h1>
-    <p class="mb-8 text-muted"><%= t(".people", count: @group.members.size) %></p>
-
-    <% if !authenticated? %>
-      <div class="grid gap-3">
-        <%= link_to t(".create_account"), new_registration_path, class: "button" %>
-        <%= link_to t(".sign_in"), new_session_path, class: "button button--quiet" %>
-      </div>
-    <% elsif @group.members.include?(Current.user) %>
-      <p class="mb-4"><%= t(".already_member") %></p>
-      <%= link_to t(".open_group"), @group, class: "button w-full" %>
     <% else %>
-      <%= button_to t(".join", group: @group.name), joins_path, params: { join_code: @group.join_code }, class: "button w-full" %>
+      <div class="avatar-stack mb-5 justify-center">
+        <% @group.members.first(5).each do |member| %>
+          <%= avatar_tag member, size: :lg %>
+        <% end %>
+      </div>
+
+      <p class="text-base text-muted"><%= t(".invited") %></p>
+      <h1 class="page-title"><%= @group.name %></h1>
+      <p class="mt-1 text-muted"><%= t(".people", count: @group.members.size) %></p>
+
+      <div class="mt-8 grid gap-3">
+        <% if !authenticated? %>
+          <%= link_to t(".create_account"), new_registration_path, class: "button" %>
+          <%= link_to t(".sign_in"), new_session_path, class: "button button--secondary" %>
+        <% elsif @group.members.include?(Current.user) %>
+          <p class="text-base text-muted"><%= t(".already_member") %></p>
+          <%= link_to t(".open_group"), @group, class: "button" %>
+        <% else %>
+          <%= button_to t(".join", group: @group.name), joins_path, params: { join_code: @group.join_code }, class: "button w-full" %>
+        <% end %>
+      </div>
     <% end %>
-  <% end %>
+  </div>
 </div>

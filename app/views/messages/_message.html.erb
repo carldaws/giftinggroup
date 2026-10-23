@@ -1,14 +1,14 @@
 <% mine = message.author == Current.user %>
 <li id="<%= dom_id(message) %>" class="flex items-end gap-2 <%= "justify-end" if mine %>">
   <% unless mine %>
-    <%= avatar_tag message.author, size: "size-8 text-xs ring-0" %>
+    <%= avatar_tag message.author, size: :sm, ring: false %>
   <% end %>
-  <div class="max-w-[80%] min-w-0 rounded-2xl px-4 py-2.5 <%= mine ? "rounded-br-md bg-clay-tint text-clay-ink" : "rounded-bl-md bg-paper" %>">
+  <div class="max-w-[80%] min-w-0 rounded-2xl px-4 py-2.5 <%= mine ? "rounded-br-md bg-accent text-on-accent" : "rounded-bl-md bg-hover" %>">
     <p class="text-sm">
       <% unless mine %>
         <span class="font-semibold"><%= message.author.name %></span> ·
       <% end %>
-      <time datetime="<%= message.created_at.iso8601 %>" class="opacity-70"><%= sent_ago(message.created_at) %></time>
+      <time datetime="<%= message.created_at.iso8601 %>" class="opacity-75"><%= sent_ago(message.created_at) %></time>
     </p>
     <p class="break-words whitespace-pre-line"><%= message.body %></p>
   </div>

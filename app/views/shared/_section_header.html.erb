@@ -1,0 +1,7 @@
+<%# locals: (title:, id:, actions:) %>
+<div class="section-header">
+  <h2 id="<%= id %>" class="section-title"><%= title %></h2>
+  <% if actions.present? %>
+    <div class="flex flex-wrap items-center gap-2"><%= actions %></div>
+  <% end %>
+</div>

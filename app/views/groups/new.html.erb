@@ -1,8 +1,7 @@
 <% content_for :title, t(".title") %>
 
-<div class="mt-6">
-  <h1 class="mb-3 text-4xl font-semibold"><%= t(".heading") %></h1>
-  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+<div class="page page--narrow">
+  <%= page_header t(".heading"), crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: t(".intro") %>
 
   <div class="card">
     <%= render "form", group: @group, submit: t(".submit") %>

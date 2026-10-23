@@ -1,7 +1,7 @@
 <% if notice.present? %>
-  <p role="status" class="mb-6 rounded-2xl bg-sage-tint px-5 py-4 font-medium text-sage-ink"><%= notice %></p>
+  <p role="status" class="notice notice--success mt-6"><%= notice %></p>
 <% end %>
 
 <% if alert.present? %>
-  <p role="alert" class="mb-6 rounded-2xl bg-danger-tint px-5 py-4 font-medium text-danger"><%= alert %></p>
+  <p role="alert" class="notice notice--danger mt-6"><%= alert %></p>
 <% end %>

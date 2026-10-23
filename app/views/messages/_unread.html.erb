@@ -1,24 +1,21 @@
 <% unread = Message.unread_by(Current.user).includes(:author, subject: %i[ user group ]).chronologically.group_by(&:subject) %>
 
 <% if unread.any? %>
-  <section aria-labelledby="unread-heading" class="mb-10">
-    <h2 id="unread-heading" class="mb-4 text-2xl font-semibold"><%= t(".heading") %></h2>
+  <section aria-labelledby="unread-heading" class="section">
+    <%= section_header t(".heading"), id: "unread-heading" %>
 
-    <ul class="card divide-y divide-line overflow-hidden p-0 sm:p-0">
+    <ul class="card card--flush list">
       <% unread.sort_by { |_, messages| messages.last.created_at }.reverse_each do |membership, messages| %>
         <% latest = messages.last %>
         <li>
-          <%= link_to group_membership_messages_path(membership.group, membership, anchor: "new"), data: { turbo_prefetch: false },
-                class: "flex items-center gap-4 px-5 py-4 no-underline hover:bg-paper sm:px-6" do %>
-            <%= avatar_tag membership.user %>
+          <%= link_to group_membership_messages_path(membership.group, membership, anchor: "new"), data: { turbo_prefetch: false }, class: "row row--link" do %>
+            <%= avatar_tag membership.user, tooltip: false %>
             <span class="min-w-0 flex-1">
-              <span class="block font-semibold break-words">
-                <%= t(".about", name: membership.user.name) %>
-                <span class="font-normal text-muted">· <%= membership.group.name %></span>
-              </span>
-              <span class="block truncate text-base text-muted"><%= latest.author.name %>: <%= latest.body %></span>
+              <span class="row-title block"><%= t(".about", name: membership.user.name) %></span>
+              <span class="row-meta block truncate"><%= latest.author.name %>: <%= latest.body %></span>
+              <span class="row-meta block"><%= membership.group.name %></span>
             </span>
-            <span class="inline-flex h-7 min-w-7 shrink-0 items-center justify-center rounded-full bg-clay px-2 text-sm font-semibold text-white">
+            <span class="count">
               <span aria-hidden="true"><%= messages.size %></span>
               <span class="sr-only"><%= t(".count", count: messages.size) %></span>
             </span>

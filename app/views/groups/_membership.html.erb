@@ -4,15 +4,15 @@
 <% removable = membership.removable_by?(Current.user) %>
 <% can_make_sign_in_link = membership.sign_in_link_creatable_by?(Current.user) %>
 
-<li class="flex items-center gap-4 px-5 py-4 sm:px-6">
-  <%= avatar_tag person %>
+<li class="row">
+  <%= avatar_tag person, tooltip: false %>
 
   <div class="min-w-0 flex-1">
-    <p class="font-semibold">
-      <%= link_to person.name, person_path(person), class: "underline decoration-line decoration-2 hover:decoration-clay" %>
+    <p class="row-title">
+      <%= link_to person.name, person_path(person), class: "link text-ink" %>
       <% if you %><span class="font-normal text-muted"><%= t(".you") %></span><% end %>
     </p>
-    <p class="flex flex-wrap gap-x-3 text-base text-muted">
+    <p class="row-meta flex flex-wrap gap-x-3">
       <% if membership.admin? %><span><%= t(".admin") %></span><% end %>
       <% if membership.dependant? %>
         <span><%= t(".looked_after_by", names: guardian_names(person)) %></span>
@@ -22,12 +22,11 @@
 
   <% if admin || removable || can_make_sign_in_link %>
     <details class="relative" data-controller="menu" data-action="toggle->menu#toggled">
-      <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-full text-muted hover:bg-paper hover:text-ink [&::-webkit-details-marker]:hidden"
-               aria-label="<%= t(".options_for", name: person.name) %>">
+      <summary class="icon-button list-none [&::-webkit-details-marker]:hidden" aria-label="<%= t(".options_for", name: person.name) %>">
         <svg viewBox="0 0 20 20" class="size-5" fill="currentColor" aria-hidden="true"><circle cx="4" cy="10" r="1.8"/><circle cx="10" cy="10" r="1.8"/><circle cx="16" cy="10" r="1.8"/></svg>
       </summary>
 
-      <div class="absolute right-0 z-10 mt-2 grid w-64 gap-1 rounded-2xl border border-line bg-card p-2 shadow-lg">
+      <div class="menu">
         <% if admin && !membership.dependant? %>
           <%= button_to (membership.admin? ? t(".remove_admin") : t(".make_admin")), group_membership_path(membership.group, membership),
                 method: :patch, params: { membership: { admin: !membership.admin? } }, class: "menu-item" %>
@@ -35,10 +34,13 @@
 
         <% if can_make_sign_in_link %>
           <%= link_to (membership.dependant? ? t(".set_up_link") : t(".reset_link")), group_membership_sign_in_link_path(membership.group, membership),
-                class: "menu-item no-underline", data: { turbo_prefetch: false } %>
+                class: "menu-item", data: { turbo_prefetch: false } %>
         <% end %>
 
         <% if removable %>
+          <% if (admin && !membership.dependant?) || can_make_sign_in_link %>
+            <div class="menu-divider"></div>
+          <% end %>
           <%= button_to (you ? t(".leave") : t(".remove")), group_membership_path(membership.group, membership), method: :delete,
                 class: "menu-item text-danger",
                 form: { data: { turbo_confirm: you ? t(".leave_confirm", group: membership.group.name) : t(".remove_confirm", name: person.name) } } %>

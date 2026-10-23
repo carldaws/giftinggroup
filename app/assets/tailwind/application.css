@@ -3,51 +3,72 @@
 :root {
   --paper: #fbf6f0;
   --card: #ffffff;
+  --field: #ffffff;
+  --hover: #fbf0ea;
   --line: #e7ddd2;
+  --line-strong: #d6c9bb;
   --ink: #2b2622;
   --muted: #6b6159;
   --clay: #b5482a;
-  --clay-hover: #9c3d23;
-  --on-clay: #ffffff;
   --clay-tint: #f6e2da;
-  --clay-tint-hover: #f0d3c8;
   --clay-ink: #8f3820;
-  --sage: #3f6b4e;
+  --accent: #b5482a;
+  --accent-hover: #9c3d23;
+  --on-accent: #ffffff;
   --sage-tint: #e3eee5;
   --sage-ink: #2f5a3d;
   --honey: #e9a93a;
   --honey-tint: #fbebc8;
   --honey-ink: #7a4e08;
-  --plum: #6a3c5c;
   --plum-tint: #f1e6ee;
+  --plum-ink: #6a3c5c;
   --danger: #a12c2c;
   --danger-tint: #fbe9e7;
+  --avatar-clay: #f6ddd3;
+  --avatar-clay-ink: #9c3d23;
+  --avatar-sage: #dceadf;
+  --avatar-sage-ink: #2f5a3d;
+  --avatar-honey: #fae6bb;
+  --avatar-honey-ink: #7a4e08;
+  --avatar-plum: #eedff0;
+  --avatar-plum-ink: #6a3c5c;
+  --surface: var(--paper);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #1e1a17;
-    --card: #28231f;
-    --line: #3b332d;
+    --paper: #1b1714;
+    --card: #2a2420;
+    --field: #221d1a;
+    --hover: #352c27;
+    --line: #463c35;
+    --line-strong: #5a4e45;
     --ink: #f3ece4;
     --muted: #b8ab9f;
     --clay: #f08a66;
-    --clay-hover: #f5a184;
-    --on-clay: #1e1a17;
-    --clay-tint: #3d2820;
-    --clay-tint-hover: #4a3027;
+    --clay-tint: #46291f;
     --clay-ink: #f6b49b;
-    --sage: #94c4a3;
-    --sage-tint: #233229;
+    --accent: #c4552f;
+    --accent-hover: #d3643d;
+    --on-accent: #ffffff;
+    --sage-tint: #26372c;
     --sage-ink: #b6dcc1;
     --honey: #f0bc5e;
-    --honey-tint: #3a2e17;
+    --honey-tint: #423419;
     --honey-ink: #f6d696;
-    --plum: #d4a9c8;
-    --plum-tint: #352531;
+    --plum-tint: #3d2a38;
+    --plum-ink: #e7c4dd;
     --danger: #f19a8f;
-    --danger-tint: #3b2220;
+    --danger-tint: #432522;
+    --avatar-clay: #8c4a33;
+    --avatar-clay-ink: #fde3d8;
+    --avatar-sage: #46664f;
+    --avatar-sage-ink: #e2f2e6;
+    --avatar-honey: #806224;
+    --avatar-honey-ink: #fdf0d2;
+    --avatar-plum: #6a4561;
+    --avatar-plum-ink: #f6e4f1;
     color-scheme: dark;
   }
 }
@@ -55,25 +76,28 @@
 @theme inline {
   --color-paper: var(--paper);
   --color-card: var(--card);
+  --color-field: var(--field);
+  --color-hover: var(--hover);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-clay: var(--clay);
-  --color-clay-hover: var(--clay-hover);
-  --color-on-clay: var(--on-clay);
   --color-clay-tint: var(--clay-tint);
-  --color-clay-tint-hover: var(--clay-tint-hover);
   --color-clay-ink: var(--clay-ink);
-  --color-sage: var(--sage);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
   --color-sage-tint: var(--sage-tint);
   --color-sage-ink: var(--sage-ink);
   --color-honey: var(--honey);
   --color-honey-tint: var(--honey-tint);
   --color-honey-ink: var(--honey-ink);
-  --color-plum: var(--plum);
   --color-plum-tint: var(--plum-tint);
+  --color-plum-ink: var(--plum-ink);
   --color-danger: var(--danger);
   --color-danger-tint: var(--danger-tint);
+  --color-surface: var(--surface);
 
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
@@ -85,10 +109,10 @@
   }
 
   body {
-    @apply bg-paper text-ink font-sans text-lg leading-relaxed antialiased;
+    @apply bg-paper font-sans text-lg leading-relaxed text-ink antialiased;
   }
 
-  h1, h2, h3 {
+  h1, h2 {
     @apply font-display text-balance;
     font-variation-settings: "SOFT" 60;
   }
@@ -103,48 +127,190 @@
 }
 
 @layer components {
-  .button {
-    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 font-semibold transition-colors;
-    @apply bg-clay text-on-clay hover:bg-clay-hover;
+  .page {
+    @apply mx-auto w-full max-w-5xl;
   }
 
-  .button--quiet {
-    @apply bg-clay-tint text-clay-ink hover:bg-clay-tint-hover;
+  .page--narrow {
+    @apply max-w-2xl;
+  }
+
+  .page--compact {
+    @apply max-w-md;
+  }
+
+  .page-header {
+    @apply mt-6 mb-8 sm:mt-8;
+  }
+
+  .page-title {
+    @apply text-3xl leading-tight font-semibold break-words sm:text-4xl;
+  }
+
+  .page-subtitle {
+    @apply mt-1 text-muted;
+  }
+
+  .crumbs {
+    @apply mb-3 flex flex-wrap items-center gap-x-1.5 text-base text-muted;
+  }
+
+  .crumbs a {
+    @apply underline decoration-line underline-offset-4 hover:text-ink hover:decoration-current;
+  }
+
+  .columns {
+    @apply grid gap-x-10 lg:grid-cols-[minmax(0,1fr)_22rem];
+  }
+
+  .section {
+    @apply mb-10;
+  }
+
+  .section-header {
+    @apply mb-4 flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold sm:text-2xl;
+  }
+
+  .card {
+    --surface: var(--card);
+    @apply rounded-3xl border border-line bg-card p-5 sm:p-6;
+  }
+
+  .card--flush {
+    @apply overflow-clip p-0 sm:p-0;
+  }
+
+  .list {
+    @apply divide-y divide-line;
+  }
+
+  .card-footer {
+    @apply border-t border-line px-5 py-4 sm:px-6;
+  }
+
+  .choice-list {
+    --surface: var(--card);
+    @apply divide-y divide-line overflow-clip rounded-xl border border-line-strong bg-card;
+  }
+
+  .choice-list > * {
+    @apply flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-hover;
+  }
+
+  .row {
+    @apply flex items-center gap-4 px-5 py-4 sm:px-6;
+  }
+
+  .row--link {
+    @apply text-ink no-underline transition-colors hover:bg-hover;
+  }
+
+  .row-title {
+    @apply font-semibold break-words;
+  }
+
+  .row-meta {
+    @apply text-base text-muted;
+  }
+
+  .empty {
+    @apply text-muted;
+  }
+
+  .button {
+    @apply inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent px-5 text-base font-semibold whitespace-nowrap no-underline transition-colors;
+    @apply bg-accent text-on-accent hover:bg-accent-hover;
+  }
+
+  .button--secondary {
+    @apply border-line-strong bg-card text-ink hover:bg-hover;
+  }
+
+  .button--danger {
+    @apply border-line-strong bg-card text-danger hover:bg-danger-tint;
   }
 
   .button--small {
-    @apply min-h-11 gap-1.5 px-4 text-base;
+    @apply h-9 gap-1.5 px-4 text-sm;
   }
 
-  .round-button {
-    @apply relative inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-clay-tint text-clay-ink no-underline hover:bg-clay-tint-hover;
+  .button--wide {
+    @apply w-full sm:w-auto;
   }
 
-  .tooltip {
-    @apply pointer-events-none absolute top-full right-0 z-10 mt-2 rounded-lg bg-ink px-2.5 py-1 text-sm font-medium whitespace-nowrap text-paper opacity-0 transition-opacity;
-    @apply group-hover:opacity-100 group-focus-visible:opacity-100;
+  .icon-button {
+    @apply relative inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted no-underline transition-colors hover:bg-hover hover:text-ink;
   }
 
-  .avatar-tooltip {
-    @apply pointer-events-none absolute top-full left-1/2 z-10 mt-2 -translate-x-1/2 rounded-lg bg-ink px-2.5 py-1 text-sm font-medium whitespace-nowrap text-paper opacity-0 transition-opacity;
-    @apply group-hover/avatar:opacity-100;
+  .icon-button--outlined {
+    @apply border border-line-strong bg-card text-ink;
   }
 
-  .tab {
-    @apply inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-semibold text-muted no-underline hover:text-ink;
+  .icon-button--small {
+    @apply size-8;
   }
 
-  .tab[aria-current="page"] {
-    @apply bg-card text-ink shadow-sm ring-1 ring-line;
+  .link {
+    @apply font-semibold text-clay underline decoration-clay/40 underline-offset-4 transition-colors hover:decoration-clay;
   }
 
-  .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-semibold;
+  .link--muted {
+    @apply font-normal text-muted decoration-line hover:text-ink hover:decoration-current;
+  }
+
+  .notice {
+    @apply rounded-xl px-5 py-4 font-medium;
+  }
+
+  .notice--success {
+    @apply bg-sage-tint text-sage-ink;
+  }
+
+  .notice--danger {
+    @apply bg-danger-tint text-danger;
+  }
+
+  .notice--honey {
+    @apply bg-honey-tint text-honey-ink;
+  }
+
+  .inset {
+    @apply rounded-xl border border-line bg-paper px-4 py-3;
+  }
+
+  .fields {
+    @apply grid gap-6;
+  }
+
+  .field {
+    @apply grid gap-2;
+  }
+
+  .label {
+    @apply block font-semibold;
+  }
+
+  .hint {
+    @apply text-base text-muted;
   }
 
   .input {
-    @apply block min-h-12 w-full rounded-2xl border border-line bg-card px-4 py-3 text-ink placeholder:text-muted;
-    @apply focus:border-clay focus:outline-none focus:ring-2 focus:ring-clay/30;
+    @apply block min-h-11 w-full rounded-xl border border-line-strong bg-field px-4 py-2 text-ink placeholder:text-muted;
+    @apply focus:border-clay focus:ring-2 focus:ring-clay/25 focus:outline-none;
+    @apply disabled:opacity-60 read-only:bg-paper read-only:text-muted;
+  }
+
+  textarea.input {
+    @apply min-h-28 resize-y py-3;
+  }
+
+  .input[type="file"] {
+    @apply cursor-pointer py-1.5 pl-1.5 text-base text-muted;
+    @apply file:mr-3 file:h-8 file:cursor-pointer file:rounded-full file:border file:border-line-strong file:bg-card file:px-4 file:font-semibold file:text-ink hover:file:bg-hover;
   }
 
   .select {
@@ -160,23 +326,105 @@
     }
   }
 
-  .label {
-    @apply mb-2 block font-semibold;
+  .checkbox {
+    @apply mt-1 size-5 shrink-0 cursor-pointer appearance-none rounded-md border-2 border-line-strong bg-field bg-center bg-no-repeat transition-colors;
+    @apply checked:border-accent checked:bg-accent;
+    background-size: 0.875rem;
   }
 
-  .hint {
-    @apply mt-2 text-base text-muted;
+  .checkbox:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
   }
 
-  .card {
-    @apply rounded-[1.75rem] border border-line bg-card p-6 sm:p-8;
+  .choice {
+    @apply flex cursor-pointer items-start gap-3;
+  }
+
+  .form-actions {
+    @apply mt-8 flex flex-col gap-3 sm:flex-row sm:items-center;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-line-strong bg-card py-1 pr-3.5 pl-1 text-base font-medium text-ink no-underline;
+  }
+
+  .chip--link {
+    @apply transition-colors hover:bg-hover;
+  }
+
+  .chip--toggle {
+    @apply cursor-pointer transition-colors hover:bg-hover has-checked:border-clay has-checked:bg-clay-tint has-checked:text-clay-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-clay;
+  }
+
+  .tag {
+    @apply inline-flex items-center gap-1 rounded-full border border-line-strong bg-card py-1 pr-1.5 pl-3.5 text-base font-medium;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-semibold;
+  }
+
+  .badge--honey {
+    @apply bg-honey-tint text-honey-ink;
+  }
+
+  .badge--sage {
+    @apply bg-sage-tint text-sage-ink;
+  }
+
+  .badge--plum {
+    @apply bg-plum-tint text-plum-ink;
+  }
+
+  .count {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs leading-none font-semibold text-on-accent;
+  }
+
+  .date-badge {
+    @apply flex size-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl bg-clay-tint text-clay-ink;
+  }
+
+  .tabs {
+    @apply inline-flex gap-1 rounded-full bg-line/60 p-1;
+  }
+
+  .tab {
+    @apply inline-flex h-9 items-center gap-2 rounded-full px-4 text-base font-semibold text-muted no-underline hover:text-ink;
+  }
+
+  .tab[aria-current="page"] {
+    @apply bg-card text-ink shadow-sm;
+  }
+
+  .menu {
+    --surface: var(--card);
+    @apply absolute right-0 z-30 mt-2 grid w-64 gap-0.5 rounded-2xl border border-line bg-card p-1.5 shadow-lg;
   }
 
   .menu-item {
-    @apply flex min-h-11 w-full items-center rounded-xl px-4 text-left font-medium hover:bg-paper;
+    @apply flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-xl px-3.5 text-left text-base font-medium text-ink no-underline hover:bg-hover;
   }
 
-  .field-errors {
-    @apply mt-2 font-medium text-danger;
+  .menu-divider {
+    @apply my-1 border-t border-line;
+  }
+
+  .progress {
+    @apply h-2 min-w-0 flex-1 appearance-none overflow-hidden rounded-full bg-line;
+    @apply [&::-moz-progress-bar]:bg-honey [&::-webkit-progress-bar]:bg-line [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-honey;
+  }
+
+  .tooltip {
+    @apply pointer-events-none absolute top-full left-1/2 z-20 mt-2 -translate-x-1/2 rounded-lg bg-ink px-2.5 py-1 text-sm font-medium whitespace-nowrap text-paper opacity-0 transition-opacity;
+  }
+
+  .group:hover > .tooltip,
+  .group:focus-visible > .tooltip,
+  .group\/avatar:hover > .tooltip {
+    @apply opacity-100;
+  }
+
+  .avatar-stack {
+    @apply flex -space-x-1;
   }
 }

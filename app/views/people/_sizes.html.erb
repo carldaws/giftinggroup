@@ -1,33 +1,35 @@
 <%# locals: (person:, manages:) %>
 <% if manages || person.sizes.any? %>
-  <section id="sizes" aria-labelledby="sizes-heading" class="mb-10">
-    <h2 id="sizes-heading" class="mb-4 text-2xl font-semibold"><%= t(".heading") %></h2>
+  <section id="sizes" aria-labelledby="sizes-heading" class="section">
+    <%= section_header t(".heading"), id: "sizes-heading" %>
 
-    <% if person.sizes.any? %>
-      <dl class="card divide-y divide-line p-0 sm:p-0">
-        <% person.sizes.order(:created_at).each do |size| %>
-          <div class="flex items-center gap-4 px-5 py-3 sm:px-6">
-            <dt class="flex-1 text-muted"><%= size.label %></dt>
-            <dd class="font-semibold"><%= size.value %></dd>
-            <% if manages %>
-              <%= button_to person_size_path(person, size), method: :delete, class: "inline-flex size-9 items-center justify-center rounded-full text-muted hover:bg-paper hover:text-ink",
-                    aria: { label: t(".remove", label: size.label) } do %>
-                <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+    <div class="card card--flush">
+      <% if person.sizes.any? %>
+        <dl class="list">
+          <% person.sizes.order(:created_at).each do |size| %>
+            <div class="row py-3">
+              <dt class="min-w-0 flex-1 text-muted"><%= size.label %></dt>
+              <dd class="font-semibold"><%= size.value %></dd>
+              <% if manages %>
+                <%= button_to person_size_path(person, size), method: :delete, class: "icon-button icon-button--small",
+                      aria: { label: t(".remove", label: size.label) } do %>
+                  <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+                <% end %>
               <% end %>
-            <% end %>
-          </div>
-        <% end %>
-      </dl>
-    <% end %>
-
-    <% if manages %>
-      <%= form_with model: Size.new, url: person_sizes_path(person), class: "mt-4 grid gap-2 sm:grid-cols-[1fr_1fr_auto]" do |form| %>
-        <%= form.label :label, t(".label"), class: "sr-only" %>
-        <%= form.text_field :label, required: true, placeholder: t(".label_placeholder"), class: "input" %>
-        <%= form.label :value, t(".value"), class: "sr-only" %>
-        <%= form.text_field :value, required: true, placeholder: t(".value_placeholder"), class: "input" %>
-        <%= form.submit t(".add"), class: "button" %>
+            </div>
+          <% end %>
+        </dl>
       <% end %>
-    <% end %>
+
+      <% if manages %>
+        <%= form_with model: Size.new, url: person_sizes_path(person), class: class_names("grid gap-2 p-5 sm:p-6", "border-t border-line": person.sizes.any?) do |form| %>
+          <%= form.label :label, t(".label"), class: "sr-only" %>
+          <%= form.text_field :label, required: true, placeholder: t(".label_placeholder"), class: "input" %>
+          <%= form.label :value, t(".value"), class: "sr-only" %>
+          <%= form.text_field :value, required: true, placeholder: t(".value_placeholder"), class: "input" %>
+          <%= form.submit t(".add"), class: "button button--secondary" %>
+        <% end %>
+      <% end %>
+    </div>
   </section>
 <% end %>

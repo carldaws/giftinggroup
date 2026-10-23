@@ -1,19 +1,21 @@
 <% content_for :title, t(".title") %>
 
-<div class="mt-6">
-  <%= link_to t(".back", group: @group.name), @group, class: "text-muted underline" %>
-  <h1 class="mt-4 mb-3 text-4xl font-semibold"><%= t(".heading") %></h1>
-  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+<div class="page page--narrow">
+  <%= page_header t(".heading"), crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ], subtitle: t(".intro") %>
 
   <div class="card">
     <%= form_with model: @dependant, url: group_dependants_path(@group) do |form| %>
       <%= render "shared/errors", record: @dependant %>
 
-      <%= form.label :name, t(".name"), class: "label" %>
-      <%= form.text_field :name, required: true, autofocus: true, class: "input" %>
-      <p class="hint"><%= t(".hint") %></p>
+      <div class="field">
+        <%= form.label :name, t(".name"), class: "label" %>
+        <%= form.text_field :name, required: true, autofocus: true, class: "input", aria: { describedby: "dependant-name-hint" } %>
+        <p id="dependant-name-hint" class="hint"><%= t(".hint") %></p>
+      </div>
 
-      <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
+      <div class="form-actions">
+        <%= form.submit t(".submit"), class: "button button--wide" %>
+      </div>
     <% end %>
   </div>
 </div>
