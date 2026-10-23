@@ -1,16 +1,33 @@
 <% content_for :title, t(".title") %>
 
-<h1 class="mt-6 mb-2 text-4xl font-semibold"><%= t(".heading", name: Current.user.name) %></h1>
+<h1 class="mt-6 mb-8 text-4xl font-semibold"><%= t(".heading", name: Current.user.name) %></h1>
 
 <% if @groups.any? %>
-  <ul class="mt-8 grid gap-4">
+  <ul class="grid gap-4">
     <% @groups.each do |group| %>
-      <li class="card"><h2 class="text-2xl font-semibold"><%= group.name %></h2></li>
+      <li class="min-w-0">
+        <%= link_to group, class: "card flex items-center justify-between gap-4 no-underline transition-colors hover:border-clay/40" do %>
+          <div class="min-w-0">
+            <h2 class="text-2xl font-semibold break-words"><%= group.name %></h2>
+            <p class="text-muted"><%= t(".people", count: group.members.size) %></p>
+          </div>
+          <div class="flex shrink-0 -space-x-3">
+            <% group.members.first(4).each do |member| %>
+              <%= avatar_tag member %>
+            <% end %>
+          </div>
+        <% end %>
+      </li>
     <% end %>
   </ul>
 <% else %>
-  <div class="card mt-8 text-center">
+  <div class="card text-center">
     <h2 class="mb-2 text-2xl font-semibold"><%= t(".empty_heading") %></h2>
     <p class="text-muted"><%= t(".empty") %></p>
   </div>
 <% end %>
+
+<div class="mt-8 grid gap-3 sm:grid-cols-2">
+  <%= link_to t(".start"), new_group_path, class: "button" %>
+  <%= link_to t(".join"), new_join_path, class: "button button--quiet" %>
+</div>

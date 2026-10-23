@@ -120,6 +120,10 @@
     @apply rounded-[1.75rem] border border-line bg-card p-6 sm:p-8;
   }
 
+  .menu-item {
+    @apply flex min-h-11 w-full items-center rounded-xl px-4 text-left font-medium hover:bg-paper;
+  }
+
   .field-errors {
     @apply mt-2 font-medium text-danger;
   }

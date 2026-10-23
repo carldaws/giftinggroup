@@ -56,12 +56,140 @@ en:
     create:
       rate_limited: Too many new accounts from here. Please wait a few minutes and try again.
 
+  passwords:
+    edit:
+      title: Sign in
+      reset_heading: Hello again, %{name}
+      reset_intro: Choose a new password and you'll be signed in.
+      set_up_heading: Welcome, %{name}
+      set_up_intro: This sets up your own account. Your list stays as it is, and from now on you won't be able to see what people get you.
+      email_address: Email address
+      email_address_hint: You'll use this to sign in. We'll never send you email.
+      password: Choose a password
+      password_hint: At least 8 characters. Your phone or browser can remember it for you.
+      submit: Save and sign in
+    expired:
+      title: Link expired
+      heading: This link has expired
+      body: Sign-in links work once, for 3 days. Ask whoever made it for a new one.
+      sign_in: Go to sign in
+    update:
+      rate_limited: Too many tries. Please wait a few minutes and try again.
+
   groups:
     index:
       title: Your groups
       heading: Hello, %{name}
+      people:
+        one: 1 person
+        other: "%{count} people"
       empty_heading: You're not in a group yet
-      empty: Soon you'll be able to start a group or join one with a code.
+      empty: Start one and invite people, or join one with a code someone has sent you.
+      start: Start a group
+      join: Join with a code
+    form:
+      name: Group name
+      name_hint: Anything you like, such as The Smiths, Uni friends or Secret Santa 2026.
+    new:
+      title: Start a group
+      heading: Start a group
+      intro: You'll be its admin, and you can invite people once it's made.
+      submit: Start the group
+    edit:
+      title: Rename group
+      back: Back to %{group}
+      heading: Rename group
+      submit: Save
+    update:
+      renamed: Group renamed.
+    show:
+      people:
+        one: 1 person
+        other: "%{count} people"
+      rename: Rename
+      people_heading: People
+      add_dependant: Add someone you look after
+      add_dependant_hint: Like a child, or a grandparent who won't sign in. You'll manage their list.
+      invite_heading: Invite people
+      invite_intro: Send this link to anyone you'd like in the group.
+      share_title: Join %{group}
+      share: Share link
+      copy: Copy link
+      copied: Copied!
+      or_code_html: Or they can tap Join with a code and enter %{code}.
+      new_code: Make a new link and code
+      new_code_confirm: The current link and code will stop working. People already in the group stay in it.
+    membership:
+      you: (you)
+      you_lowercase: you
+      admin: Admin
+      looked_after_by: Looked after by %{names}
+      options_for: Options for %{name}
+      make_admin: Make admin
+      remove_admin: Stop being admin
+      reset_link: Make a sign-in link
+      set_up_link: Make an account set-up link
+      leave: Leave group
+      leave_confirm: Leave %{group}? You'll need a new invite to come back.
+      remove: Remove from group
+      remove_confirm: Remove %{name} from the group?
+    memberships:
+      destroy:
+        left: You've left %{group}.
+        removed: "%{name} has been removed."
+      sign_in_links:
+        show:
+          title: Sign-in link
+          back: Back to %{group}
+          heading: A link for %{name}
+          reset_intro: Send this to %{name}. It lets them choose a new password.
+          set_up_intro: Send this to %{name}. It lets them set up their own account. After that they'll look after their own list and won't see what people get them.
+          share_title: Your sign-in link
+          share: Share link
+          copy: Copy link
+          copied: Copied!
+          reset_expiry: It works once, for 3 days. Using it signs %{name} out on every other device.
+          set_up_expiry: It works once, for 3 days.
+    dependants:
+      new:
+        title: Add someone
+        back: Back to %{group}
+        heading: Add someone you look after
+        intro: Like a child, or a grandparent who won't sign in themselves. They'll be part of the group, and you'll manage their list for them.
+        name: Their name
+        hint: They can set up their own account later if they want one.
+        submit: Add them
+      create:
+        added: "%{name} has been added. You're looking after their list."
+    join_codes:
+      update:
+        regenerated: Done. The old link and code no longer work.
+
+  joins:
+    rate_limited: Too many tries. Please wait a few minutes and try again.
+    new:
+      title: Join a group
+      heading: Join a group
+      intro: Enter the code someone sent you.
+      code: Code
+      submit: Join
+    show:
+      title: You're invited
+      invited: You're invited to join
+      people:
+        one: 1 person so far
+        other: "%{count} people so far"
+      create_account: Create an account to join
+      sign_in: I already have an account
+      already_member: You're already in this group.
+      open_group: Open the group
+      join: Join %{group}
+      not_found_heading: This invite doesn't work
+      not_found: The link may be old. Ask for a new one.
+      try_code: Enter a code instead
+    create:
+      joined: Welcome to %{group}!
+      not_found: That code didn't match a group. Check it and try again.
 
   activerecord:
     attributes:
@@ -78,6 +206,8 @@ en:
         signs_in: has their own account, so they look after themselves
         is_the_guardian: can't look after themselves
         too_long_for_bcrypt: is too long. Please use a shorter one.
+        last_admin: Every group needs at least one admin. Make someone else an admin first.
+        dependant_admin: Only people with their own account can be admins.
         too_many: can't be more than %{count}
         not_an_image: must be a photo (JPEG, PNG, WebP, GIF or HEIC)
         too_large: must be smaller than %{size}

@@ -1,0 +1,49 @@
+<%# locals: (membership:, admin:) %>
+<% person = membership.user %>
+<% you = person == Current.user %>
+<% removable = membership.removable_by?(Current.user) %>
+<% can_make_sign_in_link = membership.sign_in_link_creatable_by?(Current.user) %>
+
+<li class="flex items-center gap-4 px-5 py-4 sm:px-6">
+  <%= avatar_tag person %>
+
+  <div class="min-w-0 flex-1">
+    <p class="font-semibold">
+      <%= person.name %>
+      <% if you %><span class="font-normal text-muted"><%= t(".you") %></span><% end %>
+    </p>
+    <p class="flex flex-wrap gap-x-3 text-base text-muted">
+      <% if membership.admin? %><span><%= t(".admin") %></span><% end %>
+      <% if membership.dependant? %>
+        <span><%= t(".looked_after_by", names: guardian_names(person)) %></span>
+      <% end %>
+    </p>
+  </div>
+
+  <% if admin || removable || can_make_sign_in_link %>
+    <details class="group/menu relative">
+      <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-full text-muted hover:bg-paper hover:text-ink [&::-webkit-details-marker]:hidden"
+               aria-label="<%= t(".options_for", name: person.name) %>">
+        <svg viewBox="0 0 20 20" class="size-5" fill="currentColor" aria-hidden="true"><circle cx="4" cy="10" r="1.8"/><circle cx="10" cy="10" r="1.8"/><circle cx="16" cy="10" r="1.8"/></svg>
+      </summary>
+
+      <div class="absolute right-0 z-10 mt-2 grid w-64 gap-1 rounded-2xl border border-line bg-card p-2 shadow-lg">
+        <% if admin && !membership.dependant? %>
+          <%= button_to (membership.admin? ? t(".remove_admin") : t(".make_admin")), group_membership_path(membership.group, membership),
+                method: :patch, params: { membership: { admin: !membership.admin? } }, class: "menu-item" %>
+        <% end %>
+
+        <% if can_make_sign_in_link %>
+          <%= link_to (membership.dependant? ? t(".set_up_link") : t(".reset_link")), group_membership_sign_in_link_path(membership.group, membership),
+                class: "menu-item no-underline", data: { turbo_prefetch: false } %>
+        <% end %>
+
+        <% if removable %>
+          <%= button_to (you ? t(".leave") : t(".remove")), group_membership_path(membership.group, membership), method: :delete,
+                class: "menu-item text-danger",
+                form: { data: { turbo_confirm: you ? t(".leave_confirm", group: membership.group.name) : t(".remove_confirm", name: person.name) } } %>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+</li>

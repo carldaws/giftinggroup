@@ -1,0 +1,19 @@
+<% content_for :title, t(".title") %>
+
+<div class="mt-6">
+  <%= link_to t(".back", group: @group.name), @group, class: "text-muted underline" %>
+  <h1 class="mt-4 mb-3 text-4xl font-semibold"><%= t(".heading") %></h1>
+  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+
+  <div class="card">
+    <%= form_with model: @dependant, url: group_dependants_path(@group) do |form| %>
+      <%= render "shared/errors", record: @dependant %>
+
+      <%= form.label :name, t(".name"), class: "label" %>
+      <%= form.text_field :name, required: true, autofocus: true, class: "input" %>
+      <p class="hint"><%= t(".hint") %></p>
+
+      <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
+    <% end %>
+  </div>
+</div>

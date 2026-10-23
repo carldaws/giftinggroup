@@ -1,0 +1,10 @@
+<%# locals: (group:, submit:) %>
+<%= form_with model: group do |form| %>
+  <%= render "shared/errors", record: group %>
+
+  <%= form.label :name, t("groups.form.name"), class: "label" %>
+  <%= form.text_field :name, required: true, autofocus: true, class: "input", aria: { describedby: "group-name-hint" } %>
+  <p id="group-name-hint" class="hint"><%= t("groups.form.name_hint") %></p>
+
+  <%= form.submit submit, class: "button mt-6 w-full" %>
+<% end %>

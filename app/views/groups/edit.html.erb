@@ -1,0 +1,10 @@
+<% content_for :title, t(".title") %>
+
+<div class="mt-6">
+  <%= link_to t(".back", group: @group.name_was), @group, class: "text-muted underline" %>
+  <h1 class="mt-4 mb-8 text-4xl font-semibold"><%= t(".heading") %></h1>
+
+  <div class="card">
+    <%= render "form", group: @group, submit: t(".submit") %>
+  </div>
+</div>

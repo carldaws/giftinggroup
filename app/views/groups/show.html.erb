@@ -1,0 +1,58 @@
+<% content_for :title, @group.name %>
+<% admin = @group.admin?(Current.user) %>
+<% memberships = @group.memberships.by_name.includes(user: :guardians) %>
+
+<div class="mt-6 mb-8 flex items-start justify-between gap-4">
+  <div class="min-w-0">
+    <h1 class="text-4xl font-semibold break-words"><%= @group.name %></h1>
+    <p class="mt-1 text-muted"><%= t(".people", count: memberships.size) %></p>
+  </div>
+  <% if admin %>
+    <%= link_to t(".rename"), edit_group_path(@group), class: "button button--quiet min-h-10 shrink-0 px-4 text-base" %>
+  <% end %>
+</div>
+
+<section aria-labelledby="people-heading">
+  <h2 id="people-heading" class="mb-4 text-2xl font-semibold"><%= t(".people_heading") %></h2>
+
+  <ul class="card divide-y divide-line p-0 sm:p-0">
+    <% memberships.each do |membership| %>
+      <%= render "groups/membership", membership:, admin: %>
+    <% end %>
+    <li>
+      <%= link_to new_group_dependant_path(@group), class: "flex items-center gap-4 rounded-b-[1.75rem] px-5 py-4 no-underline hover:bg-paper sm:px-6" do %>
+        <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-clay/40 text-clay" aria-hidden="true">
+          <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>
+        </span>
+        <span>
+          <span class="block font-semibold text-clay"><%= t(".add_dependant") %></span>
+          <span class="block text-base text-muted"><%= t(".add_dependant_hint") %></span>
+        </span>
+      <% end %>
+    </li>
+  </ul>
+</section>
+
+<section aria-labelledby="invite-heading" class="card mt-10">
+  <h2 id="invite-heading" class="mb-2 text-2xl font-semibold"><%= t(".invite_heading") %></h2>
+  <p class="mb-5 text-muted"><%= t(".invite_intro") %></p>
+
+  <% invite_url = join_url(@group.join_code) %>
+  <div data-controller="share" data-share-url-value="<%= invite_url %>"
+       data-share-title-value="<%= t(".share_title", group: @group.name) %>" data-share-copied-value="<%= t(".copied") %>">
+    <p class="mb-4 rounded-2xl border border-line bg-paper px-4 py-3 font-mono text-base break-all"><%= invite_url %></p>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <button type="button" class="button" hidden data-share-target="shareButton" data-action="share#share"><%= t(".share") %></button>
+      <button type="button" class="button button--quiet" data-share-target="copyButton" data-action="share#copy"><%= t(".copy") %></button>
+    </div>
+  </div>
+
+  <p class="mt-5 text-muted">
+    <%= t(".or_code_html", code: tag.strong(@group.formatted_join_code, class: "font-mono font-semibold tracking-wider text-ink")) %>
+  </p>
+
+  <% if admin %>
+    <%= button_to t(".new_code"), group_join_code_path(@group), method: :patch,
+          class: "mt-4 font-semibold text-clay underline", form: { data: { turbo_confirm: t(".new_code_confirm") } } %>
+  <% end %>
+</section>

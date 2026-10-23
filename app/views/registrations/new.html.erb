@@ -1,42 +1,34 @@
 <% content_for :title, t(".title") %>
 
-<div class="mx-auto max-w-md">
-  <h1 class="mb-3 text-center text-4xl font-semibold leading-tight"><%= t(".heading") %></h1>
-  <p class="mb-8 text-center text-muted"><%= t(".intro") %></p>
+<h1 class="mb-3 text-center text-4xl font-semibold leading-tight"><%= t(".heading") %></h1>
+<p class="mb-8 text-center text-muted"><%= t(".intro") %></p>
 
-  <div class="card">
-    <%= form_with model: @user, url: registration_path do |form| %>
-      <% if @user.errors.any? %>
-        <div role="alert" class="mb-6 grid gap-1 rounded-2xl bg-danger-tint px-5 py-4 font-medium text-danger">
-          <% @user.errors.full_messages.each do |message| %>
-            <p><%= message %></p>
-          <% end %>
-        </div>
-      <% end %>
+<div class="card">
+  <%= form_with model: @user, url: registration_path do |form| %>
+    <%= render "shared/errors", record: @user %>
 
-      <%= form.label :name, t(".name"), class: "label" %>
-      <%= form.text_field :name, required: true, autofocus: true, autocomplete: "given-name", class: "input",
-            aria: { describedby: "name-hint" } %>
-      <p id="name-hint" class="hint"><%= t(".name_hint") %></p>
+    <%= form.label :name, t(".name"), class: "label" %>
+    <%= form.text_field :name, required: true, autofocus: true, autocomplete: "given-name", class: "input",
+          aria: { describedby: "name-hint" } %>
+    <p id="name-hint" class="hint"><%= t(".name_hint") %></p>
 
-      <div class="mt-6">
-        <%= form.label :email_address, t(".email_address"), class: "label" %>
-        <%= form.email_field :email_address, required: true, autocomplete: "username", class: "input",
-              aria: { describedby: "email_address-hint" } %>
-        <p id="email_address-hint" class="hint"><%= t(".email_address_hint") %></p>
-      </div>
+    <div class="mt-6">
+      <%= form.label :email_address, t(".email_address"), class: "label" %>
+      <%= form.email_field :email_address, required: true, autocomplete: "username", class: "input",
+            aria: { describedby: "email_address-hint" } %>
+      <p id="email_address-hint" class="hint"><%= t(".email_address_hint") %></p>
+    </div>
 
-      <div class="mt-6">
-        <%= render "shared/password_field", form:, field: :password, autocomplete: "new-password",
-              label: t(".password"), hint: t(".password_hint") %>
-      </div>
+    <div class="mt-6">
+      <%= render "shared/password_field", form:, field: :password, autocomplete: "new-password",
+            label: t(".password"), hint: t(".password_hint") %>
+    </div>
 
-      <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
-    <% end %>
-  </div>
-
-  <p class="mt-8 text-center">
-    <%= t(".have_account") %>
-    <%= link_to t(".sign_in"), new_session_path, class: "font-semibold text-clay underline" %>
-  </p>
+    <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
+  <% end %>
 </div>
+
+<p class="mt-8 text-center">
+  <%= t(".have_account") %>
+  <%= link_to t(".sign_in"), new_session_path, class: "font-semibold text-clay underline" %>
+</p>
