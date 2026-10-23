@@ -7,6 +7,17 @@ en:
   layouts:
     application:
       sign_out: Sign out
+    footer:
+      credit_html: Free and %{open_source}, by %{author}. %{greeting}
+      open_source: open source
+
+  seasonal_greetings:
+    new_year: Happy New Year ✨
+    valentines_day: Happy Valentine's Day 💌
+    halloween: Happy Halloween 🎃
+    bonfire_night: Happy Bonfire Night 🎆
+    christmas: Merry Christmas 🎄
+    everyday: Happy gifting 🎁
 
   shared:
     password_field:

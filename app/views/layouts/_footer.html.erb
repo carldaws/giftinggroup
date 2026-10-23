@@ -1,0 +1,6 @@
+<footer class="mx-auto w-full max-w-3xl px-4 pt-8 pb-[max(2rem,env(safe-area-inset-bottom))] text-center text-base text-muted sm:px-6">
+  <%= t(".credit_html",
+        open_source: link_to(t(".open_source"), "https://github.com/carldaws/giftinggroup", class: "underline hover:text-ink"),
+        author: link_to("carldaws", "https://github.com/carldaws", class: "underline hover:text-ink"),
+        greeting: tag.span(t(SeasonalGreeting.occasion_on(Time.zone.today), scope: :seasonal_greetings), class: "whitespace-nowrap")) %>
+</footer>

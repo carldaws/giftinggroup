@@ -25,9 +25,9 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-dvh">
+  <body class="flex min-h-dvh flex-col">
     <% if authenticated? %>
-      <header class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4 sm:px-6">
+      <header class="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4 sm:px-6">
         <%= link_to root_path, class: "no-underline" do %>
           <%= render "layouts/wordmark" %>
         <% end %>
@@ -41,9 +41,11 @@
       <%= render "layouts/masthead" %>
     <% end %>
 
-    <main class="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+    <main class="mx-auto w-full max-w-3xl flex-1 px-4 pb-8 sm:px-6">
       <%= render "layouts/flash" %>
       <%= yield %>
     </main>
+
+    <%= render "layouts/footer" %>
   </body>
 </html>
