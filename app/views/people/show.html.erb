@@ -4,26 +4,26 @@
 <% reservations = yours ? {} : Reservation.visible_to(Current.user).where(item: items).includes(:user).group_by(&:item_id) %>
 <% wishlist = items.wanted.not_little.where(suggested_by: nil) %>
 <% little_things = items.wanted.little.where(suggested_by: nil) %>
-<% content_for :title, yours ? t(".your_title") : t(".title", name: @person.name) %>
+<% content_for :title, @person.name %>
 
-<div class="mt-6 mb-8 flex items-center gap-4">
+<div class="mt-6 mb-10 flex items-center gap-4">
   <%= avatar_tag @person, size: "size-16 text-xl" %>
   <div class="min-w-0">
-    <h1 class="text-4xl font-semibold break-words"><%= yours ? t(".your_heading") : t(".heading", name: @person.name) %></h1>
-    <% if manages && !yours %>
+    <h1 class="text-4xl font-semibold break-words"><%= @person.name %></h1>
+    <% if yours %>
+      <p class="text-muted"><%= t(".this_is_you") %></p>
+    <% elsif manages %>
       <p class="text-muted"><%= t(".you_look_after", name: @person.name) %></p>
     <% end %>
   </div>
 </div>
 
-<% if yours %>
-  <p class="card mb-8 bg-sage-tint text-sage-ink"><%= t(".surprise_note") %></p>
-<% end %>
+<%= render "people/interests", person: @person, yours:, manages: %>
+<%= render "people/sizes", person: @person, manages: %>
 
 <section aria-labelledby="wishlist-heading" class="mb-10">
-  <div class="mb-4 flex items-end justify-between gap-4">
-    <h2 id="wishlist-heading" class="text-2xl font-semibold"><%= t(".wishlist") %></h2>
-  </div>
+  <h2 id="wishlist-heading" class="text-2xl font-semibold"><%= t(".wishlist") %></h2>
+  <p class="mb-4 text-muted"><%= yours ? t(".surprise_note") : t(".wishlist_intro", name: @person.name) %></p>
 
   <% if wishlist.any? %>
     <ul class="grid gap-4">
@@ -74,9 +74,6 @@
     <% end %>
   </section>
 <% end %>
-
-<%= render "people/interests", person: @person, manages: %>
-<%= render "people/sizes", person: @person, manages: %>
 
 <% if manages %>
   <% received = items.received.where(suggested_by: nil) %>

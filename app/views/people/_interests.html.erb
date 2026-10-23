@@ -1,6 +1,6 @@
-<%# locals: (person:, manages:) %>
+<%# locals: (person:, yours:, manages:) %>
 <section id="things-i-love" aria-labelledby="interests-heading" class="mb-10">
-  <h2 id="interests-heading" class="text-2xl font-semibold"><%= t(".heading") %></h2>
+  <h2 id="interests-heading" class="text-2xl font-semibold"><%= yours ? t(".heading_yours") : t(".heading", name: person.name) %></h2>
   <p class="mb-4 text-muted"><%= manages ? t(".intro_manager") : t(".intro", name: person.name) %></p>
 
   <% if person.interests.any? %>

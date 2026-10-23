@@ -35,7 +35,7 @@
 
         <%= link_to person_path(Current.user), class: "button button--quiet min-h-10 gap-2 pl-1.5 pr-4 text-base no-underline" do %>
           <%= avatar_tag Current.user, size: "size-8 text-sm ring-0" %>
-          <%= t(".your_list") %>
+          <%= t(".you") %>
         <% end %>
       </header>
     <% else %>

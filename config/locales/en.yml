@@ -6,7 +6,7 @@ en:
 
   layouts:
     application:
-      your_list: Your list
+      you: You
     footer:
       credit_html: Free and %{open_source}, by %{author}. %{greeting}
       open_source: open source
@@ -167,12 +167,10 @@ en:
 
   people:
     show:
-      title: "%{name}'s list"
-      your_title: Your list
-      heading: "%{name}'s list"
-      your_heading: Your list
-      you_look_after: You look after %{name}'s list, so you can add and change things.
-      surprise_note: You'll never see who's getting what from your list, so the surprise stays a surprise.
+      this_is_you: This is you. Everyone in your groups can see this page.
+      you_look_after: You look after %{name}, so you can add and change things.
+      surprise_note: You will never see who is getting what from your list, so the surprise stays a surprise.
+      wishlist_intro: The things %{name} would love.
       wishlist: Wishlist
       wishlist_empty_yours: Nothing here yet. Add the things you'd love, big or small.
       wishlist_empty: "%{name} hasn't added anything yet. You could suggest something."
@@ -189,7 +187,8 @@ en:
       put_back: Put back
       sign_out: Sign out
     interests:
-      heading: Things I love
+      heading: Things %{name} loves
+      heading_yours: Things I love
       intro_manager: Interests, favourite things, what's being read at the moment. It all helps with ideas.
       intro: What %{name} is into, to help with ideas.
       empty: "%{name} hasn't added any yet."
@@ -213,8 +212,8 @@ en:
         title: Add something
         suggest_title: Suggest something for %{name}
         back: Back to %{name}
-        your_list: your list
-        their_list: "%{name}'s list"
+        your_list: your page
+        their_list: "%{name}"
         heading: Add something
         little_heading: Add a little thing
         suggest_heading: Suggest something for %{name}
