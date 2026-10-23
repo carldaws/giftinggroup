@@ -20,9 +20,6 @@
       <%= link_to details, edit_person_profile_path(@person), class: "button button--quiet min-h-10 shrink-0 px-4 text-base no-underline" %>
     <% end %>
   </div>
-  <% if manages && !yours %>
-    <p class="text-muted"><%= t(".you_look_after", name: @person.name) %></p>
-  <% end %>
   <% if @person.birthday? %>
     <p class="text-muted"><%= t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) %></p>
   <% end %>
