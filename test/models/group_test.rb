@@ -26,6 +26,36 @@ class GroupTest < ActiveSupport::TestCase
     assert_nil Group.find_by(join_code: old_code)
   end
 
+  test "joining" do
+    groups(:hollies).join(users(:erin))
+
+    assert_includes groups(:hollies).members, users(:erin)
+  end
+
+  test "joining twice is harmless" do
+    assert_equal memberships(:bob_in_hollies), groups(:hollies).join(users(:bob))
+  end
+
+  test "adding a dependant" do
+    dependant = groups(:ivies).add_dependant({ name: "Fern" }, guardian: users(:erin))
+
+    assert dependant.persisted?
+    assert_includes groups(:ivies).members, dependant
+    assert users(:erin).looks_after?(dependant)
+    assert_not dependant.signs_in?
+  end
+
+  test "a dependant needs a name" do
+    assert_no_difference -> { User.count } do
+      assert_not groups(:ivies).add_dependant({ name: "" }, guardian: users(:erin)).persisted?
+    end
+  end
+
+  test "admins" do
+    assert groups(:hollies).admin?(users(:alice))
+    assert_not groups(:hollies).admin?(users(:bob))
+  end
+
   test "adding a member" do
     membership = groups(:ivies).add(users(:alice), admin: true)
 

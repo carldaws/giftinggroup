@@ -23,6 +23,22 @@ class Group < ApplicationRecord
     memberships.create!(user:, admin:)
   end
 
+  def join(user)
+    memberships.create_or_find_by!(user:)
+  end
+
+  def add_dependant(attributes, guardian:)
+    User.new(attributes).tap do |dependant|
+      dependant.guardianships_as_dependant.build(guardian:)
+      dependant.memberships.build(group: self)
+      dependant.save
+    end
+  end
+
+  def admin?(user)
+    memberships.admins.exists?(user:)
+  end
+
   def regenerate_join_code
     update!(join_code: self.class.generate_join_code)
   end
