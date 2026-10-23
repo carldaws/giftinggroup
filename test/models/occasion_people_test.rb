@@ -81,9 +81,32 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     assert_nil users(:bob).next_gifts_to_choose
   end
 
-  test "occasions more than six weeks away don't remind you yet" do
+  test "the next occasion always reminds you, however far away" do
     occasions(:christmas).update!(date: 10.weeks.from_now.to_date)
 
+    occasion, _ = users(:bob).next_gifts_to_choose
+
+    assert_equal occasions(:christmas), occasion
+  end
+
+  test "later occasions only remind you within six weeks" do
+    [ items(:socks), items(:books) ].each { it.reservations.create!(user: users(:bob), occasion: occasions(:christmas)) }
+    users(:dan).items.create!(name: "Kite").reservations.create!(user: users(:bob), occasion: occasions(:christmas))
+
+    far = groups(:hollies).occasions.create!(name: "Summer party", date: 10.weeks.from_now.to_date)
     assert_nil users(:bob).next_gifts_to_choose
+
+    far.update!(date: 5.weeks.from_now.to_date)
+    occasion, _ = users(:bob).next_gifts_to_choose
+    assert_equal far, occasion
+  end
+
+  test "your own birthday doesn't count as the next occasion" do
+    users(:bob).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
+    occasions(:christmas).update!(date: 10.weeks.from_now.to_date)
+
+    occasion, _ = users(:bob).next_gifts_to_choose
+
+    assert_equal occasions(:christmas), occasion
   end
 end

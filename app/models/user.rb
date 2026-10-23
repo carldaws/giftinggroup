@@ -70,14 +70,21 @@ class User < ApplicationRecord
   end
 
   def next_gifts_to_choose(within: 6.weeks)
-    Occasion.visible_to(self).upcoming.where(date: ..(Date.current + within)).soonest_first.includes(:group, :person, :recipients)
+    Occasion.visible_to(self).upcoming.soonest_first.includes(:group, :person, :recipients)
       .lazy
-      .map { |occasion| [ occasion, people_still_to_choose_for(occasion) ] }
+      .select { |occasion| gift_recipients_for(occasion).any? }
+      .with_index
+      .take_while { |occasion, index| index.zero? || occasion.date <= Date.current + within }
+      .map { |occasion, _| [ occasion, people_still_to_choose_for(occasion) ] }
       .find { |_, people| people.any? }
   end
 
+  def gift_recipients_for(occasion)
+    occasion.people.select { it != self && it.visible_to?(self) }
+  end
+
   def people_still_to_choose_for(occasion)
-    occasion.people.select { it != self && it.visible_to?(self) && !chosen_a_gift_for?(it, occasion) }
+    gift_recipients_for(occasion).reject { chosen_a_gift_for?(it, occasion) }
   end
 
   def chosen_a_gift_for?(person, occasion)
