@@ -21,7 +21,7 @@
           <% User::AVATAR_TONES.each_with_index do |tone, index| %>
             <label class="cursor-pointer rounded-full p-1 ring-2 ring-transparent has-[:checked]:ring-clay has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-clay">
               <%= form.radio_button :avatar_tone, index, checked: @person.avatar_tone_name == tone, class: "sr-only" %>
-              <%= avatar_tag @person, tone: %>
+              <%= avatar_tag @person, tone:, tooltip: false %>
               <span class="sr-only"><%= t(".tones.#{tone}") %></span>
             </label>
           <% end %>

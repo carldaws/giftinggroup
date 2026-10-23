@@ -16,7 +16,7 @@
         <span><%= @group.name %></span>
         <span class="flex -space-x-2" role="img" aria-label="<%= t(".readers", names: readers.map(&:name).to_sentence) %>">
           <% readers.first(8).each do |reader| %>
-            <span title="<%= reader.name %>"><%= avatar_tag reader, size: "size-7 text-xs" %></span>
+            <%= avatar_tag reader, size: "size-7 text-xs" %>
           <% end %>
           <% if readers.size > 8 %>
             <span class="inline-flex size-7 items-center justify-center rounded-full bg-line text-xs font-semibold text-ink ring-2 ring-card">+<%= readers.size - 8 %></span>

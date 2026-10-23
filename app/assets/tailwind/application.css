@@ -125,6 +125,11 @@
     @apply group-hover:opacity-100 group-focus-visible:opacity-100;
   }
 
+  .avatar-tooltip {
+    @apply pointer-events-none absolute top-full left-1/2 z-10 mt-2 -translate-x-1/2 rounded-lg bg-ink px-2.5 py-1 text-sm font-medium whitespace-nowrap text-paper opacity-0 transition-opacity;
+    @apply group-hover/avatar:opacity-100;
+  }
+
   .tab {
     @apply inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-semibold text-muted no-underline hover:text-ink;
   }
