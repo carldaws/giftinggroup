@@ -169,18 +169,20 @@ en:
     show:
       this_is_you: This is you. Everyone in your groups can see this page.
       you_look_after: You look after %{name}, so you can add and change things.
+      your_list: Your list
+      their_list: "%{name}'s list"
       surprise_note: You'll never see who's getting what from your list, so the surprise stays a surprise.
-      wishlist_intro: The things %{name} would love.
-      wishlist: Wishlist
-      wishlist_empty_yours: Nothing here yet. Add the things you'd love, big or small.
-      wishlist_empty: "%{name} hasn't added anything yet. You could suggest something."
-      add_item: Add something
-      suggest_item: Suggest something for %{name}
+      list_intro: The things %{name} would love, and ideas from everyone else.
+      filter: Show
+      everything: Everything
       little_things: Little things
       little_things_intro: Smaller things, for when money's tight or for stocking fillers.
-      add_little_thing: Add a little thing
-      suggestions: Ideas from everyone else
-      suggestions_intro: "%{name} can't see these. Add ideas that aren't on the list."
+      add_item: Add something
+      suggest_item: Suggest an idea
+      list_empty_yours: Nothing here yet. Add the things you'd love, big or small.
+      list_empty: "%{name} hasn't added anything yet. You could suggest an idea."
+      little_empty_yours: No little things yet. Add something small, for when money's tight.
+      little_empty: No little things yet.
       received:
         one: 1 thing received
         other: "%{count} things received"
@@ -261,24 +263,25 @@ en:
       little_hint: Goes in Little things, for when money's tight.
     item:
       most_wanted: Most wanted
+      little: Little thing
+      idea_from: Idea from %{name}
+      you: you
+      hidden_from: "%{name} can't see this idea."
       as_many_as_you_like: As many as you like
       wants:
         one: Wants 1
         other: Wants %{count}
       view_link: View on %{host}
-      suggested_by: Suggested by %{name}. %{owner} can't see this.
-      you: you
-      got_it: I got this
-      edit: Edit
-    reservation_status:
       getting: "%{name} is getting this"
       bought_by: "%{name} bought this"
       you_are_getting: You're getting this
       you_bought: You bought this
+      reserve: I'll get this
       bought_it: I've bought it
       not_bought: I haven't bought it yet
       let_go: Let someone else get it
-      reserve: I'll get this
+      got_it: I got this
+      edit: Edit
     edit:
       title: Edit
       back: Back to the list

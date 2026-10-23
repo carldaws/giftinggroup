@@ -1,62 +1,113 @@
-<%# locals: (item:, reservations:, yours:, manages:) %>
+<%# locals: (item:, reservations:, yours:) %>
 <% mine = reservations.find { it.user == Current.user } %>
 <% others = reservations - [ mine ] %>
+<% editable = item.editable_by?(Current.user) %>
+<% receivable = item.receivable_by?(Current.user) %>
+<% extra_photos = item.photos.drop(1) %>
+<% has_body = item.notes.present? || item.url.present? || extra_photos.any? || item.suggestion? %>
 
-<li id="<%= dom_id(item) %>" class="card flex gap-4 p-4 sm:p-5 <%= "border-plum/30" if item.suggestion? %>">
-  <% if item.photos.attached? %>
-    <%= link_to url_for(item.photos.first.variant(:large)), target: "_blank", class: "shrink-0" do %>
-      <%= image_tag item.photos.first.variant(:thumb), alt: "", class: "size-20 rounded-2xl object-cover sm:size-24" %>
+<li id="<%= dom_id(item) %>" class="card overflow-hidden p-0 sm:p-0 <%= "border-plum/30" if item.suggestion? %>">
+  <div class="flex gap-4 p-5 sm:p-6 <%= "pb-3 sm:pb-4" if has_body %>">
+    <% if item.photos.attached? %>
+      <%= link_to url_for(item.photos.first.variant(:large)), target: "_blank", class: "shrink-0" do %>
+        <%= image_tag item.photos.first.variant(:thumb), alt: "", class: "size-20 rounded-2xl object-cover sm:size-24" %>
+      <% end %>
     <% end %>
-  <% end %>
 
-  <div class="min-w-0 flex-1">
-    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-      <h3 class="text-xl font-semibold break-words"><%= item.name %></h3>
-      <% if item.most_wanted? %>
-        <span class="rounded-full bg-honey-tint px-3 py-0.5 text-sm font-semibold text-honey-ink"><%= t(".most_wanted") %></span>
+    <div class="min-w-0 flex-1">
+      <% if item.most_wanted? || item.little? || item.suggestion? %>
+        <div class="mb-2 flex flex-wrap gap-1.5">
+          <% if item.most_wanted? %><span class="badge bg-honey-tint text-honey-ink"><%= t(".most_wanted") %></span><% end %>
+          <% if item.little? %><span class="badge bg-sage-tint text-sage-ink"><%= t(".little") %></span><% end %>
+          <% if item.suggestion? %>
+            <span class="badge bg-plum-tint text-plum">
+              <%= t(".idea_from", name: item.suggested_by == Current.user ? t(".you") : item.suggested_by.name) %>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+
+      <h3 class="text-xl leading-snug font-semibold break-words"><%= item.name %></h3>
+
+      <% details = [ item.price.presence, (item.unlimited? ? t(".as_many_as_you_like") : (t(".wants", count: item.quantity) if item.quantity > 1)) ].compact %>
+      <% if details.any? %>
+        <p class="mt-1 text-base text-muted"><%= details.join(" · ") %></p>
       <% end %>
     </div>
+  </div>
 
-    <p class="text-base text-muted">
-      <%= [ item.price.presence, (item.unlimited? ? t(".as_many_as_you_like") : (t(".wants", count: item.quantity) if item.quantity > 1)) ].compact.join(" · ") %>
-    </p>
+  <% if has_body %>
+    <div class="grid gap-3 px-5 pb-5 sm:px-6 sm:pb-6">
+      <% if item.notes.present? %>
+        <p class="leading-relaxed whitespace-pre-line break-words"><%= item.notes %></p>
+      <% end %>
 
-    <% if item.notes.present? %>
-      <p class="mt-2 whitespace-pre-line break-words"><%= item.notes %></p>
-    <% end %>
+      <% if item.url.present? %>
+        <%= link_to item.url, target: "_blank", rel: "noopener noreferrer", class: "inline-flex w-fit items-center gap-1.5 font-semibold text-clay underline" do %>
+          <%= t(".view_link", host: link_host(item.url)) %>
+          <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4H4v12h12v-4M11 3h6v6M17 3l-8 8"/></svg>
+        <% end %>
+      <% end %>
 
-    <% if item.url.present? %>
-      <%= link_to t(".view_link", host: link_host(item.url)), item.url,
-            target: "_blank", rel: "noopener noreferrer", class: "mt-2 inline-block font-semibold text-clay underline" %>
-    <% end %>
+      <% if extra_photos.any? %>
+        <div class="flex flex-wrap gap-2">
+          <% extra_photos.each do |photo| %>
+            <%= link_to url_for(photo.variant(:large)), target: "_blank" do %>
+              <%= image_tag photo.variant(:thumb), alt: "", class: "size-14 rounded-xl object-cover" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
 
-    <% if item.photos.size > 1 %>
-      <div class="mt-3 flex flex-wrap gap-2">
-        <% item.photos.drop(1).each do |photo| %>
-          <%= link_to url_for(photo.variant(:large)), target: "_blank" do %>
-            <%= image_tag photo.variant(:thumb), alt: "", class: "size-14 rounded-xl object-cover" %>
+      <% if item.suggestion? %>
+        <p class="text-sm font-medium text-plum"><%= t(".hidden_from", name: item.owner.name) %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if !yours || editable || receivable %>
+    <div class="grid gap-3 border-t border-line bg-paper/50 px-5 py-4 sm:px-6">
+      <% unless yours %>
+        <% if reservations.any? %>
+          <ul class="flex flex-wrap gap-2">
+            <% reservations.each do |reservation| %>
+              <li class="inline-flex items-center gap-2 rounded-full bg-sage-tint py-1 pr-3 pl-1 text-base font-medium text-sage-ink">
+                <%= avatar_tag reservation.user, size: "size-7 text-xs ring-0" %>
+                <%= status_for(reservation) %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      <% end %>
+
+      <div class="flex flex-wrap gap-2">
+        <% unless yours %>
+          <% if mine.nil? %>
+            <% if item.unlimited? || others.size < item.quantity %>
+              <%= button_to t(".reserve"), item_reservation_path(item), class: "button button--small" %>
+            <% end %>
+          <% elsif mine.bought? %>
+            <%= button_to t(".not_bought"), item_purchase_path(item), method: :delete, class: "button button--quiet button--small" %>
+          <% else %>
+            <%= button_to t(".bought_it"), item_purchase_path(item), class: "button button--small" %>
+            <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--quiet button--small" %>
+          <% end %>
+        <% end %>
+
+        <% if receivable %>
+          <%= button_to item_receipt_path(item), class: "button button--quiet button--small" do %>
+            <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+            <%= t(".got_it") %>
+          <% end %>
+        <% end %>
+
+        <% if editable %>
+          <%= link_to edit_item_path(item), class: "button button--quiet button--small no-underline" do %>
+            <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z"/></svg>
+            <%= t(".edit") %>
           <% end %>
         <% end %>
       </div>
-    <% end %>
-
-    <% if item.suggestion? %>
-      <p class="mt-3 text-sm font-semibold text-plum"><%= t(".suggested_by", name: item.suggested_by == Current.user ? t(".you") : item.suggested_by.name, owner: item.owner.name) %></p>
-    <% end %>
-
-    <% unless yours %>
-      <%= render "items/reservation_status", item:, mine:, others: %>
-    <% end %>
-
-    <% if item.editable_by?(Current.user) || item.receivable_by?(Current.user) %>
-      <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-base">
-        <% if item.receivable_by?(Current.user) %>
-          <%= button_to t(".got_it"), item_receipt_path(item), class: "font-semibold text-sage underline" %>
-        <% end %>
-        <% if item.editable_by?(Current.user) %>
-          <%= link_to t(".edit"), edit_item_path(item), class: "font-semibold text-muted underline" %>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </li>

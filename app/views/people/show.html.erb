@@ -1,9 +1,10 @@
 <% yours = @person == Current.user %>
 <% manages = Current.user.looks_after?(@person) %>
-<% items = @person.items.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).most_wanted_first %>
-<% reservations = yours ? {} : Reservation.visible_to(Current.user).where(item: items).includes(:user).group_by(&:item_id) %>
-<% wishlist = items.wanted.not_little.where(suggested_by: nil) %>
-<% little_things = items.wanted.little.where(suggested_by: nil) %>
+<% items = @person.items.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order %>
+<% wanted = items.wanted %>
+<% little_only = params[:show] == "little" %>
+<% shown = little_only ? wanted.little : wanted %>
+<% reservations = yours ? {} : Reservation.visible_to(Current.user).where(item: shown).includes(:user).group_by(&:item_id) %>
 <% content_for :title, @person.name %>
 
 <div class="mt-6 flex items-center gap-4 <%= manages ? "mb-4" : "mb-10" %>">
@@ -25,59 +26,39 @@
 <%= render "people/interests", person: @person, yours:, manages: %>
 <%= render "people/sizes", person: @person, manages: %>
 
-<section aria-labelledby="wishlist-heading" class="mb-10">
-  <h2 id="wishlist-heading" class="text-2xl font-semibold"><%= t(".wishlist") %></h2>
-  <p class="mb-4 text-muted"><%= yours ? t(".surprise_note") : t(".wishlist_intro", name: @person.name) %></p>
+<section id="list" aria-labelledby="list-heading" class="mb-10">
+  <h2 id="list-heading" class="text-2xl font-semibold"><%= yours ? t(".your_list") : t(".their_list", name: @person.name) %></h2>
+  <p class="mb-5 text-muted"><%= yours ? t(".surprise_note") : t(".list_intro", name: @person.name) %></p>
 
-  <% if wishlist.any? %>
+  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <nav aria-label="<%= t(".filter") %>" class="inline-flex gap-1 rounded-full bg-line/50 p-1">
+      <%= link_to person_path(@person, anchor: "list"), class: "tab", aria: { current: ("page" unless little_only) } do %>
+        <%= t(".everything") %> <span class="text-muted"><%= wanted.size %></span>
+      <% end %>
+      <%= link_to person_path(@person, show: "little", anchor: "list"), class: "tab", aria: { current: ("page" if little_only) } do %>
+        <%= t(".little_things") %> <span class="text-muted"><%= wanted.little.size %></span>
+      <% end %>
+    </nav>
+
+    <%= link_to (manages ? t(".add_item") : t(".suggest_item")), new_person_item_path(@person, little: (1 if little_only)), class: "button button--small" %>
+  </div>
+
+  <% if little_only %>
+    <p class="mb-4 text-muted"><%= t(".little_things_intro") %></p>
+  <% end %>
+
+  <% if shown.any? %>
     <ul class="grid gap-4">
-      <% wishlist.each do |item| %>
-        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, manages: %>
+      <% shown.each do |item| %>
+        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours: %>
       <% end %>
     </ul>
+  <% elsif little_only %>
+    <p class="card text-muted"><%= manages ? t(".little_empty_yours") : t(".little_empty", name: @person.name) %></p>
   <% else %>
-    <p class="card text-muted"><%= manages ? t(".wishlist_empty_yours") : t(".wishlist_empty", name: @person.name) %></p>
-  <% end %>
-
-  <%= link_to (manages ? t(".add_item") : t(".suggest_item", name: @person.name)), new_person_item_path(@person), class: "button mt-4 w-full sm:w-auto" %>
-</section>
-
-<section aria-labelledby="little-heading" class="mb-10">
-  <h2 id="little-heading" class="text-2xl font-semibold"><%= t(".little_things") %></h2>
-  <p class="mb-4 text-muted"><%= t(".little_things_intro") %></p>
-
-  <% if little_things.any? %>
-    <ul class="grid gap-4">
-      <% little_things.each do |item| %>
-        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, manages: %>
-      <% end %>
-    </ul>
-  <% end %>
-
-  <% if manages %>
-    <%= link_to t(".add_little_thing"), new_person_item_path(@person, little: 1), class: "button button--quiet mt-4 w-full sm:w-auto" %>
+    <p class="card text-muted"><%= manages ? t(".list_empty_yours") : t(".list_empty", name: @person.name) %></p>
   <% end %>
 </section>
-
-<% unless yours %>
-  <% suggestions = items.wanted.suggestions %>
-  <section aria-labelledby="suggestions-heading" class="mb-10 rounded-[1.75rem] bg-plum-tint p-5 sm:p-6">
-    <h2 id="suggestions-heading" class="text-2xl font-semibold text-plum"><%= t(".suggestions") %></h2>
-    <p class="mb-4 text-plum"><%= t(".suggestions_intro", name: @person.name) %></p>
-
-    <% if suggestions.any? %>
-      <ul class="grid gap-4">
-        <% suggestions.each do |item| %>
-          <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, manages: %>
-        <% end %>
-      </ul>
-    <% end %>
-
-    <% unless manages %>
-      <%= link_to t(".suggest_item", name: @person.name), new_person_item_path(@person), class: "button button--quiet mt-4 w-full sm:w-auto" %>
-    <% end %>
-  </section>
-<% end %>
 
 <% if manages %>
   <% received = items.received.where(suggested_by: nil) %>
@@ -88,7 +69,7 @@
         <% received.each do |item| %>
           <li class="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card px-5 py-3">
             <span class="text-muted line-through"><%= item.name %></span>
-            <%= button_to t(".put_back"), item_receipt_path(item), method: :delete, class: "font-semibold text-clay underline" %>
+            <%= button_to t(".put_back"), item_receipt_path(item), method: :delete, class: "button button--quiet button--small" %>
           </li>
         <% end %>
       </ul>

@@ -8,7 +8,7 @@ class ListsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h3", text: items(:scarf).name
-    assert_no_match I18n.t("items.reservation_status.getting", name: users(:bob).name), response.body
+    assert_no_match I18n.t("items.item.getting", name: users(:bob).name), response.body
     assert_no_match items(:scarf_gloves_suggestion).name, response.body
     assert_select "form[action=?]", item_reservation_path(items(:scarf)), count: 0
   end
@@ -43,8 +43,25 @@ class ListsTest < ActionDispatch::IntegrationTest
 
     get person_path(users(:alice))
 
-    assert_select "p", text: I18n.t("items.reservation_status.getting", name: users(:bob).name)
+    assert_select "li", text: /#{I18n.t("items.item.getting", name: users(:bob).name)}/
     assert_select "h3", text: items(:scarf_gloves_suggestion).name
+  end
+
+  test "the list can be filtered to little things" do
+    sign_in_as users(:carol)
+
+    get person_path(users(:alice), show: "little")
+
+    assert_select "h3", text: items(:socks).name
+    assert_select "h3", text: items(:scarf).name, count: 0
+  end
+
+  test "ideas from others sit in the same list, marked as ideas" do
+    sign_in_as users(:carol)
+
+    get person_path(users(:alice))
+
+    assert_select "##{dom_id(items(:scarf_gloves_suggestion))} span", text: I18n.t("items.item.idea_from", name: users(:bob).name)
   end
 
   test "guardians see reservations on the list they look after" do
@@ -52,7 +69,7 @@ class ListsTest < ActionDispatch::IntegrationTest
 
     get person_path(users(:dan))
 
-    assert_select "p", text: I18n.t("items.reservation_status.bought_by", name: users(:carol).name)
+    assert_select "li", text: /#{I18n.t("items.item.bought_by", name: users(:carol).name)}/
   end
 
   test "people outside your groups can't see your list" do

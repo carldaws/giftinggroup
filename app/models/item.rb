@@ -25,8 +25,7 @@ class Item < ApplicationRecord
   scope :wanted, -> { where(received_at: nil) }
   scope :received, -> { where.not(received_at: nil) }
   scope :little, -> { where(little: true) }
-  scope :not_little, -> { where(little: false) }
-  scope :most_wanted_first, -> { order(most_wanted: :desc, created_at: :desc) }
+  scope :in_list_order, -> { order(Arel.sql("suggested_by_id IS NOT NULL"), most_wanted: :desc, created_at: :desc) }
   scope :visible_to, ->(user) do
     where(owner: User.visible_to(user)).where.not(id: suggestions.where(owner: user))
   end
