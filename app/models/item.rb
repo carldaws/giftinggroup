@@ -42,6 +42,10 @@ class Item < ApplicationRecord
     received_at.present?
   end
 
+  def given_with?(reservations)
+    !unlimited? && reservations.count(&:given?) >= quantity
+  end
+
   def fully_reserved?
     !unlimited? && reservations.size >= quantity
   end
@@ -55,7 +59,7 @@ class Item < ApplicationRecord
   end
 
   def reserve_for(user)
-    with_lock { reservations.create(user:) }
+    with_lock { reservations.create(user:, occasion: Occasion.next_for_gifts_to(owner, from: user)) }
   rescue ActiveRecord::RecordNotUnique
     reservations.find_by!(user:)
   end

@@ -218,6 +218,12 @@ en:
         one: 1 thing received
         other: "%{count} things received"
       put_back: Put back
+      given:
+        one: 1 thing already given
+        other: "%{count} things already given"
+      birthday_passed: Your birthday has just been. Tick off anything you received, so it comes off your list.
+      occasion_passed: "%{name} has just been. Tick off anything you received, so it comes off your list."
+      occasion_passed_for: "%{occasion} has just been. Tick off anything %{name} received, so it comes off their list."
     details:
       your_details: Your details
       their_details: "%{name}'s details"
@@ -303,10 +309,20 @@ en:
         one: Wants 1
         other: Wants %{count}
       view_link: View on %{host}
-      getting: "%{name} is getting this"
-      bought_by: "%{name} bought this"
-      you_are_getting: You're getting this
-      you_bought: You bought this
+      status:
+        they_getting: "%{name} is getting this"
+        they_getting_for: "%{name} is getting this for %{occasion}"
+        they_bought: "%{name} bought this"
+        they_bought_for: "%{name} bought this for %{occasion}"
+        they_gave_for: "%{name} gave this for %{occasion}"
+        you_getting: You're getting this
+        you_getting_for: You're getting this for %{occasion}
+        you_bought: You bought this
+        you_bought_for: You bought this for %{occasion}
+        you_gave_for: You gave this for %{occasion}
+      for: For
+      no_occasion: No particular occasion
+      save_occasion: Save
       reserve: I'll get this
       bought_it: I've bought it
       not_bought: I haven't bought it yet
@@ -394,6 +410,9 @@ en:
         dependant_admin: Only people with their own account can be admins.
         fully_reserved: has already been taken by someone else
         received: has already been received
+        not_for_this_person: isn't one for gifts to this person
+        already_given: can't change once the gift has been given
+        in_the_future: can't be in the future
         too_many: can't be more than %{count}
         not_an_image: must be a photo (JPEG, PNG, WebP, GIF or HEIC)
         too_large: must be smaller than %{size}

@@ -1,6 +1,7 @@
-<%# locals: (item:, reservations:, yours:) %>
+<%# locals: (item:, reservations:, yours:, occasion_choices:) %>
 <% mine = reservations.find { it.user == Current.user } %>
 <% others = reservations - [ mine ] %>
+<% picking_occasion = mine.present? && !mine.given? && occasion_choices.any? %>
 <% editable = item.editable_by?(Current.user) %>
 <% receivable = item.receivable_by?(Current.user) %>
 <% extra_photos = item.photos.drop(1) %>
@@ -69,10 +70,19 @@
             <% reservations.each do |reservation| %>
               <li class="inline-flex items-center gap-2 rounded-full bg-sage-tint py-1 pr-3 pl-1 text-base font-medium text-sage-ink">
                 <%= avatar_tag reservation.user, size: "size-7 text-xs ring-0" %>
-                <%= status_for(reservation) %>
+                <%= status_for(reservation, with_occasion: !(picking_occasion && reservation == mine)) %>
               </li>
             <% end %>
           </ul>
+        <% end %>
+
+        <% if picking_occasion %>
+          <%= form_with model: mine, url: item_reservation_path(item), method: :patch, data: { controller: "autosubmit" }, class: "flex flex-wrap items-center gap-2 text-base" do |form| %>
+            <%= form.label :occasion_id, t(".for"), class: "text-muted" %>
+            <%= form.select :occasion_id, occasion_choices.map { [ it.title, it.id ] }, { include_blank: t(".no_occasion") },
+                  class: "input min-h-10 w-auto py-1.5", data: { action: "change->autosubmit#submit" } %>
+            <noscript><%= form.submit t(".save_occasion"), class: "button button--quiet button--small" %></noscript>
+          <% end %>
         <% end %>
       <% end %>
 
@@ -83,7 +93,9 @@
               <%= button_to t(".reserve"), item_reservation_path(item), class: "button button--small" %>
             <% end %>
           <% elsif mine.bought? %>
-            <%= button_to t(".not_bought"), item_purchase_path(item), method: :delete, class: "button button--quiet button--small" %>
+            <% unless mine.given? %>
+              <%= button_to t(".not_bought"), item_purchase_path(item), method: :delete, class: "button button--quiet button--small" %>
+            <% end %>
           <% else %>
             <%= button_to t(".bought_it"), item_purchase_path(item), class: "button button--small" %>
             <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--quiet button--small" %>

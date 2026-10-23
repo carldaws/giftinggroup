@@ -1,9 +1,12 @@
 class Reservation < ApplicationRecord
   belongs_to :item
   belongs_to :user
+  belongs_to :occasion, optional: true
 
   validate :user_can_see_the_item, :user_is_not_the_owner, if: -> { item.present? && user.present? }
   validate :item_is_still_wanted, :item_is_still_available, on: :create, if: -> { item.present? && errors.none? }
+  validate :occasion_is_for_gifts_to_the_owner, if: -> { will_save_change_to_occasion_id? && occasion_id.present? && errors.none? }
+  validate :given_gifts_keep_their_occasion, on: :update, if: :will_save_change_to_occasion_id?
 
   scope :visible_to, ->(user) do
     where(item: Item.visible_to(user)).where.not(item: Item.where(owner: user))
@@ -11,6 +14,10 @@ class Reservation < ApplicationRecord
 
   def bought?
     bought_at.present?
+  end
+
+  def given?
+    bought? && occasion.present? && occasion.passed?
   end
 
   def buy
@@ -36,5 +43,14 @@ class Reservation < ApplicationRecord
 
     def item_is_still_available
       errors.add(:item, :fully_reserved) if !item.unlimited? && Reservation.where(item:).count >= item.quantity
+    end
+
+    def occasion_is_for_gifts_to_the_owner
+      errors.add(:occasion, :not_for_this_person) unless Occasion.for_gifts_to(item.owner, from: user).exists?(occasion_id)
+    end
+
+    def given_gifts_keep_their_occasion
+      previous = Occasion.find_by(id: occasion_id_in_database)
+      errors.add(:occasion, :already_given) if bought? && previous.present? && previous.passed?
     end
 end

@@ -10,10 +10,7 @@ class Membership < ApplicationRecord
   validate :dependants_are_not_admins
   validate :group_keeps_an_admin, on: :update, if: :will_save_change_to_admin?
 
-  after_create :schedule_birthday, if: -> { user.birthday? }
-
   before_destroy :ensure_group_keeps_an_admin, unless: :destroyed_with_group?
-  after_destroy :remove_birthday, unless: :destroyed_with_group?
   after_destroy :cancel_reservations_on_lists_no_longer_visible
   after_destroy :remove_dependants_nobody_else_looks_after, unless: :destroyed_with_group?
   after_destroy :remove_empty_group, unless: :destroyed_with_group?
@@ -52,14 +49,6 @@ class Membership < ApplicationRecord
         errors.add(:base, :last_admin)
         throw :abort
       end
-    end
-
-    def schedule_birthday
-      user.schedule_birthdays
-    end
-
-    def remove_birthday
-      group.occasions.where(person: user).destroy_all
     end
 
     def cancel_reservations_on_lists_no_longer_visible

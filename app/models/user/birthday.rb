@@ -6,12 +6,13 @@ module User::Birthday
 
     validates :birthday_month, inclusion: { in: 1..12 }, allow_nil: true
     validates :birthday_day, inclusion: { in: 1..31 }, allow_nil: true
-    validates :birth_year, inclusion: { in: 1900..Date.current.year }, allow_nil: true
+    validates :birth_year, inclusion: { in: ->(_) { 1900..Date.current.year } }, allow_nil: true
     validates :birthday_month, presence: true, if: -> { birthday_day.present? }
     validates :birthday_day, presence: true, if: -> { birthday_month.present? }
     validate :birthday_is_a_real_date, if: :birthday?
+    validate :birth_date_is_not_in_the_future, if: -> { birthday? && birth_year.present? }
 
-    after_save :schedule_birthdays, if: -> { saved_change_to_birthday_month? || saved_change_to_birthday_day? }
+    after_save :schedule_birthday, if: -> { saved_change_to_birthday_month? || saved_change_to_birthday_day? }
 
     scope :with_birthday, -> { where.not(birthday_month: nil) }
   end
@@ -31,8 +32,8 @@ module User::Birthday
     date.year - birth_year if birth_year.present?
   end
 
-  def schedule_birthdays
-    Occasion.schedule_birthdays_for(self)
+  def schedule_birthday
+    Occasion.schedule_birthday_for(self)
   end
 
   private
@@ -46,5 +47,9 @@ module User::Birthday
 
     def birthday_is_a_real_date
       errors.add(:birthday_day, :invalid) unless Date.valid_date?(2024, birthday_month, birthday_day)
+    end
+
+    def birth_date_is_not_in_the_future
+      errors.add(:birth_year, :in_the_future) if birthday_in(birth_year) > Date.current
     end
 end

@@ -15,4 +15,4 @@ production:
     schedule: every hour at minute 12
   schedule_birthdays:
     command: "Occasion.schedule_all_birthdays"
-    schedule: every day at 3am
+    schedule: every day at 12:05am

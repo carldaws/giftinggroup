@@ -11,6 +11,16 @@ class Items::ReservationsController < ApplicationController
     end
   end
 
+  def update
+    reservation = Current.user.reservations.find_by!(item: @item)
+
+    if reservation.update(params.expect(reservation: [ :occasion_id ]))
+      redirect_to_list
+    else
+      redirect_to_list alert: reservation.errors.full_messages.to_sentence
+    end
+  end
+
   def destroy
     Current.user.reservations.find_by!(item: @item).destroy
     redirect_to_list

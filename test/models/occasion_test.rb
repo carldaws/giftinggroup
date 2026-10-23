@@ -1,18 +1,40 @@
 require "test_helper"
 
 class OccasionTest < ActiveSupport::TestCase
-  test "a birthday makes a birthday occasion in each of your groups" do
+  test "a birthday makes one birthday occasion, whatever groups you're in" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
 
-    assert_equal [ groups(:hollies), groups(:ivies) ].sort_by(&:id), users(:carol).birthdays.map(&:group).sort_by(&:id)
-    assert users(:carol).birthdays.all? { it.date == users(:carol).next_birthday }
+    assert_equal [ users(:carol).next_birthday ], users(:carol).birthdays.pluck(:date)
+  end
+
+  test "everyone who shares a group with you sees your birthday, once" do
+    users(:carol).update!(birthday_month: 3, birthday_day: 12)
+
+    assert_equal 1, Occasion.visible_to(users(:alice)).where(person: users(:carol)).count
+    assert_equal 1, Occasion.visible_to(users(:erin)).where(person: users(:carol)).count
   end
 
   test "nobody sees their own birthday occasion" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
 
     assert_empty Occasion.visible_to(users(:carol)).where(person: users(:carol))
-    assert_not_empty Occasion.visible_to(users(:alice)).where(person: users(:carol))
+  end
+
+  test "people who share no group with you don't see your birthday" do
+    users(:alice).update!(birthday_month: 3, birthday_day: 12)
+
+    assert_empty Occasion.visible_to(users(:erin)).where(person: users(:alice))
+  end
+
+  test "a group shows its own occasions and its members' birthdays" do
+    users(:carol).update!(birthday_month: 3, birthday_day: 12)
+    users(:erin).update!(birthday_month: 4, birthday_day: 1)
+
+    in_hollies = Occasion.for_group(groups(:hollies))
+
+    assert_includes in_hollies, occasions(:christmas)
+    assert_includes in_hollies, users(:carol).birthdays.first
+    assert_not_includes in_hollies, users(:erin).birthdays.first
   end
 
   test "everyone in the group sees its other occasions" do
@@ -20,26 +42,33 @@ class OccasionTest < ActiveSupport::TestCase
     assert_not_includes Occasion.visible_to(users(:erin)), occasions(:christmas)
   end
 
-  test "changing your birthday moves the occasion, and removing it removes the occasion" do
-    users(:carol).update!(birthday_month: 3, birthday_day: 12)
-    users(:carol).update!(birthday_month: 4)
-    assert_equal [ users(:carol).next_birthday ], users(:carol).birthdays.pluck(:date).uniq
+  test "changing your birthday moves the occasion and keeps what's reserved for it" do
+    users(:alice).update!(birthday_month: 3, birthday_day: 12)
+    birthday = users(:alice).birthdays.sole
+    reservation = items(:socks).reservations.create!(user: users(:carol), occasion: birthday)
 
+    users(:alice).update!(birthday_month: 4)
+
+    assert_equal birthday, reservation.reload.occasion
+    assert_equal users(:alice).next_birthday, birthday.reload.date
+  end
+
+  test "removing your birthday removes the upcoming occasion" do
+    users(:carol).update!(birthday_month: 3, birthday_day: 12)
     users(:carol).update!(birthday_month: nil, birthday_day: nil)
+
     assert_empty users(:carol).birthdays
   end
 
-  test "joining a group adds your birthday to it, and leaving removes it" do
-    users(:erin).update!(birthday_month: 6, birthday_day: 1)
+  test "leaving a group doesn't touch your birthday" do
+    users(:carol).update!(birthday_month: 3, birthday_day: 12)
 
-    membership = groups(:hollies).join(users(:erin))
-    assert groups(:hollies).occasions.exists?(person: users(:erin))
+    memberships(:carol_in_hollies).destroy!
 
-    membership.destroy!
-    assert_not groups(:hollies).occasions.exists?(person: users(:erin))
+    assert_equal 1, users(:carol).birthdays.count
   end
 
-  test "birthdays roll forward to the next year once they've passed" do
+  test "birthdays roll forward to the next year once they've passed, keeping last year's" do
     travel_to Date.new(2026, 3, 1) do
       users(:carol).update!(birthday_month: 3, birthday_day: 12)
     end
@@ -47,8 +76,16 @@ class OccasionTest < ActiveSupport::TestCase
     travel_to Date.new(2026, 3, 13) do
       Occasion.schedule_all_birthdays
 
-      assert_includes users(:carol).birthdays.upcoming.pluck(:date), Date.new(2027, 3, 12)
+      assert_equal [ Date.new(2026, 3, 12), Date.new(2027, 3, 12) ], users(:carol).birthdays.order(:date).pluck(:date)
     end
+  end
+
+  test "rolling forward twice makes no duplicates" do
+    users(:carol).update!(birthday_month: 3, birthday_day: 12)
+
+    2.times { Occasion.schedule_all_birthdays }
+
+    assert_equal 1, users(:carol).birthdays.upcoming.count
   end
 
   test "a birthday is named after the person, with their age when the year is known" do
@@ -80,6 +117,21 @@ class OccasionTest < ActiveSupport::TestCase
     users(:carol).birthday_month = 2
 
     assert_not users(:carol).valid?
+  end
+
+  test "a birth date can't be in the future" do
+    tomorrow = Date.tomorrow
+    users(:carol).assign_attributes(birthday_month: tomorrow.month, birthday_day: tomorrow.day, birth_year: tomorrow.year)
+
+    assert_not users(:carol).valid?
+  end
+
+  test "this year is a fine birth year, even after the app has been running a while" do
+    travel_to Date.new(Date.current.year + 1, 12, 31) do
+      users(:carol).assign_attributes(birthday_month: 1, birthday_day: 1, birth_year: Date.current.year)
+
+      assert users(:carol).valid?
+    end
   end
 
   test "who can change an occasion" do

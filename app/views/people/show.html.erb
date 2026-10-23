@@ -4,7 +4,9 @@
 <% wanted = items.wanted %>
 <% little_only = params[:show] == "little" %>
 <% shown = little_only ? wanted.little : wanted %>
-<% reservations = yours ? {} : Reservation.visible_to(Current.user).where(item: shown).includes(:user).group_by(&:item_id) %>
+<% reservations = yours ? {} : Reservation.visible_to(Current.user).where(item: shown).includes(:user, occasion: :person).group_by(&:item_id) %>
+<% still_wanted, given = shown.partition { !it.given_with?(reservations.fetch(it.id, [])) } %>
+<% occasion_choices = yours ? [] : Occasion.for_gifts_to(@person, from: Current.user).upcoming.soonest_first.includes(:person).to_a %>
 <% content_for :title, @person.name %>
 
 <div class="mt-6 flex items-center gap-4 <%= manages ? "mb-4" : "mb-10" %>">
@@ -50,12 +52,36 @@
     <p class="mb-4 text-muted"><%= t(".little_things_intro") %></p>
   <% end %>
 
+  <% if manages %>
+    <% passed = Occasion.applying_to(@person).recent.order(date: :desc).first %>
+    <% if passed.present? %>
+      <p class="mb-5 rounded-2xl bg-honey-tint px-5 py-4 text-honey-ink">
+        <% if yours %>
+          <%= passed.birthday? ? t(".birthday_passed") : t(".occasion_passed", name: passed.title) %>
+        <% else %>
+          <%= t(".occasion_passed_for", occasion: passed.title, name: @person.name) %>
+        <% end %>
+      </p>
+    <% end %>
+  <% end %>
+
   <% if shown.any? %>
     <ul class="grid gap-4">
-      <% shown.each do |item| %>
-        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours: %>
+      <% still_wanted.each do |item| %>
+        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, occasion_choices: %>
       <% end %>
     </ul>
+
+    <% if given.any? %>
+      <details class="mt-6">
+        <summary class="cursor-pointer text-lg font-semibold"><%= t(".given", count: given.size) %></summary>
+        <ul class="mt-4 grid gap-4">
+          <% given.each do |item| %>
+            <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, occasion_choices: %>
+          <% end %>
+        </ul>
+      </details>
+    <% end %>
   <% elsif little_only %>
     <p class="card text-muted"><%= manages ? t(".little_empty_yours") : t(".little_empty", name: @person.name) %></p>
   <% else %>

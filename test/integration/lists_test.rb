@@ -8,7 +8,7 @@ class ListsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h3", text: items(:scarf).name
-    assert_no_match I18n.t("items.item.getting", name: users(:bob).name), response.body
+    assert_no_match I18n.t("items.item.status.they_getting", name: users(:bob).name), response.body
     assert_no_match items(:scarf_gloves_suggestion).name, response.body
     assert_select "form[action=?]", item_reservation_path(items(:scarf)), count: 0
   end
@@ -43,7 +43,7 @@ class ListsTest < ActionDispatch::IntegrationTest
 
     get person_path(users(:alice))
 
-    assert_select "li", text: /#{I18n.t("items.item.getting", name: users(:bob).name)}/
+    assert_select "li", text: /#{I18n.t("items.item.status.they_getting", name: users(:bob).name)}/
     assert_select "h3", text: items(:scarf_gloves_suggestion).name
   end
 
@@ -102,7 +102,7 @@ class ListsTest < ActionDispatch::IntegrationTest
 
     get person_path(users(:dan))
 
-    assert_select "li", text: /#{I18n.t("items.item.bought_by", name: users(:carol).name)}/
+    assert_select "li", text: /#{I18n.t("items.item.status.they_bought", name: users(:carol).name)}/
   end
 
   test "people outside your groups can't see your list" do

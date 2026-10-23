@@ -1,5 +1,6 @@
 <%# locals: (group:) %>
-<% occasions = Occasion.visible_to(Current.user).where(group:).upcoming.soonest_first.includes(:person, :creator) %>
+<% occasions = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :creator) %>
+<% admin = group.admin?(Current.user) %>
 
 <section aria-labelledby="occasions-heading" class="mb-10">
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -19,7 +20,7 @@
             <p class="font-semibold break-words"><%= occasion.title %></p>
             <p class="text-base text-muted"><%= countdown_to(occasion.date) %></p>
           </div>
-          <% if occasion.editable_by?(Current.user) %>
+          <% if occasion.editable_by?(Current.user, admin:) %>
             <%= link_to t(".edit"), edit_group_occasion_path(group, occasion), class: "button button--quiet button--small no-underline",
                   aria: { label: t(".edit_label", name: occasion.title) } %>
           <% end %>

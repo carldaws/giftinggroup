@@ -64,6 +64,40 @@ class ReservationTest < ActiveSupport::TestCase
     end
   end
 
+  test "reserving picks the soonest occasion for that person" do
+    reservation = items(:socks).reserve_for(users(:carol))
+
+    assert_equal occasions(:christmas), reservation.occasion
+  end
+
+  test "a birthday that comes sooner is picked instead" do
+    users(:alice).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
+
+    reservation = items(:socks).reserve_for(users(:carol))
+
+    assert reservation.occasion.birthday?
+  end
+
+  test "an occasion must be one for gifts to that person, in a group you share" do
+    other_groups_occasion = groups(:ivies).occasions.create!(name: "Ivies picnic", date: 1.month.from_now.to_date)
+
+    reservation = items(:socks).reservations.build(user: users(:carol), occasion: other_groups_occasion)
+
+    assert_not reservation.valid?
+    assert reservation.errors.of_kind?(:occasion, :not_for_this_person)
+  end
+
+  test "a bought gift counts as given once its occasion has passed" do
+    reservation = items(:socks).reserve_for(users(:carol))
+    reservation.buy
+    assert_not reservation.given?
+
+    travel_to occasions(:christmas).date + 1.day do
+      assert reservation.reload.given?
+      assert_not items(:socks).given_with?([ reservation ])
+    end
+  end
+
   test "buying" do
     reservations(:bob_reserved_scarf).buy
     assert reservations(:bob_reserved_scarf).bought?

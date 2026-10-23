@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_144216) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_145743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -105,7 +105,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_144216) do
   end
 
   create_table "occasions", force: :cascade do |t|
-    t.bigint "group_id", null: false
+    t.bigint "group_id"
     t.bigint "person_id"
     t.bigint "creator_id"
     t.string "name"
@@ -114,8 +114,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_144216) do
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_occasions_on_creator_id"
     t.index ["group_id", "date"], name: "index_occasions_on_group_id_and_date"
-    t.index ["group_id", "person_id", "date"], name: "index_occasions_on_group_id_and_person_id_and_date", unique: true, where: "(person_id IS NOT NULL)"
+    t.index ["person_id", "date"], name: "index_occasions_on_person_id_and_date", unique: true, where: "(person_id IS NOT NULL)"
     t.index ["person_id"], name: "index_occasions_on_person_id"
+    t.check_constraint "(group_id IS NULL) <> (person_id IS NULL)", name: "occasions_belong_to_a_group_or_a_person"
   end
 
   create_table "reservations", force: :cascade do |t|
@@ -124,7 +125,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_144216) do
     t.datetime "bought_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "occasion_id"
     t.index ["item_id", "user_id"], name: "index_reservations_on_item_id_and_user_id", unique: true
+    t.index ["occasion_id"], name: "index_reservations_on_occasion_id"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end
 
@@ -174,6 +177,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_144216) do
   add_foreign_key "occasions", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "occasions", "users", column: "person_id"
   add_foreign_key "reservations", "items"
+  add_foreign_key "reservations", "occasions", on_delete: :nullify
   add_foreign_key "reservations", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "sizes", "users"

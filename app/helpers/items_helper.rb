@@ -1,11 +1,17 @@
 module ItemsHelper
-  def status_for(reservation)
-    you = reservation.user == Current.user
+  def status_for(reservation, with_occasion: true)
+    who = reservation.user == Current.user ? "you" : "they"
+    what =
+      case
+      when reservation.given? then "gave"
+      when reservation.bought? then "bought"
+      else "getting"
+      end
 
-    if reservation.bought?
-      you ? t("items.item.you_bought") : t("items.item.bought_by", name: reservation.user.name)
+    if with_occasion && reservation.occasion.present?
+      t("items.item.status.#{who}_#{what}_for", name: reservation.user.name, occasion: reservation.occasion.title)
     else
-      you ? t("items.item.you_are_getting") : t("items.item.getting", name: reservation.user.name)
+      t("items.item.status.#{who}_#{what}", name: reservation.user.name)
     end
   end
 

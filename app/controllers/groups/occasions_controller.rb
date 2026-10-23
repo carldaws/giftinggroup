@@ -36,7 +36,7 @@ class Groups::OccasionsController < ApplicationController
 
   private
     def set_occasion
-      @occasion = Occasion.visible_to(Current.user).where(group: @group).find(params[:id])
+      @occasion = @group.occasions.find(params[:id])
     end
 
     def ensure_occasion_editable

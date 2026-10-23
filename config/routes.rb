@@ -25,7 +25,7 @@ Rails.application.routes.draw do
 
   resources :items, only: %i[ edit update destroy ] do
     scope module: :items do
-      resource :reservation, only: %i[ create destroy ]
+      resource :reservation, only: %i[ create update destroy ]
       resource :purchase, only: %i[ create destroy ]
       resource :receipt, only: %i[ create destroy ]
       resources :photos, only: :destroy

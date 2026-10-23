@@ -31,12 +31,12 @@ class OccasionsTest < ActionDispatch::IntegrationTest
     assert_select "p", text: birthday
   end
 
-  test "adding a birthday in your details adds it to your groups" do
+  test "adding a birthday in your details adds a birthday occasion" do
     sign_in_as users(:carol)
 
     patch person_profile_path(users(:carol)), params: { user: { birthday_day: 12, birthday_month: 3, birth_year: "" } }
 
-    assert_equal 2, users(:carol).birthdays.count
+    assert_equal 1, users(:carol).birthdays.count
   end
 
   test "guardians can add a birthday for someone they look after" do
@@ -44,7 +44,7 @@ class OccasionsTest < ActionDispatch::IntegrationTest
 
     patch person_profile_path(users(:dan)), params: { user: { birthday_day: 1, birthday_month: 6, birth_year: 2019 } }
 
-    assert groups(:hollies).occasions.exists?(person: users(:dan))
+    assert users(:dan).birthdays.exists?
   end
 
   test "other people see your birthday on your page" do
@@ -91,22 +91,137 @@ class OccasionsTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "birthday occasions can't be changed by hand" do
+  test "birthday occasions can't be reached through a group, by anyone" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
-    sign_in_as users(:alice)
+    birthday = users(:carol).birthdays.sole
 
-    get edit_group_occasion_path(groups(:hollies), users(:carol).birthdays.find_by(group: groups(:hollies)))
+    [ users(:alice), users(:carol) ].each do |user|
+      sign_in_as user
 
-    assert_response :forbidden
+      get edit_group_occasion_path(groups(:hollies), birthday)
+      assert_response :not_found
+
+      patch group_occasion_path(groups(:hollies), birthday), params: { occasion: { name: "Renamed" } }
+      assert_response :not_found
+
+      delete group_occasion_path(groups(:hollies), birthday)
+      assert_response :not_found
+
+      delete session_path
+    end
   end
 
-  test "you can't reach your own birthday occasion at all" do
+  test "your own birthday never appears as an occasion on other people's lists" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
     sign_in_as users(:carol)
+    post item_reservation_path(items(:socks))
 
-    get edit_group_occasion_path(groups(:hollies), users(:carol).birthdays.find_by(group: groups(:hollies)))
+    get person_path(users(:alice))
 
-    assert_response :not_found
+    assert_no_match I18n.t("occasions.birthday", name: users(:carol).name), response.body
+  end
+
+  test "the occasion picker lists each birthday once" do
+    users(:alice).update!(birthday_month: 6, birthday_day: 1)
+    groups(:ivies).join(users(:alice))
+    sign_in_as users(:carol)
+    post item_reservation_path(items(:socks))
+
+    get person_path(users(:alice))
+
+    assert_select "select[name='reservation[occasion_id]'] option", text: I18n.t("occasions.birthday", name: users(:alice).name), count: 1
+  end
+
+  test "you can say which occasion your gift is for" do
+    users(:alice).update!(birthday_month: 6, birthday_day: 1)
+    sign_in_as users(:carol)
+    post item_reservation_path(items(:socks))
+    birthday = users(:alice).birthdays.sole
+
+    patch item_reservation_path(items(:socks)), params: { reservation: { occasion_id: birthday.id } }
+
+    assert_equal birthday, items(:socks).reservations.find_by(user: users(:carol)).occasion
+  end
+
+  test "you can't pick an occasion that isn't for that person" do
+    sign_in_as users(:carol)
+    post item_reservation_path(items(:socks))
+    picnic = groups(:ivies).occasions.create!(name: "Ivies picnic", date: 1.month.from_now.to_date)
+
+    patch item_reservation_path(items(:socks)), params: { reservation: { occasion_id: picnic.id } }
+
+    assert_equal occasions(:christmas), items(:socks).reservations.find_by(user: users(:carol)).occasion
+  end
+
+  test "once the occasion has passed, given things move out of the way for everyone else" do
+    reservation = items(:scarf).reservations.sole
+    reservation.update!(occasion: occasions(:christmas), bought_at: Time.current)
+
+    travel_to occasions(:christmas).date + 1.day do
+      sign_in_as users(:carol)
+      get person_path(users(:alice))
+
+      assert_select "details summary", text: I18n.t("people.show.given", count: 1)
+      assert_select "details li", text: /#{I18n.t("items.item.status.they_gave_for", name: users(:bob).name, occasion: occasions(:christmas).name)}/
+    end
+  end
+
+  test "after an occasion, the person is reminded to tick things off, whatever anyone got them" do
+    travel_to occasions(:christmas).date + 1.day do
+      sign_in_as users(:alice)
+      get person_path(users(:alice))
+
+      assert_select "p", text: I18n.t("people.show.occasion_passed", name: occasions(:christmas).name)
+      assert_no_match(/gave this/, response.body)
+    end
+  end
+
+  test "the person never sees that something was given, even once it has been" do
+    items(:scarf).reservations.sole.update!(occasion: occasions(:christmas), bought_at: Time.current)
+
+    travel_to occasions(:christmas).date + 1.day do
+      sign_in_as users(:alice)
+      get person_path(users(:alice))
+
+      assert_select "h3", text: items(:scarf).name
+      assert_select "details summary", text: /#{I18n.t("people.show.given", count: 1)}/, count: 0
+      assert_no_match(/gave this/, response.body)
+    end
+  end
+
+  test "a made-up occasion gets the same answer as someone else's" do
+    sign_in_as users(:carol)
+    post item_reservation_path(items(:socks))
+    picnic = groups(:ivies).occasions.create!(name: "Ivies picnic", date: 1.month.from_now.to_date)
+
+    patch item_reservation_path(items(:socks)), params: { reservation: { occasion_id: picnic.id } }
+    someone_elses = flash[:alert]
+
+    patch item_reservation_path(items(:socks)), params: { reservation: { occasion_id: Occasion.maximum(:id) + 1000 } }
+
+    assert_redirected_to person_path(users(:alice))
+    assert_equal someone_elses, flash[:alert]
+  end
+
+  test "a gift's occasion can't change once it's been given" do
+    reservation = items(:socks).reserve_for(users(:carol))
+    reservation.buy
+
+    travel_to occasions(:christmas).date + 1.day do
+      later = groups(:hollies).occasions.create!(name: "New Year", date: 1.week.from_now.to_date)
+
+      assert_not reservation.update(occasion: later)
+    end
+  end
+
+  test "you can still mark something bought after leaving the group its occasion belongs to" do
+    groups(:ivies).join(users(:alice))
+    reservation = items(:socks).reserve_for(users(:carol))
+    assert_equal occasions(:christmas), reservation.occasion
+
+    memberships(:carol_in_hollies).destroy!
+
+    assert reservation.reload.buy
   end
 
   test "people outside a group can't see or change its occasions" do
