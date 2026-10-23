@@ -69,14 +69,15 @@ class User < ApplicationRecord
     dated.sort_by { [ it.occasion.date, it.item.owner.name.downcase ] } + undated.sort_by { it.item.owner.name.downcase }
   end
 
-  def next_gifts_to_choose(within: 6.weeks)
+  def gifts_to_choose(within: 6.weeks)
     Occasion.visible_to(self).upcoming.soonest_first.includes(:group, :person, :recipients)
       .lazy
       .select { |occasion| gift_recipients_for(occasion).any? }
       .with_index
       .take_while { |occasion, index| index.zero? || occasion.date <= Date.current + within }
       .map { |occasion, _| [ occasion, people_still_to_choose_for(occasion) ] }
-      .find { |_, people| people.any? }
+      .select { |_, people| people.any? }
+      .to_a
   end
 
   def gift_recipients_for(occasion)

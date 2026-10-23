@@ -78,9 +78,8 @@ en:
 
   groups:
     gifts_to_choose:
-      label: Gifts still to choose
-      birthday_html: You haven't picked anything for %{name} yet.
-      occasion_html: You haven't picked anything yet for %{names} in %{group}.
+      label: Gifts still to choose for %{occasion}
+      still_to_choose_html: You haven't picked anything yet for %{names}.
     shopping_list:
       heading: Your shopping list
       intro: Everything you've said you'll get, across all your groups.

@@ -87,7 +87,7 @@ class OccasionsTest < ActionDispatch::IntegrationTest
 
     get root_path
 
-    assert_select "section[aria-label=?] a", I18n.t("groups.gifts_to_choose.label"), text: users(:carol).name
+    assert_select "section[aria-label=?] a", I18n.t("groups.gifts_to_choose.label", occasion: occasions(:christmas).name), text: users(:carol).name
   end
 
   test "an occasion needs a name and a date" do

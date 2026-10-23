@@ -51,7 +51,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
   end
 
   test "you're reminded about people you haven't picked anything for, never yourself" do
-    occasion, people = users(:bob).next_gifts_to_choose
+    occasion, people = users(:bob).gifts_to_choose.first
 
     assert_equal occasions(:christmas), occasion
     assert_equal [ users(:alice), users(:carol), users(:dan) ].sort_by(&:id), people.sort_by(&:id)
@@ -60,7 +60,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
   test "picking something for someone for the occasion takes them off the reminder" do
     items(:books).reservations.create!(user: users(:bob), occasion: occasions(:christmas))
 
-    _, people = users(:bob).next_gifts_to_choose
+    _, people = users(:bob).gifts_to_choose.first
 
     assert_not_includes people, users(:carol)
   end
@@ -68,7 +68,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
   test "a birthday only reminds you about the birthday person" do
     users(:dan).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
 
-    occasion, people = users(:bob).next_gifts_to_choose
+    occasion, people = users(:bob).gifts_to_choose.first
 
     assert occasion.birthday?
     assert_equal [ users(:dan) ], people
@@ -78,13 +78,13 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     [ items(:socks), items(:books) ].each { it.reservations.create!(user: users(:bob), occasion: occasions(:christmas)) }
     users(:dan).items.create!(name: "Kite").reservations.create!(user: users(:bob), occasion: occasions(:christmas))
 
-    assert_nil users(:bob).next_gifts_to_choose
+    assert_empty users(:bob).gifts_to_choose
   end
 
   test "the next occasion always reminds you, however far away" do
     occasions(:christmas).update!(date: 10.weeks.from_now.to_date)
 
-    occasion, _ = users(:bob).next_gifts_to_choose
+    occasion, _ = users(:bob).gifts_to_choose.first
 
     assert_equal occasions(:christmas), occasion
   end
@@ -94,18 +94,28 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     users(:dan).items.create!(name: "Kite").reservations.create!(user: users(:bob), occasion: occasions(:christmas))
 
     far = groups(:hollies).occasions.create!(name: "Summer party", date: 10.weeks.from_now.to_date)
-    assert_nil users(:bob).next_gifts_to_choose
+    assert_empty users(:bob).gifts_to_choose
 
     far.update!(date: 5.weeks.from_now.to_date)
-    occasion, _ = users(:bob).next_gifts_to_choose
+    occasion, _ = users(:bob).gifts_to_choose.first
     assert_equal far, occasion
+  end
+
+  test "each occasion gets its own reminder" do
+    groups(:ivies).join(users(:bob))
+    ivies_christmas = groups(:ivies).occasions.create!(name: "Christmas", date: occasions(:christmas).date)
+
+    reminded = users(:bob).gifts_to_choose.map(&:first)
+
+    assert_includes reminded, occasions(:christmas)
+    assert_includes reminded, ivies_christmas
   end
 
   test "your own birthday doesn't count as the next occasion" do
     users(:bob).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
     occasions(:christmas).update!(date: 10.weeks.from_now.to_date)
 
-    occasion, _ = users(:bob).next_gifts_to_choose
+    occasion, _ = users(:bob).gifts_to_choose.first
 
     assert_equal occasions(:christmas), occasion
   end
