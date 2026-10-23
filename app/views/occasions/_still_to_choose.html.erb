@@ -1,0 +1,23 @@
+<%# locals: (people:, everyone:) %>
+<div role="group" aria-label="<%= t(".label") %>">
+  <p class="mt-4 mb-2 text-base font-medium text-muted"><%= t(".heading") %></p>
+  <ul class="flex flex-wrap gap-2">
+    <% people.each do |person| %>
+      <li>
+        <%= link_to person_path(person), class: "inline-flex items-center gap-2 rounded-full bg-honey-tint py-1 pr-3.5 pl-1 font-semibold text-honey-ink no-underline hover:bg-honey/30" do %>
+          <%= avatar_tag person, size: "size-7 text-xs ring-0" %>
+          <%= person.name %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <% if everyone.size > 1 %>
+    <% chosen = everyone.size - people.size %>
+    <div class="mt-4 flex items-center gap-3">
+      <progress value="<%= chosen %>" max="<%= everyone.size %>" aria-hidden="true"
+                class="h-2 min-w-0 flex-1 appearance-none overflow-hidden rounded-full bg-line [&::-moz-progress-bar]:bg-honey [&::-webkit-progress-bar]:bg-line [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-honey"></progress>
+      <p class="shrink-0 text-sm text-muted"><%= t(".progress", chosen:, total: everyone.size) %></p>
+    </div>
+  <% end %>
+</div>

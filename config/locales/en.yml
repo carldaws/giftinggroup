@@ -438,7 +438,9 @@ en:
     your_birthday_with_age: Your %{ordinal} birthday
     gifts_to_choose:
       label: Gifts still to choose for %{occasion}
-      still_to_choose: Still to choose for
+    still_to_choose:
+      label: People you haven't picked a gift for yet
+      heading: Still to choose for
       progress: You've picked for %{chosen} of %{total}
 
   activerecord:

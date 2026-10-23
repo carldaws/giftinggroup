@@ -99,12 +99,11 @@ class OccasionsTest < ActionDispatch::IntegrationTest
 
     get group_path(groups(:hollies))
 
-    assert_select "section[aria-label=?]", I18n.t("occasions.gifts_to_choose.label", occasion: occasions(:christmas).name) do
-      assert_select "p", text: groups(:hollies).name, count: 0
+    assert_select "section[aria-labelledby=occasions-heading] [role=group][aria-label=?]", I18n.t("occasions.still_to_choose.label"), count: 1 do
       assert_select "a", text: /#{users(:bob).name}/
       assert_select "a", text: /#{users(:erin).name}/, count: 0
     end
-    assert_select "section[aria-label]", count: 1
+    assert_select "section[aria-label]", count: 0
   end
 
   test "an occasion needs a name and a date" do

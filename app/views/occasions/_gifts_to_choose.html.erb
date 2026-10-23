@@ -1,17 +1,13 @@
-<%# locals: (in_group: nil) %>
-<% gifts_to_choose = Current.user.gifts_to_choose(in_group:) %>
+<% gifts_to_choose = Current.user.gifts_to_choose %>
 
 <% if gifts_to_choose.any? %>
   <div class="mb-10 grid gap-4">
     <% gifts_to_choose.each do |occasion, people, everyone| %>
       <section aria-label="<%= t(".label", occasion: occasion_title(occasion)) %>" class="card border-honey/40 p-5 sm:p-6">
         <div class="flex items-center gap-4">
-          <div class="flex size-12 shrink-0 flex-col items-center justify-center rounded-2xl bg-honey-tint leading-none text-honey-ink">
-            <span class="text-lg font-semibold"><%= occasion.date.day %></span>
-            <span class="text-xs font-semibold uppercase"><%= l(occasion.date, format: "%b") %></span>
-          </div>
+          <%= render "occasions/date_badge", date: occasion.date, tone: "bg-honey-tint text-honey-ink" %>
           <div class="min-w-0 flex-1">
-            <% if in_group.nil? && occasion.custom? %>
+            <% if occasion.custom? %>
               <p class="text-sm font-semibold tracking-wide text-muted uppercase"><%= occasion.group.name %></p>
             <% end %>
             <p class="text-lg leading-snug font-semibold break-words"><%= occasion_title(occasion) %></p>
@@ -19,26 +15,7 @@
           </div>
         </div>
 
-        <p class="mt-4 mb-2 text-base font-medium text-muted"><%= t(".still_to_choose") %></p>
-        <ul class="flex flex-wrap gap-2">
-          <% people.each do |person| %>
-            <li>
-              <%= link_to person_path(person), class: "inline-flex items-center gap-2 rounded-full bg-honey-tint py-1 pr-3.5 pl-1 font-semibold text-honey-ink no-underline hover:bg-honey/30" do %>
-                <%= avatar_tag person, size: "size-7 text-xs ring-0" %>
-                <%= person.name %>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-
-        <% if everyone.size > 1 %>
-          <% chosen = everyone.size - people.size %>
-          <div class="mt-4 flex items-center gap-3">
-            <progress value="<%= chosen %>" max="<%= everyone.size %>" aria-hidden="true"
-                      class="h-2 min-w-0 flex-1 appearance-none overflow-hidden rounded-full bg-line [&::-moz-progress-bar]:bg-honey [&::-webkit-progress-bar]:bg-line [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-honey"></progress>
-            <p class="shrink-0 text-sm text-muted"><%= t(".progress", chosen:, total: everyone.size) %></p>
-          </div>
-        <% end %>
+        <%= render "occasions/still_to_choose", people:, everyone: %>
       </section>
     <% end %>
   </div>
