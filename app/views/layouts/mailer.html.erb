@@ -1,13 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <style>
-      /* Email styles need to be inline */
-    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light">
   </head>
 
-  <body>
-    <%= yield %>
+  <body style="margin:0;padding:0;background:#fbf6f0;color:#2b2622;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fbf6f0">
+      <tr>
+        <td align="center" style="padding:32px 16px">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
+            <tr>
+              <td style="padding:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:600">
+                <%= t("app.name_lead") %><span style="color:#6b6159"><%= t("app.name_tail") %></span>
+              </td>
+            </tr>
+            <tr>
+              <td style="background:#ffffff;border:1px solid #e7ddd2;border-radius:24px;padding:28px">
+                <%= yield %>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

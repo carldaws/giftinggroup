@@ -1,0 +1,20 @@
+<% content_for :title, t(".title") %>
+
+<div class="mx-auto max-w-md">
+  <h1 class="mb-3 text-center text-4xl font-semibold leading-tight sm:text-5xl"><%= t(".heading") %></h1>
+  <p class="mb-8 text-center text-muted"><%= t(".pitch") %></p>
+
+  <div class="card">
+    <%= form_with model: @magic_link, url: session_path do |form| %>
+      <%= form.label :email_address, t(".email_address"), class: "label" %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "email", class: "input",
+            aria: { describedby: "email-hint" } %>
+      <% @magic_link.errors.full_messages_for(:email_address).each do |message| %>
+        <p class="field-errors"><%= message %></p>
+      <% end %>
+      <p id="email-hint" class="hint"><%= t(".email_hint") %></p>
+
+      <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
+    <% end %>
+  </div>
+</div>

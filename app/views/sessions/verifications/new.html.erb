@@ -1,0 +1,24 @@
+<% content_for :title, t(".title") %>
+
+<div class="mx-auto max-w-md">
+  <h1 class="mb-3 text-center text-4xl font-semibold leading-tight"><%= t(".heading") %></h1>
+  <p class="mb-8 text-center text-muted">
+    <%= t(".sent_to_html", email_address: tag.strong(@email_address, class: "font-semibold text-ink")) %>
+  </p>
+
+  <div class="card">
+    <%= form_with url: session_verification_path do |form| %>
+      <%= form.label :code, t(".code"), class: "label" %>
+      <%= form.text_field :code, required: true, autofocus: true, autocomplete: "one-time-code", inputmode: "numeric",
+            pattern: "[0-9 ]*", maxlength: MagicLink::CODE_LENGTH + 2,
+            class: "input text-center font-mono text-3xl tracking-[0.4em]" %>
+      <p class="hint"><%= t(".code_hint", minutes: MagicLink::LIFETIME.in_minutes.to_i) %></p>
+
+      <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
+    <% end %>
+  </div>
+
+  <p class="mt-6 text-center">
+    <%= link_to t(".different_email"), new_session_path, class: "text-muted underline" %>
+  </p>
+</div>

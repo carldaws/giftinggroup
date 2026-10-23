@@ -1,0 +1,13 @@
+<p style="margin:0 0 20px"><%= t(".intro", app_name: t("app.name")) %></p>
+
+<p style="margin:0 0 24px">
+  <a href="<%= magic_link_url(@magic_link.token) %>"
+     style="display:inline-block;background:#b5482a;color:#ffffff;text-decoration:none;font-weight:600;padding:14px 28px;border-radius:999px">
+    <%= t(".button") %>
+  </a>
+</p>
+
+<p style="margin:0 0 8px;color:#6b6159"><%= t(".or_code") %></p>
+<p style="margin:0 0 24px;font-family:Menlo,Consolas,monospace;font-size:32px;letter-spacing:6px;font-weight:600"><%= @magic_link.code %></p>
+
+<p style="margin:0;color:#6b6159;font-size:15px"><%= t(".expiry", minutes: MagicLink::LIFETIME.in_minutes.to_i) %></p>

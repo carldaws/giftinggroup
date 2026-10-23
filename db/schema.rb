@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_121609) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_122534) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -83,6 +83,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_121609) do
     t.index ["owner_id"], name: "index_lists_on_owner_id"
   end
 
+  create_table "magic_links", force: :cascade do |t|
+    t.string "email_address", null: false
+    t.string "code", null: false
+    t.string "token", null: false
+    t.integer "failed_attempts", default: 0, null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_magic_links_on_email_address"
+    t.index ["expires_at"], name: "index_magic_links_on_expires_at"
+    t.index ["token"], name: "index_magic_links_on_token", unique: true
+  end
+
   create_table "memberships", force: :cascade do |t|
     t.bigint "group_id", null: false
     t.bigint "user_id", null: false
@@ -111,6 +124,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_121609) do
     t.datetime "updated_at", null: false
     t.index ["item_id", "user_id"], name: "index_reservations_on_item_id_and_user_id", unique: true
     t.index ["user_id"], name: "index_reservations_on_user_id"
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "user_agent"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
   create_table "shares", force: :cascade do |t|
@@ -143,6 +165,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_121609) do
   add_foreign_key "messages", "users", column: "author_id"
   add_foreign_key "reservations", "items"
   add_foreign_key "reservations", "users"
+  add_foreign_key "sessions", "users"
   add_foreign_key "shares", "groups"
   add_foreign_key "shares", "lists"
 end

@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :sessions, dependent: :destroy
   has_many :memberships, dependent: :destroy
   has_many :groups, through: :memberships
   has_many :lists, foreign_key: :owner_id, inverse_of: :owner, dependent: :destroy

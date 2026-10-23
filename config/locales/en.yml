@@ -1,5 +1,76 @@
 en:
+  app:
+    name: gifting.group
+    name_lead: gifting
+    name_tail: .group
+
+  layouts:
+    application:
+      sign_out: Sign out
+
+  sessions:
+    new:
+      title: Sign in
+      heading: Wishlists for the whole family
+      pitch: Free, no ads, and the surprise stays a surprise.
+      email_address: Your email address
+      email_hint: We'll email you a link and a code. No passwords to remember.
+      submit: Email me a sign-in link
+    create:
+      rate_limited: That's a lot of sign-in emails. Please wait a few minutes and try again.
+    verifications:
+      new:
+        title: Check your email
+        heading: Check your email
+        sent_to_html: We've sent a link and a code to %{email_address}.
+        code: Type the code here
+        code_hint: Or tap the link in the email. Both work for %{minutes} minutes.
+        submit: Sign in
+        different_email: Use a different email address
+      create:
+        invalid: That code didn't work. Check it against the email, or ask for a new one.
+        rate_limited: Too many tries. Please wait a few minutes and ask for a new code.
+
+  magic_links:
+    show:
+      title: Sign in
+      heading: One more tap
+      signing_in_as_html: You're signing in as %{email_address}.
+      submit: Sign me in
+      expired_heading: This link has expired
+      expired: Sign-in links work for %{minutes} minutes and only once. Ask for a new one and you'll be in.
+      start_again: Send me a new link
+
+  registrations:
+    new:
+      title: Welcome
+      heading: Welcome!
+      intro: You're new here, so one quick question.
+      name: What should we call you?
+      name_hint: This is how your family will see you. Most people use their first name, or Mum, Grandad, and so on.
+      submit: Continue
+
+  groups:
+    index:
+      title: Your groups
+      heading: Hello, %{name}
+      empty_heading: You're not in a group yet
+      empty: Soon you'll be able to start a group for your family or join one with a code.
+
+  magic_link_mailer:
+    sign_in:
+      subject: "%{code} is your sign-in code"
+      intro: Tap the button to sign in to %{app_name}.
+      button: Sign me in
+      or_code: Or type this code
+      expiry: The link and code work for %{minutes} minutes. If you didn't ask to sign in, you can ignore this email.
+
   activerecord:
+    attributes:
+      user:
+        name: Name
+      magic_link:
+        email_address: Email address
     errors:
       messages:
         owns_the_list: can't be the person whose list this is

@@ -1,1 +1,126 @@
 @import "tailwindcss";
+
+:root {
+  --paper: #fbf6f0;
+  --card: #ffffff;
+  --line: #e7ddd2;
+  --ink: #2b2622;
+  --muted: #6b6159;
+  --clay: #b5482a;
+  --clay-hover: #9c3d23;
+  --on-clay: #ffffff;
+  --sage: #3f6b4e;
+  --sage-tint: #e3eee5;
+  --sage-ink: #2f5a3d;
+  --honey: #e9a93a;
+  --honey-tint: #fbebc8;
+  --honey-ink: #7a4e08;
+  --plum: #6a3c5c;
+  --plum-tint: #f1e6ee;
+  --danger: #a12c2c;
+  --danger-tint: #fbe9e7;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1e1a17;
+    --card: #28231f;
+    --line: #3b332d;
+    --ink: #f3ece4;
+    --muted: #b8ab9f;
+    --clay: #f08a66;
+    --clay-hover: #f5a184;
+    --on-clay: #1e1a17;
+    --sage: #94c4a3;
+    --sage-tint: #233229;
+    --sage-ink: #b6dcc1;
+    --honey: #f0bc5e;
+    --honey-tint: #3a2e17;
+    --honey-ink: #f6d696;
+    --plum: #d4a9c8;
+    --plum-tint: #352531;
+    --danger: #f19a8f;
+    --danger-tint: #3b2220;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-clay: var(--clay);
+  --color-clay-hover: var(--clay-hover);
+  --color-on-clay: var(--on-clay);
+  --color-sage: var(--sage);
+  --color-sage-tint: var(--sage-tint);
+  --color-sage-ink: var(--sage-ink);
+  --color-honey: var(--honey);
+  --color-honey-tint: var(--honey-tint);
+  --color-honey-ink: var(--honey-ink);
+  --color-plum: var(--plum);
+  --color-plum-tint: var(--plum-tint);
+  --color-danger: var(--danger);
+  --color-danger-tint: var(--danger-tint);
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans text-lg leading-relaxed antialiased;
+  }
+
+  h1, h2, h3 {
+    @apply font-display text-balance;
+    font-variation-settings: "SOFT" 60;
+  }
+
+  a {
+    @apply underline-offset-4;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-clay;
+  }
+}
+
+@layer components {
+  .button {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 font-semibold transition-colors;
+    @apply bg-clay text-on-clay hover:bg-clay-hover;
+  }
+
+  .button--quiet {
+    @apply bg-transparent text-ink ring-1 ring-line hover:bg-card;
+  }
+
+  .input {
+    @apply block min-h-12 w-full rounded-2xl border border-line bg-card px-4 py-3 text-ink placeholder:text-muted;
+    @apply focus:border-clay focus:outline-none focus:ring-2 focus:ring-clay/30;
+  }
+
+  .label {
+    @apply mb-2 block font-semibold;
+  }
+
+  .hint {
+    @apply mt-2 text-base text-muted;
+  }
+
+  .card {
+    @apply rounded-[1.75rem] border border-line bg-card p-6 sm:p-8;
+  }
+
+  .field-errors {
+    @apply mt-2 font-medium text-danger;
+  }
+}

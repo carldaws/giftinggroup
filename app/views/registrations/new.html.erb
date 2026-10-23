@@ -1,0 +1,20 @@
+<% content_for :title, t(".title") %>
+
+<div class="mx-auto max-w-md">
+  <h1 class="mb-3 text-center text-4xl font-semibold leading-tight"><%= t(".heading") %></h1>
+  <p class="mb-8 text-center text-muted"><%= t(".intro") %></p>
+
+  <div class="card">
+    <%= form_with model: @user, url: registration_path do |form| %>
+      <%= form.label :name, t(".name"), class: "label" %>
+      <%= form.text_field :name, required: true, autofocus: true, autocomplete: "given-name", class: "input",
+            aria: { describedby: "name-hint" } %>
+      <% @user.errors.full_messages.each do |message| %>
+        <p class="field-errors"><%= message %></p>
+      <% end %>
+      <p id="name-hint" class="hint"><%= t(".name_hint") %></p>
+
+      <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
+    <% end %>
+  </div>
+</div>
