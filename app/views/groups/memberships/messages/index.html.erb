@@ -25,7 +25,7 @@
         crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ], [ person.name, person_path(person) ] ] %>
 
   <div class="card card--flush">
-    <div class="p-4 sm:p-6">
+    <div class="px-5 py-5 sm:p-6">
       <% if messages.any? %>
         <ol class="grid gap-3">
           <% messages.each do |message| %>

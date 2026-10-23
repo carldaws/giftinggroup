@@ -5,10 +5,10 @@
 
   <div class="card">
     <%= render "groups/occasions/form", occasion: @occasion, url: group_occasion_path(@group, @occasion), submit: t(".submit") %>
-  </div>
 
-  <div class="mt-6">
-    <%= button_to t(".remove"), group_occasion_path(@group, @occasion), method: :delete, class: "button button--danger button--wide",
-          form: { data: { turbo_confirm: t(".remove_confirm", name: @occasion.title) } } %>
+    <div class="mt-6 border-t border-line pt-6">
+      <%= button_to t(".remove"), group_occasion_path(@group, @occasion), method: :delete, class: "button button--danger button--wide",
+            form: { data: { turbo_confirm: t(".remove_confirm", name: @occasion.title) } } %>
+    </div>
   </div>
 </div>

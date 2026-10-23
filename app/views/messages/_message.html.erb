@@ -8,7 +8,7 @@
       <% unless mine %>
         <span class="font-semibold"><%= message.author.name %></span> ·
       <% end %>
-      <time datetime="<%= message.created_at.iso8601 %>" class="opacity-75"><%= sent_ago(message.created_at) %></time>
+      <time datetime="<%= message.created_at.iso8601 %>" class="opacity-90"><%= sent_ago(message.created_at) %></time>
     </p>
     <p class="break-words whitespace-pre-line"><%= message.body %></p>
   </div>

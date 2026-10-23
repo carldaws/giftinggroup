@@ -9,24 +9,22 @@
 <% occasion_choices = yours ? [] : Occasion.for_gifts_to(@person, from: Current.user).upcoming.soonest_first.includes(:person).to_a %>
 <% birthday = (t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) if @person.birthday?) %>
 
-<% sidebar = manages || @person.interests.exists? || @person.sizes.exists? %>
-<div class="<%= class_names("page", "page--narrow": !sidebar) %>">
+<div class="page">
   <%= page_header @person.name, crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: birthday,
-        avatar: avatar_tag(@person, size: :lg, tooltip: false) do %>
-    <% if yours %>
-      <%= link_to t(".your_details"), edit_person_profile_path(@person), class: "button button--secondary" %>
-    <% else %>
+        avatar: avatar_tag(@person, tooltip: false) do %>
+    <% unless yours %>
       <%= render "people/chats", person: @person %>
-      <% if manages %>
-        <%= link_to edit_person_profile_path(@person), class: "icon-button icon-button--outlined group", aria: { label: t(".edit_details") } do %>
-          <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5Z"/></svg>
-          <span class="tooltip" aria-hidden="true"><%= t(".edit_details") %></span>
-        <% end %>
+    <% end %>
+    <% if manages %>
+      <% details = yours ? t(".your_details") : t(".edit_details") %>
+      <%= link_to edit_person_profile_path(@person), class: "icon-button icon-button--outlined group", aria: { label: details } do %>
+        <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5Z"/></svg>
+        <span class="tooltip" aria-hidden="true"><%= details %></span>
       <% end %>
     <% end %>
   <% end %>
 
-  <div class="<%= class_names("columns": sidebar) %>">
+  <div class="columns">
     <section id="list" aria-labelledby="list-heading" class="section min-w-0">
       <%= section_header (yours ? t(".your_list") : t(".their_list", name: @person.name)), id: "list-heading" do %>
         <%= link_to (manages ? t(".add_item") : t(".suggest_item")), new_person_item_path(@person, little: (1 if little_only)), class: "button button--small" %>

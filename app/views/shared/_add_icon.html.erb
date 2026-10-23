@@ -1,3 +1,8 @@
+<%# locals: (icon: :plus) %>
 <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-clay-tint text-clay-ink" aria-hidden="true">
-  <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>
+  <% if icon == :join %>
+    <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4h4a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-4M8 6.5 11.5 10 8 13.5M11.5 10H3"/></svg>
+  <% else %>
+    <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 4v12M4 10h12"/></svg>
+  <% end %>
 </span>

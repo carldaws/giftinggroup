@@ -12,7 +12,7 @@
 
     <div class="card card--flush">
       <ul class="list">
-        <% Holiday.all.each do |holiday| %>
+        <% Holiday.all.sort_by(&:next_date).each do |holiday| %>
           <% group_holiday = celebrated[holiday.key] %>
           <% checked = group_holiday.present? || (welcome && celebrated.empty? && holiday.key == "christmas_day") %>
           <li class="group/holiday">

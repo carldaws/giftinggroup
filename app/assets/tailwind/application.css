@@ -41,9 +41,9 @@
     --paper: #1b1714;
     --card: #2a2420;
     --field: #221d1a;
-    --hover: #352c27;
+    --hover: #3b312b;
     --line: #463c35;
-    --line-strong: #5a4e45;
+    --line-strong: #6e6055;
     --ink: #f3ece4;
     --muted: #b8ab9f;
     --clay: #f08a66;
@@ -109,11 +109,15 @@
   }
 
   body {
-    @apply bg-paper font-sans text-lg leading-relaxed text-ink antialiased;
+    @apply bg-paper font-sans text-lg leading-normal text-ink antialiased;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   h1, h2 {
-    @apply font-display text-balance;
+    @apply font-display text-pretty;
     font-variation-settings: "SOFT" 60;
   }
 
@@ -168,7 +172,7 @@
   }
 
   .section-header {
-    @apply mb-4 flex flex-wrap items-center justify-between gap-3;
+    @apply mb-4 flex min-h-9 flex-wrap items-center justify-between gap-3;
   }
 
   .section-title {
@@ -190,15 +194,6 @@
 
   .card-footer {
     @apply border-t border-line px-5 py-4 sm:px-6;
-  }
-
-  .choice-list {
-    --surface: var(--card);
-    @apply divide-y divide-line overflow-clip rounded-xl border border-line-strong bg-card;
-  }
-
-  .choice-list > * {
-    @apply flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-hover;
   }
 
   .row {
@@ -231,7 +226,7 @@
   }
 
   .button--danger {
-    @apply border-line-strong bg-card text-danger hover:bg-danger-tint;
+    @apply border-danger/50 bg-card text-danger hover:bg-danger-tint;
   }
 
   .button--small {
@@ -299,17 +294,21 @@
   }
 
   .input {
-    @apply block min-h-11 w-full rounded-xl border border-line-strong bg-field px-4 py-2 text-ink placeholder:text-muted;
-    @apply focus:border-clay focus:ring-2 focus:ring-clay/25 focus:outline-none;
-    @apply disabled:opacity-60 read-only:bg-paper read-only:text-muted;
+    @apply block h-11 w-full rounded-xl border border-line-strong bg-field px-4 py-0 text-ink placeholder:text-muted;
+    @apply focus:border-muted focus:ring-4 focus:ring-line focus:outline-none;
+    @apply disabled:opacity-60;
   }
 
   textarea.input {
-    @apply min-h-28 resize-y py-3;
+    @apply h-auto min-h-28 resize-y py-3;
+  }
+
+  .input[readonly] {
+    @apply bg-paper text-muted;
   }
 
   .input[type="file"] {
-    @apply cursor-pointer py-1.5 pl-1.5 text-base text-muted;
+    @apply flex cursor-pointer items-center pl-1.5 text-base text-muted;
     @apply file:mr-3 file:h-8 file:cursor-pointer file:rounded-full file:border file:border-line-strong file:bg-card file:px-4 file:font-semibold file:text-ink hover:file:bg-hover;
   }
 
@@ -353,7 +352,8 @@
   }
 
   .chip--toggle {
-    @apply cursor-pointer transition-colors hover:bg-hover has-checked:border-clay has-checked:bg-clay-tint has-checked:text-clay-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-clay;
+    @apply cursor-pointer text-muted transition-colors hover:bg-hover has-checked:border-clay has-checked:text-ink has-checked:ring-1 has-checked:ring-clay has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-clay;
+    @apply [&:not(:has(:checked))_.group\/avatar]:opacity-50;
   }
 
   .tag {
@@ -385,7 +385,7 @@
   }
 
   .tabs {
-    @apply inline-flex gap-1 rounded-full bg-line/60 p-1;
+    @apply inline-flex gap-1 rounded-full border border-line bg-paper p-1;
   }
 
   .tab {
@@ -393,7 +393,7 @@
   }
 
   .tab[aria-current="page"] {
-    @apply bg-card text-ink shadow-sm;
+    @apply bg-card text-ink shadow-sm ring-1 ring-line;
   }
 
   .menu {

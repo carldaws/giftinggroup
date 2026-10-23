@@ -24,10 +24,10 @@
     <% end %>
 
     <%= render "items/form", item: @item, url: item_path(@item), submit: t(".submit") %>
-  </div>
 
-  <div class="mt-6">
-    <%= button_to t(".remove"), item_path(@item), method: :delete, class: "button button--danger button--wide",
-          form: { data: { turbo_confirm: t(".remove_confirm", name: @item.name) } } %>
+    <div class="mt-6 border-t border-line pt-6">
+      <%= button_to t(".remove"), item_path(@item), method: :delete, class: "button button--danger button--wide",
+            form: { data: { turbo_confirm: t(".remove_confirm", name: @item.name) } } %>
+    </div>
   </div>
 </div>
