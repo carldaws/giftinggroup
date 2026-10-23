@@ -14,11 +14,7 @@
     <% end %>
   </h1>
 
-  <% if suggesting %>
-    <p class="mb-8 rounded-2xl bg-plum-tint px-5 py-4 font-medium text-plum"><%= t(".suggest_intro", name: @person.name) %></p>
-  <% else %>
-    <p class="mb-8 text-muted"><%= t(".intro") %></p>
-  <% end %>
+  <p class="mb-8 text-muted"><%= t(".intro") %></p>
 
   <div class="card">
     <%= render "items/form", item: @item, url: person_items_path(@person), submit: suggesting ? t(".suggest_submit") : t(".submit") %>

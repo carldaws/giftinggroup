@@ -69,6 +69,17 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_select "#sizes form"
   end
 
+  test "surprise ideas don't spell out who can't see them" do
+    sign_in_as users(:carol)
+
+    get new_person_item_path(users(:dan))
+    assert_select "h1", text: I18n.t("people.items.new.suggest_heading", name: users(:dan).name)
+    assert_no_match(/can.t see|won.t see/i, response.body)
+
+    get person_path(users(:alice))
+    assert_no_match(/can.t see|won.t see/i, response.body)
+  end
+
   test "the list can be filtered to little things" do
     sign_in_as users(:carol)
 

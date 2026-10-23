@@ -4,7 +4,7 @@
 <% editable = item.editable_by?(Current.user) %>
 <% receivable = item.receivable_by?(Current.user) %>
 <% extra_photos = item.photos.drop(1) %>
-<% has_body = item.notes.present? || item.url.present? || extra_photos.any? || item.suggestion? %>
+<% has_body = item.notes.present? || item.url.present? || extra_photos.any? %>
 
 <li id="<%= dom_id(item) %>" class="card overflow-hidden p-0 sm:p-0 <%= "border-plum/30" if item.suggestion? %>">
   <div class="flex gap-4 p-5 sm:p-6 <%= "pb-3 sm:pb-4" if has_body %>">
@@ -57,10 +57,6 @@
             <% end %>
           <% end %>
         </div>
-      <% end %>
-
-      <% if item.suggestion? %>
-        <p class="text-sm font-medium text-plum"><%= t(".hidden_from", name: item.owner.name) %></p>
       <% end %>
     </div>
   <% end %>

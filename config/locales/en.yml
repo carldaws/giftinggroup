@@ -172,15 +172,15 @@ en:
       your_list: Your list
       their_list: "%{name}'s list"
       surprise_note: You'll never see who's getting what from your list, so the surprise stays a surprise.
-      list_intro: The things %{name} would love, and ideas from everyone else.
+      list_intro: The things %{name} would love, and surprise ideas from everyone else.
       filter: Show
       everything: Everything
       little_things: Little things
       little_things_intro: Smaller things, for when money's tight or for stocking fillers.
       add_item: Add something
-      suggest_item: Suggest an idea
+      suggest_item: Add a surprise idea
       list_empty_yours: Nothing here yet. Add the things you'd love, big or small.
-      list_empty: "%{name} hasn't added anything yet. You could suggest an idea."
+      list_empty: "%{name} hasn't added anything yet. You could add a surprise idea."
       little_empty_yours: No little things yet. Add something small, for when money's tight.
       little_empty: No little things yet.
       received:
@@ -225,20 +225,19 @@ en:
     items:
       new:
         title: Add something
-        suggest_title: Suggest something for %{name}
+        suggest_title: Add a surprise idea for %{name}
         back: Back to %{name}
         your_list: your page
         their_list: "%{name}"
         heading: Add something
         little_heading: Add a little thing
-        suggest_heading: Suggest something for %{name}
+        suggest_heading: Add a surprise idea for %{name}
         intro: Only the name is needed. A link, photos and notes help people get exactly the right thing.
-        suggest_intro: "%{name} won't see this. Everyone else in your groups will, and they can reserve it."
         submit: Add to the list
-        suggest_submit: Add the suggestion
+        suggest_submit: Add the idea
       create:
         added: "%{name} added."
-        suggested: Suggestion added. It's hidden from them.
+        suggested: Surprise idea added.
 
   items:
     form:
@@ -260,9 +259,8 @@ en:
     item:
       most_wanted: Most wanted
       little: Little thing
-      idea_from: Idea from %{name}
+      idea_from: Surprise idea from %{name}
       you: you
-      hidden_from: "%{name} can't see this idea."
       as_many_as_you_like: As many as you like
       wants:
         one: Wants 1
