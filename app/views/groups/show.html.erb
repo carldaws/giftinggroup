@@ -7,9 +7,7 @@
     <h1 class="text-4xl font-semibold break-words"><%= @group.name %></h1>
     <p class="mt-1 text-muted"><%= t(".people", count: memberships.size) %></p>
   </div>
-  <% if admin %>
-    <%= link_to t(".rename"), edit_group_path(@group), class: "button button--quiet min-h-10 shrink-0 px-4 text-base" %>
-  <% end %>
+  <%= link_to t(".rename"), edit_group_path(@group), class: "button button--quiet min-h-10 shrink-0 px-4 text-base" %>
 </div>
 
 <%= render "groups/coming_up", group: @group %>

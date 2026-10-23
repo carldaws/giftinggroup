@@ -86,13 +86,13 @@ class MembershipTest < ActiveSupport::TestCase
     assert_not memberships(:carol_in_hollies).removable_by?(users(:bob))
   end
 
-  test "admins can make sign-in links for others" do
-    assert memberships(:bob_in_hollies).sign_in_link_creatable_by?(users(:alice))
-    assert_not memberships(:alice_in_hollies).sign_in_link_creatable_by?(users(:alice))
+  test "anyone in the group can make a sign-in link for another adult, but not for themselves" do
+    assert memberships(:carol_in_hollies).sign_in_link_creatable_by?(users(:bob))
+    assert_not memberships(:bob_in_hollies).sign_in_link_creatable_by?(users(:bob))
   end
 
-  test "guardians can make sign-in links for their dependants, but not for other adults" do
+  test "only guardians can make a set-up link for someone they look after" do
     assert memberships(:dan_in_hollies).sign_in_link_creatable_by?(users(:bob))
-    assert_not memberships(:carol_in_hollies).sign_in_link_creatable_by?(users(:bob))
+    assert_not memberships(:dan_in_hollies).sign_in_link_creatable_by?(users(:carol))
   end
 end

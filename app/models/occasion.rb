@@ -132,10 +132,6 @@ class Occasion < ApplicationRecord
     end
   end
 
-  def editable_by?(user, admin: group.present? && group.admin?(user))
-    custom? && (creator == user || admin)
-  end
-
   private
     def people
       if birthday?

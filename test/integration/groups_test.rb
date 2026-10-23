@@ -58,12 +58,13 @@ class GroupsTest < ActionDispatch::IntegrationTest
     assert_equal new_name, groups(:hollies).reload.name
   end
 
-  test "other members can't rename a group" do
+  test "anyone in the group can rename it" do
     sign_in_as users(:bob)
+    new_name = "Bob's group"
 
-    patch group_path(groups(:hollies)), params: { group: { name: "Bob's group" } }
+    patch group_path(groups(:hollies)), params: { group: { name: new_name } }
 
-    assert_response :forbidden
+    assert_equal new_name, groups(:hollies).reload.name
   end
 
   test "joining with a typed code" do
@@ -199,10 +200,21 @@ class GroupsTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "members can't make sign-in links for other adults" do
+  test "anyone in the group can make a sign-in link for another adult" do
     sign_in_as users(:bob)
 
+    get group_path(groups(:hollies))
+    assert_select "a[href=?]", group_membership_sign_in_link_path(groups(:hollies), memberships(:carol_in_hollies))
+
     get group_membership_sign_in_link_path(groups(:hollies), memberships(:carol_in_hollies))
+
+    assert_response :success
+  end
+
+  test "only guardians can make a set-up link for someone they look after" do
+    sign_in_as users(:carol)
+
+    get group_membership_sign_in_link_path(groups(:hollies), memberships(:dan_in_hollies))
 
     assert_response :forbidden
   end

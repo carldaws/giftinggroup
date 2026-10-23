@@ -1,15 +1,12 @@
 <%# locals: (group:) %>
-<% occasions = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :creator, :recipients) %>
-<% admin = group.admin?(Current.user) %>
+<% occasions = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :recipients) %>
 <% gifts_to_choose = Current.user.gifts_to_choose(in_group: group).to_h { |occasion, people, everyone| [ occasion, { people:, everyone: } ] } %>
 
 <section aria-labelledby="occasions-heading" class="mb-10">
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
     <h2 id="occasions-heading" class="text-2xl font-semibold"><%= t(".heading") %></h2>
     <div class="flex flex-wrap gap-2">
-      <% if admin %>
-        <%= link_to t(".holidays"), edit_group_holidays_path(group), class: "button button--quiet button--small no-underline" %>
-      <% end %>
+      <%= link_to t(".holidays"), edit_group_holidays_path(group), class: "button button--quiet button--small no-underline" %>
       <%= link_to t(".add"), new_group_occasion_path(group), class: "button button--quiet button--small no-underline" %>
     </div>
   </div>
@@ -30,7 +27,7 @@
                 <% end %>
               </p>
             </div>
-            <% if occasion.editable_by?(Current.user, admin:) %>
+            <% if occasion.custom? %>
               <%= link_to t(".edit"), edit_group_occasion_path(group, occasion), class: "button button--quiet button--small no-underline",
                     aria: { label: t(".edit_label", name: occasion.title) } %>
             <% end %>

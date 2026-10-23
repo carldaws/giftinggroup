@@ -2,7 +2,6 @@ class Groups::OccasionsController < ApplicationController
   include GroupScoped
 
   before_action :set_occasion, only: %i[ edit update destroy ]
-  before_action :ensure_occasion_editable, only: %i[ edit update destroy ]
 
   def new
     @occasion = @group.occasions.new
@@ -37,10 +36,6 @@ class Groups::OccasionsController < ApplicationController
   private
     def set_occasion
       @occasion = @group.occasions.find(params[:id])
-    end
-
-    def ensure_occasion_editable
-      head :forbidden unless @occasion.editable_by?(Current.user)
     end
 
     def occasion_params

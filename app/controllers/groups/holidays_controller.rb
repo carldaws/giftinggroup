@@ -1,8 +1,6 @@
 class Groups::HolidaysController < ApplicationController
   include GroupScoped
 
-  before_action :ensure_admin
-
   def edit
   end
 

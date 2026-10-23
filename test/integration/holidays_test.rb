@@ -35,14 +35,14 @@ class HolidaysTest < ActionDispatch::IntegrationTest
     assert_empty groups(:hollies).group_holidays.reload
   end
 
-  test "only admins choose a group's holidays" do
+  test "anyone in the group can choose its holidays" do
     sign_in_as users(:bob)
 
     get edit_group_holidays_path(groups(:hollies))
-    assert_response :forbidden
+    assert_response :success
 
     patch group_holidays_path(groups(:hollies)), params: { keys: [ "christmas_day" ] }
-    assert_response :forbidden
+    assert groups(:hollies).celebrates?("christmas_day")
   end
 
   test "holidays show up in coming up, with who they're for when it isn't everyone" do

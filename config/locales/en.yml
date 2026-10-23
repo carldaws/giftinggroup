@@ -107,7 +107,7 @@ en:
     new:
       title: Start a group
       heading: Start a group
-      intro: You'll be its admin, and you can invite people once it's made.
+      intro: You can invite people once it's made.
       submit: Start the group
     edit:
       title: Rename group

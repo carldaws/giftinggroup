@@ -1,6 +1,5 @@
 class GroupsController < ApplicationController
   before_action :set_group, only: %i[ show edit update ]
-  before_action :ensure_admin, only: %i[ edit update ]
 
   def index
     @groups = Current.user.groups.includes(:members).order(:name)
@@ -37,10 +36,6 @@ class GroupsController < ApplicationController
   private
     def set_group
       @group = Current.user.groups.find(params[:id])
-    end
-
-    def ensure_admin
-      head :forbidden unless @group.admin?(Current.user)
     end
 
     def group_params

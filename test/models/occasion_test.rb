@@ -134,18 +134,6 @@ class OccasionTest < ActiveSupport::TestCase
     end
   end
 
-  test "who can change an occasion" do
-    assert occasions(:christmas).editable_by?(users(:bob))
-    assert occasions(:christmas).editable_by?(users(:alice))
-    assert_not occasions(:christmas).editable_by?(users(:carol))
-  end
-
-  test "birthday occasions can't be edited" do
-    users(:carol).update!(birthday_month: 3, birthday_day: 12)
-
-    assert_not users(:carol).birthdays.first.editable_by?(users(:alice))
-  end
-
   test "upcoming and recent" do
     past = groups(:hollies).occasions.create!(name: "Bonfire party", date: 3.days.ago.to_date)
 

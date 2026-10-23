@@ -26,7 +26,7 @@ class Membership < ApplicationRecord
   end
 
   def sign_in_link_creatable_by?(other)
-    other != user && (group.admin?(other) || (dependant? && other.looks_after?(user)))
+    other != user && (!dependant? || other.looks_after?(user))
   end
 
   def mark_read_by(reader)

@@ -124,12 +124,14 @@ class OccasionsTest < ActionDispatch::IntegrationTest
     assert_not Occasion.exists?(occasions(:christmas).id)
   end
 
-  test "other members can't change someone else's occasion" do
+  test "anyone in the group can change an occasion" do
     sign_in_as users(:carol)
+    new_name = "Carol's Christmas"
 
-    patch group_occasion_path(groups(:hollies), occasions(:christmas)), params: { occasion: { name: "Carol's Christmas" } }
+    patch group_occasion_path(groups(:hollies), occasions(:christmas)), params: { occasion: { name: new_name } }
 
-    assert_response :forbidden
+    assert_redirected_to group_path(groups(:hollies))
+    assert_equal new_name, occasions(:christmas).reload.name
   end
 
   test "birthday occasions can't be reached through a group, by anyone" do

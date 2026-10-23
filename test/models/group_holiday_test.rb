@@ -111,6 +111,6 @@ class GroupHolidayTest < ActiveSupport::TestCase
   test "holidays can't be edited like a group's own occasions" do
     groups(:hollies).celebrate([ "christmas_day" ])
 
-    assert_not christmas.occasions.sole.editable_by?(users(:alice))
+    assert_not_includes groups(:hollies).occasions, christmas.occasions.sole
   end
 end
