@@ -80,7 +80,7 @@
           <%= form_with model: mine, url: item_reservation_path(item), method: :patch, data: { controller: "autosubmit" }, class: "flex flex-wrap items-center gap-2 text-base" do |form| %>
             <%= form.label :occasion_id, t(".for"), class: "text-muted" %>
             <%= form.select :occasion_id, occasion_choices.map { [ it.title, it.id ] }, { include_blank: t(".no_occasion") },
-                  class: "input min-h-10 w-auto py-1.5", data: { action: "change->autosubmit#submit" } %>
+                  class: "input select min-h-10 w-auto py-1.5", data: { action: "change->autosubmit#submit" } %>
             <noscript><%= form.submit t(".save_occasion"), class: "button button--quiet button--small" %></noscript>
           <% end %>
         <% end %>

@@ -24,13 +24,13 @@
 
       <fieldset class="mt-6" aria-describedby="birthday-hint">
         <legend class="label"><%= t(".birthday") %></legend>
-        <div class="grid grid-cols-[6.5rem_1fr_6rem] gap-2">
+        <div class="grid grid-cols-[6.5rem_1fr] gap-2 sm:grid-cols-[6.5rem_1fr_7rem]">
           <%= form.label :birthday_day, t(".day"), class: "sr-only" %>
-          <%= form.select :birthday_day, 1..31, { include_blank: t(".day") }, class: "input" %>
+          <%= form.select :birthday_day, 1..31, { include_blank: t(".day") }, class: "input select" %>
           <%= form.label :birthday_month, t(".month"), class: "sr-only" %>
-          <%= form.select :birthday_month, (1..12).map { [ l(Date.new(2000, it, 1), format: "%B"), it ] }, { include_blank: t(".month") }, class: "input" %>
+          <%= form.select :birthday_month, (1..12).map { [ l(Date.new(2000, it, 1), format: "%B"), it ] }, { include_blank: t(".month") }, class: "input select" %>
           <%= form.label :birth_year, t(".year"), class: "sr-only" %>
-          <%= form.number_field :birth_year, placeholder: t(".year"), min: 1900, max: Date.current.year, inputmode: "numeric", class: "input" %>
+          <%= form.number_field :birth_year, placeholder: t(".year"), min: 1900, max: Date.current.year, inputmode: "numeric", class: "input col-span-2 sm:col-span-1" %>
         </div>
         <p id="birthday-hint" class="hint"><%= yours ? t(".birthday_hint_yours") : t(".birthday_hint", name: person.name) %></p>
       </fieldset>

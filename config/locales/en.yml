@@ -251,9 +251,9 @@ en:
     interests:
       heading: Things %{name} loves
       heading_yours: Things I love
-      intro: Interests, favourite things, what's being read at the moment. It all helps with ideas.
+      intro: Interests, favourite things, what's being read at the moment, from crime novels to dark chocolate. It all helps with ideas.
       add_label: Add something you love
-      placeholder: For example, David Bowie or dark chocolate
+      placeholder: For example, gardening
       add: Add
       remove: Remove %{name}
     sizes:
