@@ -9,31 +9,28 @@
 <% occasion_choices = yours ? [] : Occasion.for_gifts_to(@person, from: Current.user).upcoming.soonest_first.includes(:person).to_a %>
 <% content_for :title, @person.name %>
 
-<div class="mt-6 flex items-center gap-4 <%= manages ? "mb-4" : "mb-10" %>">
-  <%= avatar_tag @person, size: "size-16 text-xl" %>
-  <div class="min-w-0">
-    <h1 class="text-4xl font-semibold break-words"><%= @person.name %></h1>
-    <% if yours %>
-      <p class="text-muted"><%= t(".this_is_you") %></p>
-    <% elsif manages %>
-      <p class="text-muted"><%= t(".you_look_after", name: @person.name) %></p>
-    <% end %>
-    <% if @person.birthday? %>
-      <p class="text-muted"><%= t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) %></p>
+<div class="mt-6 mb-10">
+  <div class="flex items-start justify-between gap-4">
+    <%= avatar_tag @person, size: "size-16 text-xl" %>
+    <% if manages %>
+      <% details = yours ? t(".your_details") : t(".their_details", name: @person.name) %>
+      <%= link_to details, edit_person_profile_path(@person), class: "button button--quiet min-h-10 shrink-0 px-4 text-base no-underline" %>
     <% end %>
   </div>
+  <h1 class="mt-4 text-4xl font-semibold break-words"><%= @person.name %></h1>
+  <% if manages && !yours %>
+    <p class="text-muted"><%= t(".you_look_after", name: @person.name) %></p>
+  <% end %>
+  <% if @person.birthday? %>
+    <p class="text-muted"><%= t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) %></p>
+  <% end %>
 </div>
-
-<% if manages %>
-  <%= render "people/details", person: @person, yours: %>
-<% end %>
 
 <%= render "people/interests", person: @person, yours:, manages: %>
 <%= render "people/sizes", person: @person, manages: %>
 
 <section id="list" aria-labelledby="list-heading" class="mb-10">
-  <h2 id="list-heading" class="text-2xl font-semibold"><%= yours ? t(".your_list") : t(".their_list", name: @person.name) %></h2>
-  <p class="mb-5 text-muted"><%= yours ? t(".surprise_note") : t(".list_intro", name: @person.name) %></p>
+  <h2 id="list-heading" class="mb-5 text-2xl font-semibold"><%= yours ? t(".your_list") : t(".their_list", name: @person.name) %></h2>
 
   <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
     <nav aria-label="<%= t(".filter") %>" class="inline-flex gap-1 rounded-full bg-line/50 p-1">
@@ -84,8 +81,12 @@
     <% end %>
   <% elsif little_only %>
     <p class="card text-muted"><%= manages ? t(".little_empty_yours") : t(".little_empty", name: @person.name) %></p>
+  <% elsif yours %>
+    <p class="card text-muted"><%= t(".list_empty_yours") %></p>
+  <% elsif manages %>
+    <p class="card text-muted"><%= t(".list_empty_looked_after", name: @person.name) %></p>
   <% else %>
-    <p class="card text-muted"><%= manages ? t(".list_empty_yours") : t(".list_empty", name: @person.name) %></p>
+    <p class="card text-muted"><%= t(".list_empty", name: @person.name) %></p>
   <% end %>
 </section>
 

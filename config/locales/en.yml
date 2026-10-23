@@ -233,13 +233,12 @@ en:
 
   people:
     show:
-      this_is_you: This is you. Everyone in your groups can see this page.
+      your_details: Your details
+      their_details: "%{name}'s details"
       you_look_after: You look after %{name}, so you can add and change things.
       birthday: Birthday %{date} · %{countdown}
       your_list: Your list
       their_list: "%{name}'s list"
-      surprise_note: You'll never see who's getting what from your list, so the surprise stays a surprise.
-      list_intro: The things %{name} would love, and surprise ideas from everyone else.
       filter: Show
       everything: Everything
       little_things: Little things
@@ -247,6 +246,7 @@ en:
       add_item: Add something
       suggest_item: Add a surprise idea
       list_empty_yours: Nothing here yet. Add the things you'd love, big or small.
+      list_empty_looked_after: Nothing here yet. Add the things %{name} would love, big or small.
       list_empty: "%{name} hasn't added anything yet. You could add a surprise idea."
       little_empty_yours: No little things yet. Add something small, for when money's tight.
       little_empty: No little things yet.
@@ -260,41 +260,41 @@ en:
       birthday_passed: Your birthday has just been. Tick off anything you received, so it comes off your list.
       occasion_passed: "%{name} has just been. Tick off anything you received, so it comes off your list."
       occasion_passed_for: "%{occasion} has just been. Tick off anything %{name} received, so it comes off their list."
-    details:
-      your_details: Your details
-      their_details: "%{name}'s details"
-      name: Name
-      colour: Colour
-      birthday: Birthday
-      day: Day
-      month: Month
-      year: Year
-      birthday_hint_yours: Optional, and the year is too. Without a birthday, your groups won't get a birthday occasion for you.
-      birthday_hint: Optional, and the year is too. Without a birthday, %{name}'s groups won't get a birthday occasion for them.
-      tones:
-        clay: Terracotta
-        sage: Green
-        honey: Yellow
-        plum: Purple
-      email_address: Email address
-      password_challenge: Current password
-      password_challenge_hint: Only needed if you're changing your email address.
-      submit: Save
-      sign_out: Sign out
     profiles:
+      edit:
+        back_yours: Back to your page
+        back: Back to %{name}'s page
+        your_details: Your details
+        their_details: "%{name}'s details"
+        name: Name
+        colour: Colour
+        birthday: Birthday
+        day: Day
+        month: Month
+        year: Year
+        birthday_hint_yours: Optional, and the year is too. Without a birthday, your groups won't get a birthday occasion for you.
+        birthday_hint: Optional, and the year is too. Without a birthday, %{name}'s groups won't get a birthday occasion for them.
+        tones:
+          clay: Terracotta
+          sage: Green
+          honey: Yellow
+          plum: Purple
+        email_address: Email address
+        password_challenge: Current password
+        password_challenge_hint: Only needed if you're changing your email address.
+        submit: Save
+        sign_out: Sign out
       update:
         saved: Saved.
     interests:
       heading: Things %{name} loves
       heading_yours: Things I love
-      intro: Interests, favourite things, what's being read at the moment, from crime novels to dark chocolate. It all helps with ideas.
       add_label: Add something you love
       placeholder: For example, gardening
       add: Add
       remove: Remove %{name}
     sizes:
       heading: Sizes
-      intro: So nobody has to ask.
       label: What
       label_placeholder: For example, shoes
       value: Size

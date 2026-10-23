@@ -3,11 +3,14 @@ class People::ProfilesController < ApplicationController
 
   before_action :ensure_looks_after_person
 
+  def edit
+  end
+
   def update
     if @person.update(profile_params)
       redirect_to person_path(@person), notice: t(".saved")
     else
-      redirect_to person_path(@person, details: "open", anchor: "details"), alert: @person.errors.full_messages.to_sentence
+      render :edit, status: :unprocessable_content
     end
   end
 

@@ -1,10 +1,7 @@
 <%# locals: (person:, yours:, manages:) %>
 <% if manages || person.interests.any? %>
   <section id="things-i-love" aria-labelledby="interests-heading" class="mb-10">
-    <h2 id="interests-heading" class="text-2xl font-semibold <%= "mb-4" unless manages %>"><%= yours ? t(".heading_yours") : t(".heading", name: person.name) %></h2>
-    <% if manages %>
-      <p class="mb-4 text-muted"><%= t(".intro") %></p>
-    <% end %>
+    <h2 id="interests-heading" class="mb-4 text-2xl font-semibold"><%= yours ? t(".heading_yours") : t(".heading", name: person.name) %></h2>
 
     <% if person.interests.any? %>
       <ul class="flex flex-wrap gap-2">

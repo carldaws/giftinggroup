@@ -17,18 +17,20 @@ class ProfilesTest < ActionDispatch::IntegrationTest
     new_email_address = "ally@example.com"
 
     patch person_profile_path(users(:alice)), params: { user: { email_address: new_email_address, password_challenge: "wrong" } }
+    assert_response :unprocessable_content
     assert_not_equal new_email_address, users(:alice).reload.email_address
 
     patch person_profile_path(users(:alice)), params: { user: { email_address: new_email_address, password_challenge: FixturePasswords::PASSWORD } }
     assert_equal new_email_address, users(:alice).reload.email_address
   end
 
-  test "a failed save reopens your details" do
+  test "a failed save shows your details again with what went wrong" do
     sign_in_as users(:alice)
 
     patch person_profile_path(users(:alice)), params: { user: { name: "" } }
 
-    assert_redirected_to person_path(users(:alice), details: "open", anchor: "details")
+    assert_response :unprocessable_content
+    assert_select "form[action=?]", person_profile_path(users(:alice))
   end
 
   test "you can't remove your email address" do
@@ -49,6 +51,25 @@ class ProfilesTest < ActionDispatch::IntegrationTest
     assert_not users(:dan).signs_in?
   end
 
+  test "the details button only shows for people you look after" do
+    sign_in_as users(:alice)
+
+    get person_path(users(:dan))
+    assert_select "a[href=?]", edit_person_profile_path(users(:dan))
+
+    get person_path(users(:carol))
+    assert_select "a[href=?]", edit_person_profile_path(users(:carol)), count: 0
+  end
+
+  test "guardians can open the details of someone they look after, and nobody else can" do
+    sign_in_as users(:alice)
+    get edit_person_profile_path(users(:dan))
+    assert_response :success
+
+    get edit_person_profile_path(users(:carol))
+    assert_response :forbidden
+  end
+
   test "nobody else can change your details" do
     sign_in_as users(:bob)
 
@@ -60,8 +81,8 @@ class ProfilesTest < ActionDispatch::IntegrationTest
   test "signing out from your details" do
     sign_in_as users(:alice)
 
-    get person_path(users(:alice))
-    assert_select "#details form[action=?]", session_path
+    get edit_person_profile_path(users(:alice))
+    assert_select "form[action=?]", session_path
 
     delete session_path
     assert_redirected_to new_session_path

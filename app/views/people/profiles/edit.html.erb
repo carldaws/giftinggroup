@@ -1,11 +1,17 @@
-<%# locals: (person:, yours:) %>
-<details id="details" class="mb-10" <%= "open" if params[:details] == "open" %>>
-  <summary class="button button--quiet min-h-10 cursor-pointer list-none px-4 text-base [&::-webkit-details-marker]:hidden">
-    <%= yours ? t(".your_details") : t(".their_details", name: person.name) %>
-  </summary>
+<% yours = @person == Current.user %>
+<% name = @person.name_was %>
+<% heading = yours ? t(".your_details") : t(".their_details", name:) %>
+<% back = yours ? t(".back_yours") : t(".back", name:) %>
+<% content_for :title, heading %>
 
-  <div class="card mt-4">
-    <%= form_with model: person, url: person_profile_path(person), method: :patch do |form| %>
+<div class="mt-6">
+  <%= link_to back, person_path(@person), class: "text-muted underline" %>
+  <h1 class="mt-4 mb-8 text-4xl font-semibold"><%= heading %></h1>
+
+  <div class="card">
+    <%= form_with model: @person, url: person_profile_path(@person), method: :patch do |form| %>
+      <%= render "shared/errors", record: @person %>
+
       <%= form.label :name, t(".name"), class: "label" %>
       <%= form.text_field :name, required: true, autocomplete: (yours ? "given-name" : "off"), class: "input" %>
 
@@ -14,8 +20,8 @@
         <div class="flex flex-wrap gap-3">
           <% User::AVATAR_TONES.each_with_index do |tone, index| %>
             <label class="cursor-pointer rounded-full p-1 ring-2 ring-transparent has-[:checked]:ring-clay has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-clay">
-              <%= form.radio_button :avatar_tone, index, checked: person.avatar_tone_name == tone, class: "sr-only" %>
-              <%= avatar_tag person, tone: %>
+              <%= form.radio_button :avatar_tone, index, checked: @person.avatar_tone_name == tone, class: "sr-only" %>
+              <%= avatar_tag @person, tone: %>
               <span class="sr-only"><%= t(".tones.#{tone}") %></span>
             </label>
           <% end %>
@@ -32,7 +38,7 @@
           <%= form.label :birth_year, t(".year"), class: "sr-only" %>
           <%= form.number_field :birth_year, placeholder: t(".year"), min: 1900, max: Date.current.year, inputmode: "numeric", class: "input col-span-2 sm:col-span-1" %>
         </div>
-        <p id="birthday-hint" class="hint"><%= yours ? t(".birthday_hint_yours") : t(".birthday_hint", name: person.name) %></p>
+        <p id="birthday-hint" class="hint"><%= yours ? t(".birthday_hint_yours") : t(".birthday_hint", name:) %></p>
       </fieldset>
 
       <% if yours %>
@@ -57,4 +63,4 @@
       </div>
     <% end %>
   </div>
-</details>
+</div>

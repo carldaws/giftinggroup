@@ -53,7 +53,6 @@ class ListsTest < ActionDispatch::IntegrationTest
     get person_path(users(:alice))
     assert_select "#things-i-love"
     assert_select "#sizes"
-    assert_select "#things-i-love p", text: I18n.t("people.interests.intro"), count: 0
 
     get person_path(users(:bob))
     assert_select "#things-i-love", count: 0
