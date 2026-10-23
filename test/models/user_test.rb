@@ -42,6 +42,19 @@ class UserTest < ActiveSupport::TestCase
     assert_not User.new(name: "Another Alice", email_address: users(:alice).email_address).valid?
   end
 
+  test "everyone has an avatar colour, chosen or not" do
+    assert_includes User::AVATAR_TONES, users(:bob).avatar_tone_name
+
+    users(:bob).avatar_tone = 3
+    assert_equal User::AVATAR_TONES[3], users(:bob).avatar_tone_name
+  end
+
+  test "avatar colours come from the set" do
+    users(:bob).avatar_tone = User::AVATAR_TONES.size
+
+    assert_not users(:bob).valid?
+  end
+
   test "people look after themselves and their dependants" do
     assert users(:alice).looks_after?(users(:alice))
     assert users(:alice).looks_after?(users(:dan))

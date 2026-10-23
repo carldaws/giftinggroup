@@ -6,7 +6,7 @@
 <% little_things = items.wanted.little.where(suggested_by: nil) %>
 <% content_for :title, @person.name %>
 
-<div class="mt-6 mb-10 flex items-center gap-4">
+<div class="mt-6 flex items-center gap-4 <%= manages ? "mb-4" : "mb-10" %>">
   <%= avatar_tag @person, size: "size-16 text-xl" %>
   <div class="min-w-0">
     <h1 class="text-4xl font-semibold break-words"><%= @person.name %></h1>
@@ -17,6 +17,10 @@
     <% end %>
   </div>
 </div>
+
+<% if manages %>
+  <%= render "people/details", person: @person, yours: %>
+<% end %>
 
 <%= render "people/interests", person: @person, yours:, manages: %>
 <%= render "people/sizes", person: @person, manages: %>
@@ -90,8 +94,4 @@
       </ul>
     </details>
   <% end %>
-<% end %>
-
-<% if yours %>
-  <%= button_to t(".sign_out"), session_path, method: :delete, class: "button button--quiet w-full sm:w-auto" %>
 <% end %>

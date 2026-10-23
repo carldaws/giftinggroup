@@ -1,0 +1,47 @@
+<%# locals: (person:, yours:) %>
+<details id="details" class="mb-10" <%= "open" if params[:details] == "open" %>>
+  <summary class="button button--quiet min-h-10 cursor-pointer list-none px-4 text-base [&::-webkit-details-marker]:hidden">
+    <%= yours ? t(".your_details") : t(".their_details", name: person.name) %>
+  </summary>
+
+  <div class="card mt-4">
+    <%= form_with model: person, url: person_profile_path(person), method: :patch do |form| %>
+      <%= form.label :name, t(".name"), class: "label" %>
+      <%= form.text_field :name, required: true, autocomplete: (yours ? "given-name" : "off"), class: "input" %>
+
+      <fieldset class="mt-6">
+        <legend class="label"><%= t(".colour") %></legend>
+        <div class="flex flex-wrap gap-3">
+          <% User::AVATAR_TONES.each_with_index do |tone, index| %>
+            <label class="cursor-pointer rounded-full p-1 ring-2 ring-transparent has-[:checked]:ring-clay has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-clay">
+              <%= form.radio_button :avatar_tone, index, checked: person.avatar_tone_name == tone, class: "sr-only" %>
+              <%= avatar_tag person, tone: %>
+              <span class="sr-only"><%= t(".tones.#{tone}") %></span>
+            </label>
+          <% end %>
+        </div>
+      </fieldset>
+
+      <% if yours %>
+        <div class="mt-6">
+          <%= form.label :email_address, t(".email_address"), class: "label" %>
+          <%= form.email_field :email_address, required: true, autocomplete: "username", class: "input" %>
+        </div>
+
+        <div class="mt-6">
+          <%= form.label :password_challenge, t(".password_challenge"), class: "label" %>
+          <%= form.password_field :password_challenge, autocomplete: "current-password", class: "input", aria: { describedby: "password-challenge-hint" } %>
+          <p id="password-challenge-hint" class="hint"><%= t(".password_challenge_hint") %></p>
+        </div>
+      <% end %>
+
+      <%= form.submit t(".submit"), class: "button mt-6 w-full sm:w-auto" %>
+    <% end %>
+
+    <% if yours %>
+      <div class="mt-8 border-t border-line pt-6">
+        <%= button_to t(".sign_out"), session_path, method: :delete, class: "button button--quiet w-full sm:w-auto" %>
+      </div>
+    <% end %>
+  </div>
+</details>

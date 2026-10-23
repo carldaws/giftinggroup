@@ -169,7 +169,7 @@ en:
     show:
       this_is_you: This is you. Everyone in your groups can see this page.
       you_look_after: You look after %{name}, so you can add and change things.
-      surprise_note: You will never see who is getting what from your list, so the surprise stays a surprise.
+      surprise_note: You'll never see who's getting what from your list, so the surprise stays a surprise.
       wishlist_intro: The things %{name} would love.
       wishlist: Wishlist
       wishlist_empty_yours: Nothing here yet. Add the things you'd love, big or small.
@@ -185,7 +185,24 @@ en:
         one: 1 thing received
         other: "%{count} things received"
       put_back: Put back
+    details:
+      your_details: Your details
+      their_details: "%{name}'s details"
+      name: Name
+      colour: Colour
+      tones:
+        clay: Terracotta
+        sage: Green
+        honey: Yellow
+        plum: Purple
+      email_address: Email address
+      password_challenge: Current password
+      password_challenge_hint: Only needed if you're changing your email address.
+      submit: Save
       sign_out: Sign out
+    profiles:
+      update:
+        saved: Saved.
     interests:
       heading: Things %{name} loves
       heading_yours: Things I love
@@ -312,6 +329,8 @@ en:
         name: Name
         email_address: Email address
         password: Password
+        password_challenge: Current password
+        avatar_tone: Colour
     errors:
       messages:
         owns_the_list: can't be the person whose list this is

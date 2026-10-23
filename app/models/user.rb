@@ -20,18 +20,23 @@ class User < ApplicationRecord
     password_salt.to_s.last(10)
   end
 
+  AVATAR_TONES = %w[ clay sage honey plum ].freeze
+
   normalizes :email_address, with: ->(email_address) { email_address.strip.downcase.presence }
 
   validates :name, presence: true
+  validates :avatar_tone, inclusion: { in: 0...AVATAR_TONES.size }, allow_nil: true
   validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_nil: true
   validates :email_address, presence: true, on: %i[ registration credentials ]
+  validates :email_address, presence: true, if: -> { email_address_in_database.present? }
+  validate :email_change_is_confirmed_with_password, if: -> { will_save_change_to_email_address? && email_address_in_database.present? }
   validates :password, presence: true, if: :signs_in?, unless: :password_digest?
   validates :password, presence: true, on: :credentials
   validates :password, length: { minimum: 8 }, allow_nil: true
   validate :password_fits_bcrypt, if: -> { password.present? }
 
-  after_save :stop_being_looked_after, if: -> { saved_change_to_email_address? && signs_in? }
-  after_save :sign_out_everywhere, if: :saved_change_to_password_digest?
+  after_update :stop_being_looked_after, if: -> { saved_change_to_email_address? && signs_in? }
+  after_update :sign_out_everywhere, if: :saved_change_to_password_digest?
 
   scope :visible_to, ->(user) do
     where(id: Membership.where(group_id: user.memberships.select(:group_id)).select(:user_id))
@@ -45,6 +50,10 @@ class User < ApplicationRecord
 
   def signs_in?
     email_address.present?
+  end
+
+  def avatar_tone_name
+    AVATAR_TONES[avatar_tone || id % AVATAR_TONES.size]
   end
 
   def looks_after?(user)
@@ -71,6 +80,10 @@ class User < ApplicationRecord
 
     def sign_out_everywhere
       sessions.destroy_all
+    end
+
+    def email_change_is_confirmed_with_password
+      errors.add(:password_challenge, :invalid) unless BCrypt::Password.new(password_digest_in_database).is_password?(password_challenge.to_s)
     end
 
     def password_fits_bcrypt
