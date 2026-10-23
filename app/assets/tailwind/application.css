@@ -116,6 +116,15 @@
     @apply min-h-11 gap-1.5 px-4 text-base;
   }
 
+  .round-button {
+    @apply relative inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-clay-tint text-clay-ink no-underline hover:bg-clay-tint-hover;
+  }
+
+  .tooltip {
+    @apply pointer-events-none absolute top-full right-0 z-10 mt-2 rounded-lg bg-ink px-2.5 py-1 text-sm font-medium whitespace-nowrap text-paper opacity-0 transition-opacity;
+    @apply group-hover:opacity-100 group-focus-visible:opacity-100;
+  }
+
   .tab {
     @apply inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-semibold text-muted no-underline hover:text-ink;
   }

@@ -15,9 +15,18 @@
       <%= avatar_tag @person %>
       <h1 class="min-w-0 text-4xl font-semibold break-words"><%= @person.name %></h1>
     </div>
-    <% if manages %>
-      <% details = yours ? t(".your_details") : t(".edit_details") %>
-      <%= link_to details, edit_person_profile_path(@person), class: "button button--quiet min-h-10 shrink-0 px-4 text-base no-underline" %>
+    <% if yours %>
+      <%= link_to t(".your_details"), edit_person_profile_path(@person), class: "button button--quiet min-h-10 shrink-0 px-4 text-base no-underline" %>
+    <% else %>
+      <div class="flex shrink-0 items-center gap-2">
+        <%= render "people/chats", person: @person %>
+        <% if manages %>
+          <%= link_to edit_person_profile_path(@person), class: "round-button group", aria: { label: t(".edit_details") } do %>
+            <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5Z"/></svg>
+            <span class="tooltip" aria-hidden="true"><%= t(".edit_details") %></span>
+          <% end %>
+        <% end %>
+      </div>
     <% end %>
   </div>
   <% if @person.birthday? %>
@@ -25,7 +34,6 @@
   <% end %>
 </div>
 
-<%= render "people/chats", person: @person %>
 <%= render "people/interests", person: @person, yours:, manages: %>
 <%= render "people/sizes", person: @person, manages: %>
 

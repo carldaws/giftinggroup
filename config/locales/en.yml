@@ -302,10 +302,10 @@ en:
       add: Add
       remove: Remove %{name}
     chats:
-      about: Chat about %{name}
-      new:
-        one: 1 new
-        other: "%{count} new"
+      label:
+        zero: Chat about %{name} in %{group}
+        one: Chat about %{name} in %{group}, 1 new message
+        other: Chat about %{name} in %{group}, %{count} new messages
     sizes:
       heading: Sizes
       label: What
