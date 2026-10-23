@@ -1,5 +1,5 @@
 <%# locals: (group:) %>
-<% occasions = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :creator) %>
+<% occasions = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :creator, :recipients) %>
 <% admin = group.admin?(Current.user) %>
 
 <section aria-labelledby="occasions-heading" class="mb-10">
@@ -18,7 +18,12 @@
           </div>
           <div class="min-w-0 flex-1">
             <p class="font-semibold break-words"><%= occasion_title(occasion) %></p>
-            <p class="text-base text-muted"><%= countdown_to(occasion.date) %></p>
+            <p class="text-base text-muted">
+              <%= countdown_to(occasion.date) %>
+              <% unless occasion.birthday? || occasion.for_everyone? %>
+                · <%= t(".for_people", names: occasion.recipients.map { it == Current.user ? t("groups.membership.you_lowercase") : it.name }.to_sentence) %>
+              <% end %>
+            </p>
           </div>
           <% if occasion.editable_by?(Current.user, admin:) %>
             <%= link_to t(".edit"), edit_group_occasion_path(group, occasion), class: "button button--quiet button--small no-underline",

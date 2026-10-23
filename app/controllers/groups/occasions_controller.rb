@@ -44,6 +44,6 @@ class Groups::OccasionsController < ApplicationController
     end
 
     def occasion_params
-      params.expect(occasion: [ :name, :date ])
+      params.expect(occasion: [ :name, :date, member_ids: [] ])
     end
 end

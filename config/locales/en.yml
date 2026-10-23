@@ -77,6 +77,10 @@ en:
       rate_limited: Too many tries. Please wait a few minutes and try again.
 
   groups:
+    gifts_to_choose:
+      label: Gifts still to choose
+      birthday_html: You haven't picked anything for %{name} yet.
+      occasion_html: You haven't picked anything yet for %{names} in %{group}.
     shopping_list:
       heading: Your shopping list
       intro: Everything you've said you'll get, across all your groups.
@@ -180,6 +184,7 @@ en:
       update:
         regenerated: Done. The old link and code no longer work.
     coming_up:
+      for_people: For %{names}
       heading: Coming up
       add: Add an occasion
       edit: Edit
@@ -190,11 +195,15 @@ en:
         name: What's the occasion?
         name_placeholder: For example, Christmas 2026
         date: Date
+        people: Who it's for
+        people_hint: Everyone ticked means everyone, including people who join later. Untick people for an anniversary, a graduation or a housewarming.
+        select_all: Select everyone
+        clear_all: Clear all
       new:
         title: Add an occasion
         back: Back to %{group}
         heading: Add an occasion
-        intro: Something everyone in the group is giving for. Birthdays are added for you.
+        intro: Christmas, a graduation, an anniversary, a housewarming. Birthdays are added for you.
         submit: Add the occasion
       edit:
         title: Edit occasion
@@ -430,6 +439,7 @@ en:
         not_for_this_person: isn't one for gifts to this person
         already_given: can't change once the gift has been given
         in_the_future: can't be in the future
+        for_no_one: Pick at least one person it's for.
         too_many: can't be more than %{count}
         not_an_image: must be a photo (JPEG, PNG, WebP, GIF or HEIC)
         too_large: must be smaller than %{size}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_145743) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_152513) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -104,6 +104,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_145743) do
     t.index ["subject_id"], name: "index_messages_on_subject_id"
   end
 
+  create_table "occasion_recipients", force: :cascade do |t|
+    t.bigint "occasion_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["occasion_id", "user_id"], name: "index_occasion_recipients_on_occasion_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_occasion_recipients_on_user_id"
+  end
+
   create_table "occasions", force: :cascade do |t|
     t.bigint "group_id"
     t.bigint "person_id"
@@ -112,6 +121,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_145743) do
     t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "for_everyone", default: true, null: false
     t.index ["creator_id"], name: "index_occasions_on_creator_id"
     t.index ["group_id", "date"], name: "index_occasions_on_group_id_and_date"
     t.index ["person_id", "date"], name: "index_occasions_on_person_id_and_date", unique: true, where: "(person_id IS NOT NULL)"
@@ -173,6 +183,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_145743) do
   add_foreign_key "memberships", "users"
   add_foreign_key "messages", "memberships", column: "subject_id"
   add_foreign_key "messages", "users", column: "author_id"
+  add_foreign_key "occasion_recipients", "occasions"
+  add_foreign_key "occasion_recipients", "users"
   add_foreign_key "occasions", "groups"
   add_foreign_key "occasions", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "occasions", "users", column: "person_id"

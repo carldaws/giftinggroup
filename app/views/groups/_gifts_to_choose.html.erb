@@ -1,0 +1,17 @@
+<% occasion, people = Current.user.next_gifts_to_choose %>
+
+<% if occasion.present? %>
+  <section aria-label="<%= t(".label") %>" class="mb-10 rounded-[1.75rem] bg-honey-tint p-5 text-honey-ink sm:p-6">
+    <p class="text-lg font-semibold">
+      <%= occasion_title(occasion) %> · <%= countdown_to(occasion.date).downcase_first %>
+    </p>
+    <p class="mt-1">
+      <% names = to_sentence(people.map { link_to it.name, person_path(it), class: "font-semibold underline" }) %>
+      <% if occasion.birthday? %>
+        <%= t(".birthday_html", name: names) %>
+      <% else %>
+        <%= t(".occasion_html", names:, group: occasion.group.name) %>
+      <% end %>
+    </p>
+  </section>
+<% end %>

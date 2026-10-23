@@ -69,6 +69,21 @@ class User < ApplicationRecord
     dated.sort_by { [ it.occasion.date, it.item.owner.name.downcase ] } + undated.sort_by { it.item.owner.name.downcase }
   end
 
+  def next_gifts_to_choose(within: 6.weeks)
+    Occasion.visible_to(self).upcoming.where(date: ..(Date.current + within)).soonest_first.includes(:group, :person, :recipients)
+      .lazy
+      .map { |occasion| [ occasion, people_still_to_choose_for(occasion) ] }
+      .find { |_, people| people.any? }
+  end
+
+  def people_still_to_choose_for(occasion)
+    occasion.people.select { it != self && it.visible_to?(self) && !chosen_a_gift_for?(it, occasion) }
+  end
+
+  def chosen_a_gift_for?(person, occasion)
+    reservations.where(occasion:).joins(:item).exists?(items: { owner_id: person.id })
+  end
+
   def build_item(attributes, by:)
     items.build(attributes).tap do |item|
       item.suggested_by = by unless by.looks_after?(self)

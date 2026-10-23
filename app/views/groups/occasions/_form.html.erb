@@ -10,5 +10,31 @@
     <%= form.date_field :date, required: true, class: "input" %>
   </div>
 
+  <fieldset class="mt-6" data-controller="checkboxes"
+            data-checkboxes-select-all-value="<%= t("groups.occasions.form.select_all") %>"
+            data-checkboxes-clear-all-value="<%= t("groups.occasions.form.clear_all") %>">
+    <legend class="label"><%= t("groups.occasions.form.people") %></legend>
+    <p class="hint mt-0 mb-3"><%= t("groups.occasions.form.people_hint") %></p>
+    <button type="button" class="button button--quiet button--small mb-3" data-checkboxes-target="toggle" data-action="checkboxes#toggleAll">
+      <%= t("groups.occasions.form.clear_all") %>
+    </button>
+
+    <%= hidden_field_tag "occasion[member_ids][]", "" %>
+    <% chosen = occasion.chosen_member_ids %>
+    <ul class="card divide-y divide-line p-0 sm:p-0">
+      <% occasion.group.memberships.by_name.includes(:user).each do |membership| %>
+        <li>
+          <label class="flex cursor-pointer items-center gap-4 px-5 py-3 sm:px-6">
+            <%= check_box_tag "occasion[member_ids][]", membership.user_id, chosen.include?(membership.user_id),
+                  id: "occasion_member_#{membership.user_id}", class: "size-5 accent-clay",
+                  data: { checkboxes_target: "checkbox", action: "checkboxes#update" } %>
+            <%= avatar_tag membership.user, size: "size-9 text-sm" %>
+            <span class="font-medium"><%= membership.user.name %></span>
+          </label>
+        </li>
+      <% end %>
+    </ul>
+  </fieldset>
+
   <%= form.submit submit, class: "button mt-6 w-full sm:w-auto" %>
 <% end %>

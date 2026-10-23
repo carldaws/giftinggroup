@@ -6,12 +6,18 @@ class Occasion < ApplicationRecord
   belongs_to :creator, class_name: "User", optional: true
 
   has_many :reservations, dependent: :nullify
+  has_many :occasion_recipients, dependent: :delete_all
+  has_many :recipients, through: :occasion_recipients, source: :user
 
   normalizes :name, with: ->(name) { name.squish.presence }
 
   validates :date, presence: true
   validates :name, presence: true, length: { maximum: 80 }, unless: :birthday?
   validates :group, presence: true, unless: :birthday?
+  validate :is_for_someone, unless: -> { birthday? || for_everyone? }
+
+  before_validation :apply_member_ids, if: -> { !@member_ids.nil? && group.present? }
+  after_save :save_recipients, if: -> { !@chosen_recipient_ids.nil? }
 
   scope :upcoming, -> { where(date: Date.current..) }
   scope :recent, -> { where(date: (Date.current - RECENT)...Date.current) }
@@ -23,7 +29,9 @@ class Occasion < ApplicationRecord
       .or(where(group_id: nil, person_id: User.visible_to(user).select(:id)))
   end
   scope :applying_to, ->(person) do
-    where(person_id: person.id).or(where(person_id: nil, group_id: person.memberships.select(:group_id)))
+    where(person_id: person.id)
+      .or(where(person_id: nil, for_everyone: true, group_id: person.memberships.select(:group_id)))
+      .or(where(person_id: nil, for_everyone: false, id: OccasionRecipient.where(user: person).select(:occasion_id)))
   end
   scope :for_gifts_to, ->(person, from:) { visible_to(from).applying_to(person) }
   scope :for_group, ->(group) do
@@ -60,6 +68,24 @@ class Occasion < ApplicationRecord
     date < Date.current
   end
 
+  def people
+    if birthday?
+      [ person ]
+    elsif for_everyone?
+      group.members
+    else
+      recipients
+    end
+  end
+
+  def member_ids=(ids)
+    @member_ids = Array(ids).compact_blank.map(&:to_i)
+  end
+
+  def chosen_member_ids
+    @member_ids || (for_everyone? ? group.member_ids : recipient_ids)
+  end
+
   def title
     if !birthday?
       name
@@ -73,4 +99,20 @@ class Occasion < ApplicationRecord
   def editable_by?(user, admin: group.present? && group.admin?(user))
     !birthday? && (creator == user || admin)
   end
+
+  private
+    def apply_member_ids
+      chosen = group.member_ids & @member_ids
+      self.for_everyone = chosen.sort == group.member_ids.sort
+      @chosen_recipient_ids = for_everyone? ? [] : chosen
+    end
+
+    def is_for_someone
+      errors.add(:base, :for_no_one) if (@chosen_recipient_ids || recipient_ids).empty?
+    end
+
+    def save_recipients
+      self.recipient_ids = @chosen_recipient_ids
+      @chosen_recipient_ids = nil
+    end
 end

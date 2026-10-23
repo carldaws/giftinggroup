@@ -1,0 +1,89 @@
+require "test_helper"
+
+class OccasionPeopleTest < ActiveSupport::TestCase
+  test "an occasion for particular people only applies to them" do
+    anniversary = groups(:hollies).occasions.new(name: "Anniversary", date: 1.month.from_now.to_date, member_ids: [ users(:alice).id, users(:bob).id ])
+    assert anniversary.save
+
+    assert_not anniversary.for_everyone?
+    assert_includes Occasion.applying_to(users(:alice)), anniversary
+    assert_not_includes Occasion.applying_to(users(:carol)), anniversary
+  end
+
+  test "ticking everyone makes it for everyone, including people who join later" do
+    party = groups(:hollies).occasions.new(name: "Party", date: 1.month.from_now.to_date, member_ids: groups(:hollies).member_ids)
+    assert party.save
+    assert party.for_everyone?
+
+    groups(:hollies).join(users(:erin))
+
+    assert_includes Occasion.applying_to(users(:erin)), party
+  end
+
+  test "an occasion has to be for someone" do
+    party = groups(:hollies).occasions.new(name: "Party", date: 1.month.from_now.to_date, member_ids: [ "" ])
+
+    assert_not party.save
+    assert party.errors.of_kind?(:base, :for_no_one)
+  end
+
+  test "only people in the group can be chosen" do
+    party = groups(:hollies).occasions.new(name: "Party", date: 1.month.from_now.to_date, member_ids: [ users(:alice).id, users(:erin).id ])
+    assert party.save
+
+    assert_equal [ users(:alice) ], party.recipients
+  end
+
+  test "a failed change leaves who it's for alone" do
+    anniversary = groups(:hollies).occasions.new(name: "Anniversary", date: 1.month.from_now.to_date, member_ids: [ users(:alice).id, users(:bob).id ])
+    assert anniversary.save
+
+    assert_not anniversary.update(name: "", member_ids: [ users(:carol).id ])
+
+    assert_equal [ users(:alice), users(:bob) ].sort_by(&:id), anniversary.reload.recipients.sort_by(&:id)
+  end
+
+  test "reserving for someone doesn't pick an occasion that isn't for them" do
+    anniversary = groups(:hollies).occasions.new(name: "Anniversary", date: 1.week.from_now.to_date, member_ids: [ users(:bob).id ])
+    assert anniversary.save
+
+    assert_equal occasions(:christmas), items(:books).reserve_for(users(:bob)).occasion
+  end
+
+  test "you're reminded about people you haven't picked anything for, never yourself" do
+    occasion, people = users(:bob).next_gifts_to_choose
+
+    assert_equal occasions(:christmas), occasion
+    assert_equal [ users(:alice), users(:carol), users(:dan) ].sort_by(&:id), people.sort_by(&:id)
+  end
+
+  test "picking something for someone for the occasion takes them off the reminder" do
+    items(:books).reservations.create!(user: users(:bob), occasion: occasions(:christmas))
+
+    _, people = users(:bob).next_gifts_to_choose
+
+    assert_not_includes people, users(:carol)
+  end
+
+  test "a birthday only reminds you about the birthday person" do
+    users(:dan).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
+
+    occasion, people = users(:bob).next_gifts_to_choose
+
+    assert occasion.birthday?
+    assert_equal [ users(:dan) ], people
+  end
+
+  test "once everyone's covered, the reminder moves on" do
+    [ items(:socks), items(:books) ].each { it.reservations.create!(user: users(:bob), occasion: occasions(:christmas)) }
+    users(:dan).items.create!(name: "Kite").reservations.create!(user: users(:bob), occasion: occasions(:christmas))
+
+    assert_nil users(:bob).next_gifts_to_choose
+  end
+
+  test "occasions more than six weeks away don't remind you yet" do
+    occasions(:christmas).update!(date: 10.weeks.from_now.to_date)
+
+    assert_nil users(:bob).next_gifts_to_choose
+  end
+end

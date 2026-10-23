@@ -64,6 +64,32 @@ class OccasionsTest < ActionDispatch::IntegrationTest
     assert_equal users(:carol), groups(:hollies).occasions.order(:created_at).last.creator
   end
 
+  test "adding an occasion for particular people" do
+    sign_in_as users(:carol)
+
+    post group_occasions_path(groups(:hollies)),
+      params: { occasion: { name: "Anniversary", date: 2.months.from_now.to_date, member_ids: [ "", users(:alice).id, users(:bob).id ] } }
+
+    anniversary = groups(:hollies).occasions.order(:created_at).last
+    assert_equal [ users(:alice), users(:bob) ].sort_by(&:id), anniversary.recipients.sort_by(&:id)
+  end
+
+  test "the occasion form starts with everyone ticked" do
+    sign_in_as users(:carol)
+
+    get new_group_occasion_path(groups(:hollies))
+
+    assert_select "input[type=checkbox][name='occasion[member_ids][]'][checked]", count: groups(:hollies).members.count
+  end
+
+  test "your home page reminds you who you haven't picked anything for" do
+    sign_in_as users(:bob)
+
+    get root_path
+
+    assert_select "section[aria-label=?] a", I18n.t("groups.gifts_to_choose.label"), text: users(:carol).name
+  end
+
   test "an occasion needs a name and a date" do
     sign_in_as users(:carol)
 
