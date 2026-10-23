@@ -1,24 +1,28 @@
-# README
+# gifting.group
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Free wishlists for groups of people who buy each other presents.
 
-Things you may want to cover:
+Start a group and invite people. Everyone shares their wishlists, and anyone can mark an item as reserved or bought, but never on their own list. Each person also has a chat that everyone in the group can see except them, for agreeing who gets what.
 
-* Ruby version
+No ads, no affiliate links, no email. It's a work in progress.
 
-* System dependencies
+## Running it locally
 
-* Configuration
+You need Ruby (see `.ruby-version`), PostgreSQL and libvips.
 
-* Database creation
+```sh
+bin/setup
+```
 
-* Database initialization
+That installs gems, prepares the database and starts the app at http://localhost:2512.
 
-* How to run the test suite
+## Tests
 
-* Services (job queues, cache servers, search engines, etc.)
+```sh
+bin/rails test
+bin/rubocop
+```
 
-* Deployment instructions
+## Licence
 
-* ...
+[AGPL-3.0](LICENSE). If you run a modified copy as a website, you have to publish your changes under the same licence.
