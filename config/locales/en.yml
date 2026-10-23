@@ -158,6 +158,7 @@ en:
           back: Back to %{name}'s page
           new: New
           empty: No messages yet.
+          readers: "In this chat: %{names}"
           label: Message about %{name}
           placeholder: Write a message
           send: Send

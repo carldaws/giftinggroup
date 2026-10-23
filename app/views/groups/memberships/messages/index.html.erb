@@ -11,7 +11,18 @@
     <%= avatar_tag person %>
     <div class="min-w-0">
       <h1 class="text-4xl font-semibold break-words"><%= t(".heading", name: person.name) %></h1>
-      <p class="text-muted"><%= @group.name %></p>
+      <% readers = @membership.chat_readers.to_a %>
+      <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted">
+        <span><%= @group.name %></span>
+        <span class="flex -space-x-2" role="img" aria-label="<%= t(".readers", names: readers.map(&:name).to_sentence) %>">
+          <% readers.first(8).each do |reader| %>
+            <span title="<%= reader.name %>"><%= avatar_tag reader, size: "size-7 text-xs" %></span>
+          <% end %>
+          <% if readers.size > 8 %>
+            <span class="inline-flex size-7 items-center justify-center rounded-full bg-line text-xs font-semibold text-ink ring-2 ring-card">+<%= readers.size - 8 %></span>
+          <% end %>
+        </span>
+      </div>
     </div>
   </div>
 </div>

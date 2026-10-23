@@ -96,3 +96,10 @@ class MembershipTest < ActiveSupport::TestCase
     assert_not memberships(:dan_in_hollies).sign_in_link_creatable_by?(users(:carol))
   end
 end
+
+class MembershipChatReadersTest < ActiveSupport::TestCase
+  test "a chat is read by everyone else in the group with their own account" do
+    assert_equal [ users(:bob), users(:carol) ], memberships(:alice_in_hollies).chat_readers.to_a
+    assert_equal [ users(:alice), users(:bob), users(:carol) ], memberships(:dan_in_hollies).chat_readers.to_a
+  end
+end
