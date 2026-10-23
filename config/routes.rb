@@ -6,7 +6,10 @@ Rails.application.routes.draw do
   resources :groups, only: %i[ index new create show edit update ] do
     scope module: :groups do
       resources :memberships, only: %i[ update destroy ] do
-        resource :sign_in_link, only: :show, module: :memberships
+        scope module: :memberships do
+          resource :sign_in_link, only: :show
+          resources :messages, only: %i[ index create ]
+        end
       end
       resources :dependants, only: %i[ new create ]
       resources :occasions, only: %i[ new create edit update destroy ]

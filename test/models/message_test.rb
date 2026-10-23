@@ -38,3 +38,39 @@ class MessageTest < ActiveSupport::TestCase
     assert message.errors.of_kind?(:author, :not_in_the_group)
   end
 end
+
+class MessageUnreadTest < ActiveSupport::TestCase
+  test "messages count as unread until you open the chat" do
+    assert_includes Message.unread_by(users(:carol)), messages(:about_alice)
+
+    memberships(:alice_in_hollies).mark_read_by(users(:carol))
+
+    assert_not_includes Message.unread_by(users(:carol)), messages(:about_alice)
+  end
+
+  test "new messages after you've read the chat are unread" do
+    memberships(:alice_in_hollies).mark_read_by(users(:carol))
+
+    travel 1.minute do
+      newer = memberships(:alice_in_hollies).messages_about.create!(author: users(:bob), body: "Gloves too?")
+
+      assert_includes Message.unread_by(users(:carol)), newer
+    end
+  end
+
+  test "your own messages are never unread" do
+    assert_not_includes Message.unread_by(users(:bob)), messages(:about_alice)
+  end
+
+  test "nobody has unread messages about themselves" do
+    assert_not_includes Message.unread_by(users(:alice)), messages(:about_alice)
+  end
+
+  test "line breaks are stored the way the browser counts them" do
+    lines = %w[ Scarf Gloves ]
+
+    message = memberships(:alice_in_hollies).messages_about.create!(author: users(:bob), body: lines.join("\r\n"))
+
+    assert_equal lines.join("\n"), message.body
+  end
+end

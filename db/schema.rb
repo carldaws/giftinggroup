@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_155604) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_164844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -149,6 +149,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_155604) do
     t.check_constraint "num_nonnulls(group_id, person_id, holiday_key) = 1", name: "occasions_belong_to_one_thing"
   end
 
+  create_table "readings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "membership_id", null: false
+    t.datetime "read_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["membership_id"], name: "index_readings_on_membership_id"
+    t.index ["user_id", "membership_id"], name: "index_readings_on_user_id_and_membership_id", unique: true
+  end
+
   create_table "reservations", force: :cascade do |t|
     t.bigint "item_id", null: false
     t.bigint "user_id", null: false
@@ -211,6 +221,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_155604) do
   add_foreign_key "occasions", "groups"
   add_foreign_key "occasions", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "occasions", "users", column: "person_id"
+  add_foreign_key "readings", "memberships"
+  add_foreign_key "readings", "users"
   add_foreign_key "reservations", "items"
   add_foreign_key "reservations", "occasions", on_delete: :nullify
   add_foreign_key "reservations", "users"

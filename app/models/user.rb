@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :interests, dependent: :destroy
   has_many :sizes, dependent: :destroy
   has_many :reservations, dependent: :destroy
+  has_many :readings, dependent: :destroy
   has_many :suggestions, class_name: "Item", foreign_key: :suggested_by_id, inverse_of: :suggested_by, dependent: :destroy
   has_many :authored_messages, class_name: "Message", foreign_key: :author_id, inverse_of: :author, dependent: :destroy
 

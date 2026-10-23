@@ -3,8 +3,10 @@ class Membership < ApplicationRecord
   belongs_to :user
 
   has_many :messages_about, class_name: "Message", foreign_key: :subject_id, inverse_of: :subject, dependent: :destroy
+  has_many :readings, dependent: :destroy
 
   scope :admins, -> { where(admin: true) }
+  scope :with_chat_visible_to, ->(user) { where(group_id: user.memberships.select(:group_id)).where.not(user:) }
   scope :by_name, -> { joins(:user).order(Arel.sql("lower(users.name)")) }
 
   validate :dependants_are_not_admins
@@ -25,6 +27,10 @@ class Membership < ApplicationRecord
 
   def sign_in_link_creatable_by?(other)
     other != user && (group.admin?(other) || (dependant? && other.looks_after?(user)))
+  end
+
+  def mark_read_by(reader)
+    Reading.upsert({ user_id: reader.id, membership_id: id, read_at: Time.current }, unique_by: %i[ user_id membership_id ])
   end
 
   private

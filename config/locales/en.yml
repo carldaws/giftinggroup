@@ -79,7 +79,6 @@ en:
   groups:
     shopping_list:
       heading: Your shopping list
-      intro: Everything you've said you'll get, across all your groups.
       for: For %{name}
       for_occasion: For %{name} · %{occasion}, %{countdown}
       their_occasion: "%{occasion}, %{countdown}"
@@ -152,6 +151,16 @@ en:
       destroy:
         left: You've left %{group}.
         removed: "%{name} has been removed."
+      messages:
+        index:
+          title: Chat about %{name}
+          heading: Chat about %{name}
+          back: Back to %{name}'s page
+          new: New
+          empty: No messages yet.
+          label: Message about %{name}
+          placeholder: Write a message
+          send: Send
       sign_in_links:
         show:
           title: Sign-in link
@@ -292,6 +301,11 @@ en:
       placeholder: For example, gardening
       add: Add
       remove: Remove %{name}
+    chats:
+      about: Chat about %{name}
+      new:
+        one: 1 new
+        other: "%{count} new"
     sizes:
       heading: Sizes
       label: What
@@ -441,6 +455,16 @@ en:
       label: People you haven't picked a gift for yet
       heading: Still to choose for
       progress: You've picked for %{chosen} of %{total}
+
+  messages:
+    just_now: Just now
+    ago: "%{time} ago"
+    unread:
+      heading: New messages
+      about: Chat about %{name}
+      count:
+        one: 1 new message
+        other: "%{count} new messages"
 
   activerecord:
     attributes:
