@@ -1,0 +1,34 @@
+<%# locals: (person:, manages:) %>
+<section id="sizes" aria-labelledby="sizes-heading" class="mb-10">
+  <h2 id="sizes-heading" class="text-2xl font-semibold"><%= t(".heading") %></h2>
+  <p class="mb-4 text-muted"><%= manages ? t(".intro_manager") : t(".intro", name: person.name) %></p>
+
+  <% if person.sizes.any? %>
+    <dl class="card divide-y divide-line p-0 sm:p-0">
+      <% person.sizes.order(:created_at).each do |size| %>
+        <div class="flex items-center gap-4 px-5 py-3 sm:px-6">
+          <dt class="flex-1 text-muted"><%= size.label %></dt>
+          <dd class="font-semibold"><%= size.value %></dd>
+          <% if manages %>
+            <%= button_to person_size_path(person, size), method: :delete, class: "inline-flex size-9 items-center justify-center rounded-full text-muted hover:bg-paper hover:text-ink",
+                  aria: { label: t(".remove", label: size.label) } do %>
+              <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </dl>
+  <% elsif !manages %>
+    <p class="text-muted"><%= t(".empty", name: person.name) %></p>
+  <% end %>
+
+  <% if manages %>
+    <%= form_with model: Size.new, url: person_sizes_path(person), class: "mt-4 grid gap-2 sm:grid-cols-[1fr_1fr_auto]" do |form| %>
+      <%= form.label :label, t(".label"), class: "sr-only" %>
+      <%= form.text_field :label, required: true, placeholder: t(".label_placeholder"), class: "input" %>
+      <%= form.label :value, t(".value"), class: "sr-only" %>
+      <%= form.text_field :value, required: true, placeholder: t(".value_placeholder"), class: "input" %>
+      <%= form.submit t(".add"), class: "button" %>
+    <% end %>
+  <% end %>
+</section>

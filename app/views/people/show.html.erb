@@ -1,0 +1,100 @@
+<% yours = @person == Current.user %>
+<% manages = Current.user.looks_after?(@person) %>
+<% items = @person.items.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).most_wanted_first %>
+<% reservations = yours ? {} : Reservation.visible_to(Current.user).where(item: items).includes(:user).group_by(&:item_id) %>
+<% wishlist = items.wanted.not_little.where(suggested_by: nil) %>
+<% little_things = items.wanted.little.where(suggested_by: nil) %>
+<% content_for :title, yours ? t(".your_title") : t(".title", name: @person.name) %>
+
+<div class="mt-6 mb-8 flex items-center gap-4">
+  <%= avatar_tag @person, size: "size-16 text-xl" %>
+  <div class="min-w-0">
+    <h1 class="text-4xl font-semibold break-words"><%= yours ? t(".your_heading") : t(".heading", name: @person.name) %></h1>
+    <% if manages && !yours %>
+      <p class="text-muted"><%= t(".you_look_after", name: @person.name) %></p>
+    <% end %>
+  </div>
+</div>
+
+<% if yours %>
+  <p class="card mb-8 bg-sage-tint text-sage-ink"><%= t(".surprise_note") %></p>
+<% end %>
+
+<section aria-labelledby="wishlist-heading" class="mb-10">
+  <div class="mb-4 flex items-end justify-between gap-4">
+    <h2 id="wishlist-heading" class="text-2xl font-semibold"><%= t(".wishlist") %></h2>
+  </div>
+
+  <% if wishlist.any? %>
+    <ul class="grid gap-4">
+      <% wishlist.each do |item| %>
+        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, manages: %>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="card text-muted"><%= manages ? t(".wishlist_empty_yours") : t(".wishlist_empty", name: @person.name) %></p>
+  <% end %>
+
+  <%= link_to (manages ? t(".add_item") : t(".suggest_item", name: @person.name)), new_person_item_path(@person), class: "button mt-4 w-full sm:w-auto" %>
+</section>
+
+<section aria-labelledby="little-heading" class="mb-10">
+  <h2 id="little-heading" class="text-2xl font-semibold"><%= t(".little_things") %></h2>
+  <p class="mb-4 text-muted"><%= t(".little_things_intro") %></p>
+
+  <% if little_things.any? %>
+    <ul class="grid gap-4">
+      <% little_things.each do |item| %>
+        <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, manages: %>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% if manages %>
+    <%= link_to t(".add_little_thing"), new_person_item_path(@person, little: 1), class: "button button--quiet mt-4 w-full sm:w-auto" %>
+  <% end %>
+</section>
+
+<% unless yours %>
+  <% suggestions = items.wanted.suggestions %>
+  <section aria-labelledby="suggestions-heading" class="mb-10 rounded-[1.75rem] bg-plum-tint p-5 sm:p-6">
+    <h2 id="suggestions-heading" class="text-2xl font-semibold text-plum"><%= t(".suggestions") %></h2>
+    <p class="mb-4 text-plum"><%= t(".suggestions_intro", name: @person.name) %></p>
+
+    <% if suggestions.any? %>
+      <ul class="grid gap-4">
+        <% suggestions.each do |item| %>
+          <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), yours:, manages: %>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% unless manages %>
+      <%= link_to t(".suggest_item", name: @person.name), new_person_item_path(@person), class: "button button--quiet mt-4 w-full sm:w-auto" %>
+    <% end %>
+  </section>
+<% end %>
+
+<%= render "people/interests", person: @person, manages: %>
+<%= render "people/sizes", person: @person, manages: %>
+
+<% if manages %>
+  <% received = items.received.where(suggested_by: nil) %>
+  <% if received.any? %>
+    <details class="mb-10">
+      <summary class="cursor-pointer text-lg font-semibold"><%= t(".received", count: received.size) %></summary>
+      <ul class="mt-4 grid gap-2">
+        <% received.each do |item| %>
+          <li class="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card px-5 py-3">
+            <span class="text-muted line-through"><%= item.name %></span>
+            <%= button_to t(".put_back"), item_receipt_path(item), method: :delete, class: "font-semibold text-clay underline" %>
+          </li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+<% end %>
+
+<% if yours %>
+  <%= button_to t(".sign_out"), session_path, method: :delete, class: "button button--quiet w-full sm:w-auto" %>
+<% end %>

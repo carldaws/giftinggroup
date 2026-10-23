@@ -25,11 +25,11 @@ class MembershipTest < ActiveSupport::TestCase
     assert_not Group.exists?(group.id)
   end
 
-  test "leaving stops your lists being shared with the group" do
-    share = shares(:carol_birthday_with_hollies)
+  test "after you leave, the group no longer sees your list, but your other groups still do" do
     memberships(:carol_in_hollies).destroy!
 
-    assert_not Share.exists?(share.id)
+    assert_not_includes Item.visible_to(users(:bob)), items(:books)
+    assert_includes Item.visible_to(users(:erin)), items(:books)
   end
 
   test "deleting a group isn't blocked by its last admin" do
@@ -73,7 +73,7 @@ class MembershipTest < ActiveSupport::TestCase
 
   test "leaving keeps reservations on lists you can still see" do
     reservation = reservations(:carol_bought_lego)
-    lists(:dan_christmas).shares.create!(group: groups(:ivies))
+    groups(:ivies).join(users(:dan))
     memberships(:carol_in_hollies).destroy!
 
     assert Reservation.exists?(reservation.id)

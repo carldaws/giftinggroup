@@ -2,7 +2,9 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :memberships, dependent: :destroy
   has_many :groups, through: :memberships
-  has_many :lists, foreign_key: :owner_id, inverse_of: :owner, dependent: :destroy
+  has_many :items, foreign_key: :owner_id, inverse_of: :owner, dependent: :destroy
+  has_many :interests, dependent: :destroy
+  has_many :sizes, dependent: :destroy
   has_many :reservations, dependent: :destroy
   has_many :suggestions, class_name: "Item", foreign_key: :suggested_by_id, inverse_of: :suggested_by, dependent: :destroy
   has_many :authored_messages, class_name: "Message", foreign_key: :author_id, inverse_of: :author, dependent: :destroy
@@ -31,12 +33,28 @@ class User < ApplicationRecord
   after_save :stop_being_looked_after, if: -> { saved_change_to_email_address? && signs_in? }
   after_save :sign_out_everywhere, if: :saved_change_to_password_digest?
 
+  scope :visible_to, ->(user) do
+    where(id: Membership.where(group_id: user.memberships.select(:group_id)).select(:user_id))
+      .or(where(id: user.id))
+      .or(where(id: user.guardianships.select(:dependant_id)))
+  end
+
+  def visible_to?(user)
+    User.visible_to(user).exists?(id)
+  end
+
   def signs_in?
     email_address.present?
   end
 
   def looks_after?(user)
-    user == self || dependants.include?(user)
+    user == self || dependants.to_a.include?(user)
+  end
+
+  def build_item(attributes, by:)
+    items.build(attributes).tap do |item|
+      item.suggested_by = by unless by.looks_after?(self)
+    end
   end
 
   def start_group(attributes)

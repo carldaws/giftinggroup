@@ -1,19 +1,29 @@
 scarf:
-  list: alice_christmas
+  owner: alice
   name: Green wool scarf
   notes: The darker green, not the mint one
 
 scarf_gloves_suggestion:
-  list: alice_christmas
+  owner: alice
   suggested_by: bob
   name: Matching gloves
 
+socks:
+  owner: alice
+  name: Fun socks
+  little: true
+  quantity: 3
+
 lego:
-  list: dan_christmas
+  owner: dan
   name: Lego fire station
   most_wanted: true
 
 books:
-  list: carol_birthday
+  owner: carol
   name: Any Terry Pratchett paperback
   quantity:
+
+tent:
+  owner: erin
+  name: Two-person tent

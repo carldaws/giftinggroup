@@ -1,0 +1,32 @@
+<% content_for :title, t(".title") %>
+
+<div class="mt-6">
+  <%= link_to t(".back"), person_path(@item.owner), class: "text-muted underline" %>
+  <h1 class="mt-4 mb-8 text-4xl font-semibold"><%= t(".heading") %></h1>
+
+  <% saved_photos = @item.photos_attachments.includes(:blob).order(:id) %>
+  <% if saved_photos.any? %>
+    <div class="card mb-6">
+      <h2 class="label"><%= t(".photos") %></h2>
+      <ul class="flex flex-wrap gap-3">
+        <% saved_photos.each do |photo| %>
+          <li class="relative">
+            <%= image_tag photo.variant(:thumb), alt: "", class: "size-24 rounded-2xl object-cover" %>
+            <%= button_to item_photo_path(@item, photo), method: :delete,
+                  class: "absolute -top-2 -right-2 inline-flex size-9 items-center justify-center rounded-full border border-line bg-card text-muted shadow hover:text-danger",
+                  aria: { label: t(".remove_photo") }, form: { data: { turbo_confirm: t(".remove_photo_confirm") } } do %>
+              <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <%= render "items/form", item: @item, url: item_path(@item), submit: t(".submit") %>
+  </div>
+
+  <%= button_to t(".remove"), item_path(@item), method: :delete, class: "mt-6 font-semibold text-danger underline",
+        form: { data: { turbo_confirm: t(".remove_confirm", name: @item.name) } } %>
+</div>

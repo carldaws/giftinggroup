@@ -6,7 +6,7 @@ en:
 
   layouts:
     application:
-      sign_out: Sign out
+      your_list: Your list
     footer:
       credit_html: Free and %{open_source}, by %{author}. %{greeting}
       open_source: open source
@@ -165,6 +165,122 @@ en:
       update:
         regenerated: Done. The old link and code no longer work.
 
+  people:
+    show:
+      title: "%{name}'s list"
+      your_title: Your list
+      heading: "%{name}'s list"
+      your_heading: Your list
+      you_look_after: You look after %{name}'s list, so you can add and change things.
+      surprise_note: You'll never see who's getting what from your list, so the surprise stays a surprise.
+      wishlist: Wishlist
+      wishlist_empty_yours: Nothing here yet. Add the things you'd love, big or small.
+      wishlist_empty: "%{name} hasn't added anything yet. You could suggest something."
+      add_item: Add something
+      suggest_item: Suggest something for %{name}
+      little_things: Little things
+      little_things_intro: Smaller things, for when money's tight or for stocking fillers.
+      add_little_thing: Add a little thing
+      suggestions: Ideas from everyone else
+      suggestions_intro: "%{name} can't see these. Add ideas that aren't on the list."
+      received:
+        one: 1 thing received
+        other: "%{count} things received"
+      put_back: Put back
+      sign_out: Sign out
+    interests:
+      heading: Things I love
+      intro_manager: Interests, favourite things, what's being read at the moment. It all helps with ideas.
+      intro: What %{name} is into, to help with ideas.
+      empty: "%{name} hasn't added any yet."
+      add_label: Add something you love
+      placeholder: For example, David Bowie or dark chocolate
+      add: Add
+      remove: Remove %{name}
+    sizes:
+      heading: Sizes
+      intro_manager: So nobody has to ask.
+      intro: So you don't have to ask %{name}.
+      empty: "%{name} hasn't added any yet."
+      label: What
+      label_placeholder: For example, shoes
+      value: Size
+      value_placeholder: For example, UK 9
+      add: Add
+      remove: Remove %{label}
+    items:
+      new:
+        title: Add something
+        suggest_title: Suggest something for %{name}
+        back: Back to %{name}
+        your_list: your list
+        their_list: "%{name}'s list"
+        heading: Add something
+        little_heading: Add a little thing
+        suggest_heading: Suggest something for %{name}
+        intro: Only the name is needed. A link, photos and notes help people get exactly the right thing.
+        suggest_intro: "%{name} won't see this. Everyone else in your groups will, and they can reserve it."
+        submit: Add to the list
+        suggest_submit: Add the suggestion
+      create:
+        added: "%{name} added."
+        suggested: Suggestion added. It's hidden from them.
+
+  items:
+    form:
+      name: What is it?
+      url: Link
+      url_hint: Optional. Where to find it online.
+      price: Price
+      price_placeholder: For example, about £20
+      quantity: How many?
+      quantity_hint: Leave empty for as many as people like.
+      notes: Notes for whoever gets it
+      notes_placeholder: Size, colour, where to buy, anything that helps
+      photos: Photos
+      photos_hint: Optional, up to %{count}. Handy for showing the exact colour or style.
+      most_wanted: Most wanted
+      most_wanted_hint: Shows at the top, with a label.
+      little: A little thing
+      little_hint: Goes in Little things, for when money's tight.
+    item:
+      most_wanted: Most wanted
+      as_many_as_you_like: As many as you like
+      wants:
+        one: Wants 1
+        other: Wants %{count}
+      view_link: View on %{host}
+      suggested_by: Suggested by %{name}. %{owner} can't see this.
+      you: you
+      got_it: I got this
+      edit: Edit
+    reservation_status:
+      getting: "%{name} is getting this"
+      bought_by: "%{name} bought this"
+      you_are_getting: You're getting this
+      you_bought: You bought this
+      bought_it: I've bought it
+      not_bought: I haven't bought it yet
+      let_go: Let someone else get it
+      reserve: I'll get this
+    edit:
+      title: Edit
+      back: Back to the list
+      heading: Edit
+      photos: Photos
+      remove_photo: Remove photo
+      remove_photo_confirm: Remove this photo?
+      submit: Save
+      remove: Remove from the list
+      remove_confirm: Remove %{name}? Anyone getting it won't be able to see it any more.
+    update:
+      updated: "%{name} saved."
+    destroy:
+      removed: "%{name} removed."
+    receipts:
+      create:
+        received: Ticked off %{name}. It's in your received list if you change your mind.
+
   joins:
     rate_limited: Too many tries. Please wait a few minutes and try again.
     new:
@@ -208,6 +324,8 @@ en:
         too_long_for_bcrypt: is too long. Please use a shorter one.
         last_admin: Every group needs at least one admin. Make someone else an admin first.
         dependant_admin: Only people with their own account can be admins.
+        fully_reserved: has already been taken by someone else
+        received: has already been received
         too_many: can't be more than %{count}
         not_an_image: must be a photo (JPEG, PNG, WebP, GIF or HEIC)
         too_large: must be smaller than %{size}

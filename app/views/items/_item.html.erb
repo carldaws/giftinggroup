@@ -1,0 +1,62 @@
+<%# locals: (item:, reservations:, yours:, manages:) %>
+<% mine = reservations.find { it.user == Current.user } %>
+<% others = reservations - [ mine ] %>
+
+<li id="<%= dom_id(item) %>" class="card flex gap-4 p-4 sm:p-5 <%= "border-plum/30" if item.suggestion? %>">
+  <% if item.photos.attached? %>
+    <%= link_to url_for(item.photos.first.variant(:large)), target: "_blank", class: "shrink-0" do %>
+      <%= image_tag item.photos.first.variant(:thumb), alt: "", class: "size-20 rounded-2xl object-cover sm:size-24" %>
+    <% end %>
+  <% end %>
+
+  <div class="min-w-0 flex-1">
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <h3 class="text-xl font-semibold break-words"><%= item.name %></h3>
+      <% if item.most_wanted? %>
+        <span class="rounded-full bg-honey-tint px-3 py-0.5 text-sm font-semibold text-honey-ink"><%= t(".most_wanted") %></span>
+      <% end %>
+    </div>
+
+    <p class="text-base text-muted">
+      <%= [ item.price.presence, (item.unlimited? ? t(".as_many_as_you_like") : (t(".wants", count: item.quantity) if item.quantity > 1)) ].compact.join(" · ") %>
+    </p>
+
+    <% if item.notes.present? %>
+      <p class="mt-2 whitespace-pre-line break-words"><%= item.notes %></p>
+    <% end %>
+
+    <% if item.url.present? %>
+      <%= link_to t(".view_link", host: link_host(item.url)), item.url,
+            target: "_blank", rel: "noopener noreferrer", class: "mt-2 inline-block font-semibold text-clay underline" %>
+    <% end %>
+
+    <% if item.photos.size > 1 %>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <% item.photos.drop(1).each do |photo| %>
+          <%= link_to url_for(photo.variant(:large)), target: "_blank" do %>
+            <%= image_tag photo.variant(:thumb), alt: "", class: "size-14 rounded-xl object-cover" %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if item.suggestion? %>
+      <p class="mt-3 text-sm font-semibold text-plum"><%= t(".suggested_by", name: item.suggested_by == Current.user ? t(".you") : item.suggested_by.name, owner: item.owner.name) %></p>
+    <% end %>
+
+    <% unless yours %>
+      <%= render "items/reservation_status", item:, mine:, others: %>
+    <% end %>
+
+    <% if item.editable_by?(Current.user) || item.receivable_by?(Current.user) %>
+      <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-base">
+        <% if item.receivable_by?(Current.user) %>
+          <%= button_to t(".got_it"), item_receipt_path(item), class: "font-semibold text-sage underline" %>
+        <% end %>
+        <% if item.editable_by?(Current.user) %>
+          <%= link_to t(".edit"), edit_item_path(item), class: "font-semibold text-muted underline" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</li>

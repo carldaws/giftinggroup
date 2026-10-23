@@ -1,0 +1,26 @@
+<% suggesting = @item.suggestion? %>
+<% content_for :title, suggesting ? t(".suggest_title", name: @person.name) : t(".title") %>
+
+<div class="mt-6">
+  <%= link_to t(".back", name: @person == Current.user ? t(".your_list") : t(".their_list", name: @person.name)), person_path(@person), class: "text-muted underline" %>
+
+  <h1 class="mt-4 mb-3 text-4xl font-semibold">
+    <% if suggesting %>
+      <%= t(".suggest_heading", name: @person.name) %>
+    <% elsif @item.little? %>
+      <%= t(".little_heading") %>
+    <% else %>
+      <%= t(".heading") %>
+    <% end %>
+  </h1>
+
+  <% if suggesting %>
+    <p class="mb-8 rounded-2xl bg-plum-tint px-5 py-4 font-medium text-plum"><%= t(".suggest_intro", name: @person.name) %></p>
+  <% else %>
+    <p class="mb-8 text-muted"><%= t(".intro") %></p>
+  <% end %>
+
+  <div class="card">
+    <%= render "items/form", item: @item, url: person_items_path(@person), submit: suggesting ? t(".suggest_submit") : t(".submit") %>
+  </div>
+</div>

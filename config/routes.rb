@@ -13,6 +13,23 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :people, only: :show do
+    scope module: :people do
+      resources :items, only: %i[ new create ]
+      resources :interests, only: %i[ create destroy ]
+      resources :sizes, only: %i[ create destroy ]
+    end
+  end
+
+  resources :items, only: %i[ edit update destroy ] do
+    scope module: :items do
+      resource :reservation, only: %i[ create destroy ]
+      resource :purchase, only: %i[ create destroy ]
+      resource :receipt, only: %i[ create destroy ]
+      resources :photos, only: :destroy
+    end
+  end
+
   resources :joins, path: "join", only: %i[ new create show ], param: :join_code
 
   root "groups#index"

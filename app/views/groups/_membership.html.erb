@@ -9,7 +9,7 @@
 
   <div class="min-w-0 flex-1">
     <p class="font-semibold">
-      <%= person.name %>
+      <%= link_to person.name, person_path(person), class: "underline decoration-line decoration-2 hover:decoration-clay" %>
       <% if you %><span class="font-normal text-muted"><%= t(".you") %></span><% end %>
     </p>
     <p class="flex flex-wrap gap-x-3 text-base text-muted">

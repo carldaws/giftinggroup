@@ -11,7 +11,6 @@ class Membership < ApplicationRecord
   validate :group_keeps_an_admin, on: :update, if: :will_save_change_to_admin?
 
   before_destroy :ensure_group_keeps_an_admin, unless: :destroyed_with_group?
-  after_destroy :stop_sharing_lists_with_group
   after_destroy :cancel_reservations_on_lists_no_longer_visible
   after_destroy :remove_dependants_nobody_else_looks_after, unless: :destroyed_with_group?
   after_destroy :remove_empty_group, unless: :destroyed_with_group?
@@ -50,10 +49,6 @@ class Membership < ApplicationRecord
         errors.add(:base, :last_admin)
         throw :abort
       end
-    end
-
-    def stop_sharing_lists_with_group
-      group.shares.where(list: user.lists).delete_all
     end
 
     def cancel_reservations_on_lists_no_longer_visible

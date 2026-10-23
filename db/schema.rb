@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_125143) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_135454) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -59,8 +59,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125143) do
     t.index ["guardian_id", "dependant_id"], name: "index_guardianships_on_guardian_id_and_dependant_id", unique: true
   end
 
+  create_table "interests", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_interests_on_user_id"
+  end
+
   create_table "items", force: :cascade do |t|
-    t.bigint "list_id", null: false
     t.bigint "suggested_by_id"
     t.string "name", null: false
     t.string "url"
@@ -71,16 +78,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125143) do
     t.datetime "received_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["list_id"], name: "index_items_on_list_id"
-    t.index ["suggested_by_id"], name: "index_items_on_suggested_by_id"
-  end
-
-  create_table "lists", force: :cascade do |t|
     t.bigint "owner_id", null: false
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["owner_id"], name: "index_lists_on_owner_id"
+    t.boolean "little", default: false, null: false
+    t.index ["owner_id"], name: "index_items_on_owner_id"
+    t.index ["suggested_by_id"], name: "index_items_on_suggested_by_id"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -122,13 +123,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125143) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "shares", force: :cascade do |t|
-    t.bigint "list_id", null: false
-    t.bigint "group_id", null: false
+  create_table "sizes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "label", null: false
+    t.string "value", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["group_id"], name: "index_shares_on_group_id"
-    t.index ["list_id", "group_id"], name: "index_shares_on_list_id_and_group_id", unique: true
+    t.index ["user_id"], name: "index_sizes_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -144,9 +145,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125143) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "guardianships", "users", column: "dependant_id"
   add_foreign_key "guardianships", "users", column: "guardian_id"
-  add_foreign_key "items", "lists"
+  add_foreign_key "interests", "users"
+  add_foreign_key "items", "users", column: "owner_id"
   add_foreign_key "items", "users", column: "suggested_by_id"
-  add_foreign_key "lists", "users", column: "owner_id"
   add_foreign_key "memberships", "groups"
   add_foreign_key "memberships", "users"
   add_foreign_key "messages", "memberships", column: "subject_id"
@@ -154,6 +155,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125143) do
   add_foreign_key "reservations", "items"
   add_foreign_key "reservations", "users"
   add_foreign_key "sessions", "users"
-  add_foreign_key "shares", "groups"
-  add_foreign_key "shares", "lists"
+  add_foreign_key "sizes", "users"
 end

@@ -1,0 +1,24 @@
+<%# locals: (item:, mine:, others:) %>
+<div class="mt-4 grid gap-2">
+  <% others.each do |reservation| %>
+    <p class="inline-flex w-fit items-center gap-2 rounded-full bg-sage-tint px-3 py-1 text-base font-medium text-sage-ink">
+      <%= reservation.bought? ? t(".bought_by", name: reservation.user.name) : t(".getting", name: reservation.user.name) %>
+    </p>
+  <% end %>
+
+  <% if mine.present? %>
+    <p class="inline-flex w-fit items-center gap-2 rounded-full bg-sage-tint px-3 py-1 text-base font-semibold text-sage-ink">
+      <%= mine.bought? ? t(".you_bought") : t(".you_are_getting") %>
+    </p>
+    <div class="flex flex-wrap gap-x-5 gap-y-2 text-base">
+      <% if mine.bought? %>
+        <%= button_to t(".not_bought"), item_purchase_path(item), method: :delete, class: "font-semibold text-muted underline" %>
+      <% else %>
+        <%= button_to t(".bought_it"), item_purchase_path(item), class: "font-semibold text-clay underline" %>
+        <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "font-semibold text-muted underline" %>
+      <% end %>
+    </div>
+  <% elsif item.unlimited? || others.size < item.quantity %>
+    <%= button_to t(".reserve"), item_reservation_path(item), class: "button mt-1" %>
+  <% end %>
+</div>
