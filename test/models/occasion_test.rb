@@ -14,10 +14,10 @@ class OccasionTest < ActiveSupport::TestCase
     assert_equal 1, Occasion.visible_to(users(:erin)).where(person: users(:carol)).count
   end
 
-  test "nobody sees their own birthday occasion" do
+  test "you see your own birthday too" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
 
-    assert_empty Occasion.visible_to(users(:carol)).where(person: users(:carol))
+    assert_equal 1, Occasion.visible_to(users(:carol)).where(person: users(:carol)).count
   end
 
   test "people who share no group with you don't see your birthday" do

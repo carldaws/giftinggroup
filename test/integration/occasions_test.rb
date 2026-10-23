@@ -17,18 +17,17 @@ class OccasionsTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", edit_group_occasion_path(groups(:hollies), occasions(:christmas)), text: I18n.t("groups.coming_up.edit")
   end
 
-  test "your own birthday never shows up for you, but does for everyone else" do
+  test "everyone sees a birthday coming up, the birthday person as their own" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
-    birthday = I18n.t("occasions.birthday", name: users(:carol).name)
 
     sign_in_as users(:carol)
     get group_path(groups(:hollies))
-    assert_no_match birthday, response.body
+    assert_select "p", text: I18n.t("occasions.your_birthday")
     delete session_path
 
     sign_in_as users(:alice)
     get group_path(groups(:hollies))
-    assert_select "p", text: birthday
+    assert_select "p", text: I18n.t("occasions.birthday", name: users(:carol).name)
   end
 
   test "adding a birthday in your details adds a birthday occasion" do

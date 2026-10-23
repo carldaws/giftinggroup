@@ -403,6 +403,8 @@ en:
         other: In %{count} months
     birthday: "%{name}'s birthday"
     birthday_with_age: "%{name}'s %{ordinal} birthday"
+    your_birthday: Your birthday
+    your_birthday_with_age: Your %{ordinal} birthday
 
   activerecord:
     attributes:

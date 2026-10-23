@@ -17,7 +17,7 @@
             <span class="text-xs font-semibold uppercase"><%= l(occasion.date, format: "%b") %></span>
           </div>
           <div class="min-w-0 flex-1">
-            <p class="font-semibold break-words"><%= occasion.title %></p>
+            <p class="font-semibold break-words"><%= occasion_title(occasion) %></p>
             <p class="text-base text-muted"><%= countdown_to(occasion.date) %></p>
           </div>
           <% if occasion.editable_by?(Current.user, admin:) %>

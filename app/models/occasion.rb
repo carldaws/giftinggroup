@@ -20,7 +20,7 @@ class Occasion < ApplicationRecord
 
   scope :visible_to, ->(user) do
     where(person_id: nil, group_id: user.memberships.select(:group_id))
-      .or(where(group_id: nil, person_id: User.visible_to(user).where.not(id: user.id).select(:id)))
+      .or(where(group_id: nil, person_id: User.visible_to(user).select(:id)))
   end
   scope :applying_to, ->(person) do
     where(person_id: person.id).or(where(person_id: nil, group_id: person.memberships.select(:group_id)))
