@@ -5,6 +5,7 @@ class Group < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :members, through: :memberships, source: :user
   has_many :occasions, dependent: :destroy
+  has_many :group_holidays, dependent: :destroy
 
   normalizes :join_code, with: ->(join_code) { join_code.upcase.gsub(/[^A-Z0-9]/, "") }
 
@@ -32,6 +33,23 @@ class Group < ApplicationRecord
       dependant.memberships.build(group: self)
       dependant.save
     end
+  end
+
+  def celebrate(keys, people: {})
+    keys = keys & Holiday.keys
+
+    transaction do
+      group_holidays.where.not(key: keys).destroy_all
+
+      keys.each do |key|
+        group_holiday = group_holidays.find_or_create_by!(key:)
+        group_holiday.update!(recipient_ids: member_ids & Array(people[key]).compact_blank.map(&:to_i)) unless group_holiday.holiday.for_everyone?
+      end
+    end
+  end
+
+  def celebrates?(key)
+    group_holidays.any? { it.key == key }
   end
 
   def admin?(user)

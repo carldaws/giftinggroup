@@ -81,7 +81,7 @@ class User < ApplicationRecord
   end
 
   def gift_recipients_for(occasion)
-    occasion.people.select { it != self && it.visible_to?(self) }
+    occasion.people_for(self).select { it != self && it.visible_to?(self) }
   end
 
   def people_still_to_choose_for(occasion)

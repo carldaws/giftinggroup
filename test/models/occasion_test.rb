@@ -74,7 +74,7 @@ class OccasionTest < ActiveSupport::TestCase
     end
 
     travel_to Date.new(2026, 3, 13) do
-      Occasion.schedule_all_birthdays
+      Occasion.schedule_all
 
       assert_equal [ Date.new(2026, 3, 12), Date.new(2027, 3, 12) ], users(:carol).birthdays.order(:date).pluck(:date)
     end
@@ -83,7 +83,7 @@ class OccasionTest < ActiveSupport::TestCase
   test "rolling forward twice makes no duplicates" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
 
-    2.times { Occasion.schedule_all_birthdays }
+    2.times { Occasion.schedule_all }
 
     assert_equal 1, users(:carol).birthdays.upcoming.count
   end

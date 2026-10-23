@@ -396,6 +396,16 @@ en:
       joined: Welcome to %{group}!
       not_found: That code didn't match a group. Check it and try again.
 
+  holidays:
+    christmas_day: Christmas Day
+    christmas_eve: Christmas Eve
+    st_nicholas_day: St Nicholas' Day
+    easter_sunday: Easter Sunday
+    valentines_day: Valentine's Day
+    mothers_day_uk: Mother's Day (UK)
+    mothers_day_us: Mother's Day (US)
+    fathers_day: Father's Day
+
   occasions:
     countdown:
       today: Today

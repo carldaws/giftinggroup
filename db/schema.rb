@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_152513) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_155604) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_152513) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "group_holiday_recipients", force: :cascade do |t|
+    t.bigint "group_holiday_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_holiday_id", "user_id"], name: "index_group_holiday_recipients_on_group_holiday_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_group_holiday_recipients_on_user_id"
+  end
+
+  create_table "group_holidays", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.string "key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "key"], name: "index_group_holidays_on_group_id_and_key", unique: true
+    t.index ["key"], name: "index_group_holidays_on_key"
   end
 
   create_table "groups", force: :cascade do |t|
@@ -122,11 +140,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_152513) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "for_everyone", default: true, null: false
+    t.string "holiday_key"
     t.index ["creator_id"], name: "index_occasions_on_creator_id"
     t.index ["group_id", "date"], name: "index_occasions_on_group_id_and_date"
+    t.index ["holiday_key", "date"], name: "index_occasions_on_holiday_key_and_date", unique: true, where: "(holiday_key IS NOT NULL)"
     t.index ["person_id", "date"], name: "index_occasions_on_person_id_and_date", unique: true, where: "(person_id IS NOT NULL)"
     t.index ["person_id"], name: "index_occasions_on_person_id"
-    t.check_constraint "(group_id IS NULL) <> (person_id IS NULL)", name: "occasions_belong_to_a_group_or_a_person"
+    t.check_constraint "num_nonnulls(group_id, person_id, holiday_key) = 1", name: "occasions_belong_to_one_thing"
   end
 
   create_table "reservations", force: :cascade do |t|
@@ -174,6 +194,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_152513) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "group_holiday_recipients", "group_holidays"
+  add_foreign_key "group_holiday_recipients", "users"
+  add_foreign_key "group_holidays", "groups"
   add_foreign_key "guardianships", "users", column: "dependant_id"
   add_foreign_key "guardianships", "users", column: "guardian_id"
   add_foreign_key "interests", "users"
