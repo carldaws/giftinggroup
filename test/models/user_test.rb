@@ -20,6 +20,24 @@ class UserTest < ActiveSupport::TestCase
     assert User.create!(name: "Fern").persisted?
   end
 
+  test "people who sign in need a password" do
+    assert_not User.new(name: "Fern", email_address: "fern@example.com").valid?
+    assert User.new(name: "Fern", email_address: "fern@example.com", password: "a long enough password").valid?
+  end
+
+  test "passwords are at least 8 characters" do
+    assert_not User.new(name: "Fern", email_address: "fern@example.com", password: "short").valid?
+  end
+
+  test "passwords must fit in bcrypt's 72 bytes, however many characters that is" do
+    assert_not User.new(name: "Fern", email_address: "fern@example.com", password: "é" * 40).valid?
+    assert User.new(name: "Fern", email_address: "fern@example.com", password: "é" * 36).valid?
+  end
+
+  test "registering needs an email address" do
+    assert_not User.new(name: "Fern").valid?(:registration)
+  end
+
   test "email addresses are unique" do
     assert_not User.new(name: "Another Alice", email_address: users(:alice).email_address).valid?
   end

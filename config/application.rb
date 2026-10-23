@@ -1,6 +1,14 @@
 require_relative "boot"
 
-require "rails/all"
+require "rails"
+require "active_model/railtie"
+require "active_job/railtie"
+require "active_record/railtie"
+require "active_storage/engine"
+require "action_controller/railtie"
+require "action_view/railtie"
+require "action_cable/engine"
+require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
 
@@ -11,7 +19,5 @@ module Gifting
     config.autoload_lib(ignore: %w[assets tasks])
 
     config.time_zone = "London"
-
-    config.x.mail_from = ENV.fetch("MAIL_FROM", "gifting.group <hello@gifting.group>")
   end
 end

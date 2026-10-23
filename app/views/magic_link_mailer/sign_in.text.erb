@@ -1,7 +1,0 @@
-<%= t(".intro", app_name: t("app.name")) %>
-
-<%= magic_link_url(@magic_link.token) %>
-
-<%= t(".or_code") %> <%= @magic_link.code %>
-
-<%= t(".expiry", minutes: MagicLink::LIFETIME.in_minutes.to_i) %>

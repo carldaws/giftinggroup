@@ -5,16 +5,23 @@
   <p class="mb-8 text-center text-muted"><%= t(".pitch") %></p>
 
   <div class="card">
-    <%= form_with model: @magic_link, url: session_path do |form| %>
+    <%= form_with url: session_path do |form| %>
       <%= form.label :email_address, t(".email_address"), class: "label" %>
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "email", class: "input",
-            aria: { describedby: "email-hint" } %>
-      <% @magic_link.errors.full_messages_for(:email_address).each do |message| %>
-        <p class="field-errors"><%= message %></p>
-      <% end %>
-      <p id="email-hint" class="hint"><%= t(".email_hint") %></p>
+      <%= form.email_field :email_address, value: params[:email_address], required: true, autocomplete: "username",
+            autofocus: params[:email_address].blank?, class: "input" %>
+
+      <div class="mt-5">
+        <%= render "shared/password_field", form:, field: :password, autocomplete: "current-password", label: t(".password") %>
+      </div>
 
       <%= form.submit t(".submit"), class: "button mt-6 w-full" %>
     <% end %>
+
+    <p class="hint mt-5"><%= t(".forgotten") %></p>
   </div>
+
+  <p class="mt-8 text-center">
+    <%= t(".new_here") %>
+    <%= link_to t(".create_account"), new_registration_path, class: "font-semibold text-clay underline" %>
+  </p>
 </div>

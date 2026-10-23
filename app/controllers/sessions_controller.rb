@@ -1,21 +1,20 @@
 class SessionsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
-  before_action :redirect_when_signed_in, only: :new
-  rate_limit to: 10, within: 3.minutes, only: :create, name: "by-ip", with: -> { reject_as_rate_limited }
-  rate_limit to: 5, within: 15.minutes, only: :create, name: "by-email-address", by: -> { requested_email_address },
+  before_action :redirect_when_signed_in, only: %i[ new create ]
+  rate_limit to: 20, within: 3.minutes, only: :create, name: "by-ip", with: -> { reject_as_rate_limited }
+  rate_limit to: 10, within: 1.hour, only: :create, name: "by-email-address", by: -> { attempted_email_address },
     with: -> { reject_as_rate_limited }
 
   def new
-    @magic_link = MagicLink.new
   end
 
   def create
-    @magic_link = MagicLink.new(magic_link_params)
+    user = User.authenticate_by(email_address: attempted_email_address, password: params.expect(:password))
 
-    if @magic_link.save
-      session[:pending_email_address] = @magic_link.email_address
-      redirect_to new_session_verification_path
+    if user.present?
+      sign_in user
     else
+      flash.now[:alert] = t(".invalid")
       render :new, status: :unprocessable_content
     end
   end
@@ -26,19 +25,11 @@ class SessionsController < ApplicationController
   end
 
   private
-    def magic_link_params
-      params.expect(magic_link: [ :email_address ])
-    end
-
-    def requested_email_address
-      MagicLink.normalize_value_for(:email_address, magic_link_params[:email_address].to_s)
-    end
-
-    def redirect_when_signed_in
-      redirect_to root_path if authenticated?
+    def attempted_email_address
+      User.normalize_value_for(:email_address, params.expect(:email_address))
     end
 
     def reject_as_rate_limited
-      redirect_to new_session_path, alert: t("sessions.create.rate_limited")
+      redirect_to new_session_path, alert: t(".rate_limited")
     end
 end

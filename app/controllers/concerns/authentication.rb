@@ -1,8 +1,6 @@
 module Authentication
   extend ActiveSupport::Concern
 
-  VERIFIED_EMAIL_ADDRESS_LIFETIME = 30.minutes
-
   included do
     before_action :require_authentication
     helper_method :authenticated?
@@ -36,19 +34,8 @@ module Authentication
       redirect_to new_session_path
     end
 
-    def sign_in_or_register(email_address)
-      user = User.find_by(email_address:)
-
-      if user.present?
-        sign_in user
-      else
-        session[:verified_email_address] = email_address_verifier.generate(email_address, expires_in: VERIFIED_EMAIL_ADDRESS_LIFETIME)
-        redirect_to new_registration_path
-      end
-    end
-
-    def verified_email_address
-      email_address_verifier.verified(session[:verified_email_address]) if session[:verified_email_address].present?
+    def redirect_when_signed_in
+      redirect_to root_path if authenticated?
     end
 
     def sign_in(user)
@@ -69,9 +56,5 @@ module Authentication
       Current.session.destroy
       cookies.delete(:session_id)
       reset_session
-    end
-
-    def email_address_verifier
-      Rails.application.message_verifier(:verified_email_address)
     end
 end
