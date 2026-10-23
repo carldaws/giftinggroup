@@ -182,8 +182,24 @@ en:
     join_codes:
       update:
         regenerated: Done. The old link and code no longer work.
+    holidays:
+      edit:
+        title: Holidays
+        back: Back to %{group}
+        welcome_heading: Which occasions does %{group} give presents for?
+        heading: Holidays
+        intro: Tick the ones your group celebrates. Birthdays are added for you, and you can add your own occasions too.
+        who_for: Who's %{holiday} for?
+        custom_hint: Something else, like an anniversary or a graduation? Add it as an occasion from your group page.
+        continue: Continue
+        save: Save
+      update:
+        all_set: All set. Now invite people.
+        saved: Holidays saved.
     coming_up:
       for_people: For %{names}
+      for_no_one_yet: Choose who it's for
+      holidays: Holidays
       heading: Coming up
       add: Add an occasion
       edit: Edit

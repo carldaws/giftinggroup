@@ -9,7 +9,7 @@ class GroupsTest < ActionDispatch::IntegrationTest
     end
 
     group = Group.last
-    assert_redirected_to group
+    assert_redirected_to edit_group_holidays_path(group, welcome: 1)
     assert group.admin?(users(:erin))
   end
 

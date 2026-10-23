@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       end
       resources :dependants, only: %i[ new create ]
       resources :occasions, only: %i[ new create edit update destroy ]
+      resource :holidays, only: %i[ edit update ]
       resource :join_code, only: :update
     end
   end

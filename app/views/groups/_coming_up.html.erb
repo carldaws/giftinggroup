@@ -5,7 +5,12 @@
 <section aria-labelledby="occasions-heading" class="mb-10">
   <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
     <h2 id="occasions-heading" class="text-2xl font-semibold"><%= t(".heading") %></h2>
-    <%= link_to t(".add"), new_group_occasion_path(group), class: "button button--quiet button--small no-underline" %>
+    <div class="flex flex-wrap gap-2">
+      <% if admin %>
+        <%= link_to t(".holidays"), edit_group_holidays_path(group), class: "button button--quiet button--small no-underline" %>
+      <% end %>
+      <%= link_to t(".add"), new_group_occasion_path(group), class: "button button--quiet button--small no-underline" %>
+    </div>
   </div>
 
   <% if occasions.any? %>
@@ -20,8 +25,9 @@
             <p class="font-semibold break-words"><%= occasion_title(occasion) %></p>
             <p class="text-base text-muted">
               <%= countdown_to(occasion.date) %>
-              <% unless occasion.birthday? || occasion.for_everyone? %>
-                · <%= t(".for_people", names: occasion.recipients.map { it == Current.user ? t("groups.membership.you_lowercase") : it.name }.to_sentence) %>
+              <% unless occasion.birthday? || occasion.for_everyone_in_group? %>
+                <% people = occasion.people_in(group) %>
+                · <%= people.any? ? t(".for_people", names: people.map { it == Current.user ? t("groups.membership.you_lowercase") : it.name }.to_sentence) : t(".for_no_one_yet") %>
               <% end %>
             </p>
           </div>

@@ -1,0 +1,67 @@
+require "test_helper"
+
+class HolidaysTest < ActionDispatch::IntegrationTest
+  setup do
+    occasions(:christmas).destroy!
+  end
+
+  test "a new group starts by picking holidays, with Christmas Day ticked" do
+    sign_in_as users(:erin)
+    post groups_path, params: { group: { name: "The Oaks" } }
+    follow_redirect!
+
+    assert_select "h1", text: I18n.t("groups.holidays.edit.welcome_heading", group: "The Oaks")
+    assert_select "input#holiday_christmas_day[checked]"
+    assert_select "input#holiday_easter_sunday[checked]", count: 0
+  end
+
+  test "picking holidays for a group" do
+    sign_in_as users(:alice)
+
+    patch group_holidays_path(groups(:hollies)),
+      params: { keys: [ "", "christmas_day", "mothers_day_uk" ], people: { "mothers_day_uk" => [ users(:alice).id ] } }
+
+    assert_redirected_to groups(:hollies)
+    assert groups(:hollies).celebrates?("christmas_day")
+    assert_equal [ users(:alice) ], groups(:hollies).group_holidays.find_by!(key: Holiday.find("mothers_day_uk").key).recipients
+  end
+
+  test "switching every holiday off" do
+    groups(:hollies).celebrate([ "christmas_day" ])
+    sign_in_as users(:alice)
+
+    patch group_holidays_path(groups(:hollies)), params: { keys: [ "" ] }
+
+    assert_empty groups(:hollies).group_holidays.reload
+  end
+
+  test "only admins choose a group's holidays" do
+    sign_in_as users(:bob)
+
+    get edit_group_holidays_path(groups(:hollies))
+    assert_response :forbidden
+
+    patch group_holidays_path(groups(:hollies)), params: { keys: [ "christmas_day" ] }
+    assert_response :forbidden
+  end
+
+  test "holidays show up in coming up, with who they're for when it isn't everyone" do
+    groups(:hollies).celebrate([ "christmas_day", "fathers_day" ], people: { "fathers_day" => [ users(:bob).id ] })
+    sign_in_as users(:carol)
+
+    get group_path(groups(:hollies))
+
+    assert_select "section[aria-labelledby=occasions-heading] li p", text: Holiday.find("christmas_day").name
+    assert_select "section[aria-labelledby=occasions-heading] li p", text: /#{I18n.t("groups.coming_up.for_people", names: users(:bob).name)}/
+  end
+
+  test "the nudge for a holiday has no group in its title" do
+    groups(:hollies).celebrate([ "christmas_day" ])
+    travel_to Holiday.find("christmas_day").next_date - 2.weeks do
+      sign_in_as users(:bob)
+      get root_path
+
+      assert_select "section[aria-label] p.text-lg", text: /\A#{Holiday.find("christmas_day").name} ·/
+    end
+  end
+end

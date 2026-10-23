@@ -1,0 +1,54 @@
+<% welcome = params[:welcome].present? %>
+<% members = @group.memberships.by_name.includes(:user).map(&:user) %>
+<% celebrated = @group.group_holidays.includes(:recipients).index_by(&:key) %>
+<% content_for :title, t(".title") %>
+
+<div class="mt-6">
+  <% unless welcome %>
+    <%= link_to t(".back", group: @group.name), @group, class: "text-muted underline" %>
+  <% end %>
+
+  <h1 class="mt-4 mb-3 text-4xl font-semibold"><%= welcome ? t(".welcome_heading", group: @group.name) : t(".heading") %></h1>
+  <p class="mb-8 text-muted"><%= t(".intro") %></p>
+
+  <%= form_with url: group_holidays_path(@group, welcome: (1 if welcome)), method: :patch do |form| %>
+    <%= hidden_field_tag "keys[]", "" %>
+
+    <ul class="grid gap-3">
+      <% Holiday.all.each do |holiday| %>
+        <% group_holiday = celebrated[holiday.key] %>
+        <% checked = group_holiday.present? || (welcome && celebrated.empty? && holiday.key == "christmas_day") %>
+        <li class="card p-0 sm:p-0">
+          <label class="flex cursor-pointer items-center gap-4 px-5 py-4 sm:px-6">
+            <%= check_box_tag "keys[]", holiday.key, checked, id: "holiday_#{holiday.key}", class: "size-5 accent-clay" %>
+            <span class="min-w-0 flex-1">
+              <span class="block font-semibold"><%= holiday.name %></span>
+              <span class="block text-base text-muted"><%= l(holiday.next_date, format: "%A %-d %B %Y") %></span>
+            </span>
+          </label>
+
+          <% unless holiday.for_everyone? %>
+            <fieldset class="border-t border-line px-5 py-4 sm:px-6">
+              <legend class="sr-only"><%= t(".who_for", holiday: holiday.name) %></legend>
+              <p class="mb-2 text-base text-muted"><%= t(".who_for", holiday: holiday.name) %></p>
+              <div class="flex flex-wrap gap-2">
+                <% members.each do |member| %>
+                  <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-paper py-1 pr-3 pl-1 has-[:checked]:border-clay has-[:checked]:bg-clay-tint has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-clay">
+                    <%= check_box_tag "people[#{holiday.key}][]", member.id, group_holiday.present? && group_holiday.recipients.include?(member),
+                          id: "holiday_#{holiday.key}_#{member.id}", class: "sr-only" %>
+                    <%= avatar_tag member, size: "size-7 text-xs ring-0" %>
+                    <span class="text-base font-medium"><%= member.name %></span>
+                  </label>
+                <% end %>
+              </div>
+            </fieldset>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <p class="hint mt-6"><%= t(".custom_hint") %></p>
+
+    <%= form.submit welcome ? t(".continue") : t(".save"), class: "button mt-6 w-full sm:w-auto" %>
+  <% end %>
+</div>
