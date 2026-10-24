@@ -43,8 +43,7 @@ en:
   sessions:
     new:
       title: Sign in
-      heading: Wishlists for the people you buy for
-      pitch: Free, no ads, and the surprise stays a surprise.
+      heading: Sign in
       email_address: Email address
       password: Password
       submit: Sign in
@@ -501,6 +500,62 @@ en:
       label: People you haven't picked a gift for yet
       heading: Still to choose for
       progress: You've picked for %{chosen} of %{total}
+
+  home:
+    show:
+      title: Wishlists for groups
+      heading: Wishlists for the people you buy for
+      intro: Make a group, share your lists and work out together who's getting what. It's free, and the surprise stays a surprise.
+      create_account: Create an account
+      sign_in: Sign in
+      invited: Been sent an invite? Open the link to join.
+      how_heading: How it works
+      free_heading: Free, with no catch
+      free_body: No ads, no tracking and no emails. It's open source, and made as a gift.
+      steps:
+        group:
+          heading: Start a group
+          body: Invite people with a link or a code. Anyone who swaps presents can be a group, from old friends to a Secret Santa at work.
+        list:
+          heading: Make your list
+          body: Add the things you'd love, with a link, photos and notes. Mark what you want most, and add your sizes and the things you love so people have ideas.
+        pick:
+          heading: Pick something for someone
+          body: Say you'll get it, then tick it off once it's bought. Everyone else sees it's taken, so nothing gets bought twice.
+        ideas:
+          heading: Add surprise ideas
+          body: Spotted something they'd love that isn't on their list? Add it as an idea. Everyone else can see it and pick it, but they can't.
+        chat:
+          heading: Plan presents together
+          body: Each person has a chat where everyone else can plan for them, so the surprise stays a surprise. Share an idea, team up on something bigger, or check a size.
+        occasions:
+          heading: Keep track of occasions
+          body: Choose the holidays your group celebrates, add your own, and birthdays appear by themselves. You'll see who you still need to pick something for.
+        looked_after:
+          heading: Run a list for someone else
+          body: Add a child, or anyone who won't sign in, and look after their list for them. When they're ready, give them their own account.
+        shopping:
+          heading: Keep your shopping straight
+          body: Everything you've picked, from every group, in one list you tick off as you buy.
+      demo:
+        alice: Alice
+        bob: Bob
+        carol: Carol
+        rebecca: Rebecca
+        you: you
+        group: The Walkers
+        code: HN4A-YFXT
+        scarf: Green wool scarf
+        scarf_price: About £25
+        scarf_notes: The darker green, not the mint
+        love_walking: Long walks
+        love_chocolate: Dark chocolate
+        for_alice: On Alice's list
+        hidden_from: "%{name} never sees who's getting what."
+        gloves: Matching gloves
+        book: Dinosaur book
+        chat_question: Does anyone know her glove size?
+        chat_answer: Medium! Want to go halves on the scarf?
 
   privacy:
     show:

@@ -1,10 +1,25 @@
 require "test_helper"
 
 class SignInTest < ActionDispatch::IntegrationTest
-  test "signed-out people are sent to sign in" do
+  test "signed-out people see how it works" do
     get root_path
 
+    assert_select "h1", text: I18n.t("home.show.heading")
+    assert_select "main a[href=?]", new_registration_path
+  end
+
+  test "signed-out people are sent to sign in for anything else" do
+    get new_group_path
+
     assert_redirected_to new_session_path
+  end
+
+  test "signed-in people see their groups at the same address" do
+    sign_in_as users(:alice)
+
+    get root_path
+
+    assert_select "#groups-heading"
   end
 
   test "signing in" do
@@ -45,11 +60,11 @@ class SignInTest < ActionDispatch::IntegrationTest
   end
 
   test "signing in returns you to where you were going" do
-    get root_path(from: "elsewhere")
+    get new_join_path(from: "elsewhere")
 
     sign_in_as users(:alice)
 
-    assert_redirected_to root_url(from: "elsewhere")
+    assert_redirected_to new_join_url(from: "elsewhere")
   end
 
   test "passwords can't be guessed in bulk" do
@@ -143,7 +158,7 @@ class SignInTest < ActionDispatch::IntegrationTest
 
   private
     def assert_not_signed_in
-      get root_path
+      get new_group_path
       assert_redirected_to new_session_path
     end
 end
