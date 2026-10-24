@@ -1,6 +1,6 @@
 <% yours = @person == Current.user %>
 <% manages = Current.user.looks_after?(@person) %>
-<% items = @person.items.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order %>
+<% items = @person.items.listed.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order %>
 <% wanted = items.wanted %>
 <% little_only = params[:show] == "little" %>
 <% shown = little_only ? wanted.little : wanted %>

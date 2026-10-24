@@ -65,6 +65,18 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     assert_not_includes people, users(:carol)
   end
 
+  test "a pick that's taken off their list puts them back on the reminder, unless it's bought" do
+    reservation = items(:books).reservations.create!(user: users(:bob), occasion: occasions(:christmas))
+    items(:books).remove
+
+    _, people = users(:bob).gifts_to_choose.first
+    assert_includes people, users(:carol)
+
+    reservation.buy
+    _, people = users(:bob).gifts_to_choose.first
+    assert_not_includes people, users(:carol)
+  end
+
   test "a birthday only reminds you about the birthday person" do
     users(:dan).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
 

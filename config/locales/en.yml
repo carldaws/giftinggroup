@@ -98,6 +98,7 @@ en:
       for_occasion: For %{name} · %{occasion}, %{countdown}
       their_occasion: "%{occasion}, %{countdown}"
       already_has: "%{name} has ticked this off, so they may already have it."
+      removed: Taken off their list.
       bought: Bought
       let_go: Let it go
       all_bought: You've bought everything on your list.
@@ -512,6 +513,7 @@ en:
         dependant_admin: Only people with their own account can be admins.
         fully_reserved: has already been taken by someone else
         received: has already been received
+        removed: is no longer on their list
         not_for_this_person: isn't one for gifts to this person
         already_given: can't change once the gift has been given
         in_the_future: can't be in the future

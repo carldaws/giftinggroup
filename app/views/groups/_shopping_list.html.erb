@@ -14,7 +14,11 @@
             <li class="row">
               <%= avatar_tag item.owner %>
               <div class="min-w-0 flex-1">
-                <%= link_to item.name, person_path(item.owner, anchor: dom_id(item)), class: "row-title link text-ink" %>
+                <% if item.removed? %>
+                  <p class="row-title"><%= item.name %></p>
+                <% else %>
+                  <%= link_to item.name, person_path(item.owner, anchor: dom_id(item)), class: "row-title link text-ink" %>
+                <% end %>
                 <p class="row-meta">
                   <% if reservation.occasion.present? && reservation.occasion.person == item.owner %>
                     <%= t(".their_occasion", occasion: reservation.occasion.title, countdown: countdown_to(reservation.occasion.date).downcase_first) %>
@@ -24,11 +28,13 @@
                     <%= t(".for", name: item.owner.name) %>
                   <% end %>
                 </p>
-                <% if item.received? %>
+                <% if item.removed? %>
+                  <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".removed") %></p>
+                <% elsif item.received? %>
                   <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".already_has", name: item.owner.name) %></p>
                 <% end %>
               </div>
-              <% if item.received? %>
+              <% if item.removed? || item.received? %>
                 <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
               <% else %>
                 <%= button_to item_purchase_path(item), class: "button button--secondary button--small" do %>
@@ -55,8 +61,15 @@
                 <div class="min-w-0 flex-1">
                   <p class="text-muted line-through"><%= item.name %></p>
                   <p class="row-meta"><%= t(".for", name: item.owner.name) %></p>
+                  <% if item.removed? %>
+                    <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".removed") %></p>
+                  <% end %>
                 </div>
-                <%= button_to t(".put_back"), item_purchase_path(item), method: :delete, class: "button button--secondary button--small" %>
+                <% if item.removed? %>
+                  <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
+                <% else %>
+                  <%= button_to t(".put_back"), item_purchase_path(item), method: :delete, class: "button button--secondary button--small" %>
+                <% end %>
               </li>
             <% end %>
           </ul>

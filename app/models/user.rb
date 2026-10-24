@@ -92,7 +92,8 @@ class User < ApplicationRecord
   end
 
   def people_chosen_for(occasion)
-    User.where(id: reservations.where(occasion:).joins(:item).select("items.owner_id"))
+    picks = reservations.where(occasion:).joins(:item)
+    User.where(id: picks.merge(Item.listed).or(picks.where.not(bought_at: nil)).select("items.owner_id"))
   end
 
   def build_item(attributes, by:)

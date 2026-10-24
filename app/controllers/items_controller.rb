@@ -14,7 +14,7 @@ class ItemsController < ApplicationController
   end
 
   def destroy
-    @item.destroy
+    @item.remove
     redirect_to person_path(@item.owner), notice: t(".removed", name: @item.name)
   end
 

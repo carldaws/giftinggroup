@@ -21,6 +21,7 @@ class Item < ApplicationRecord
   validate :suggester_can_see_the_owner, :suggester_does_not_manage_the_list, if: -> { suggestion? && owner.present? }
   validate :photos_are_acceptable
 
+  scope :listed, -> { where(removed_at: nil) }
   scope :suggestions, -> { where.not(suggested_by: nil) }
   scope :wanted, -> { where(received_at: nil) }
   scope :received, -> { where.not(received_at: nil) }
@@ -50,8 +51,24 @@ class Item < ApplicationRecord
     !unlimited? && reservations.size >= quantity
   end
 
+  def removed?
+    removed_at.present?
+  end
+
+  def remove
+    with_lock do
+      if reservations.exists?
+        update!(removed_at: Time.current)
+      else
+        destroy!
+      end
+    end
+  end
+
   def editable_by?(user)
-    if suggestion?
+    if removed?
+      false
+    elsif suggestion?
       suggested_by == user
     else
       user.looks_after?(owner)
@@ -65,7 +82,7 @@ class Item < ApplicationRecord
   end
 
   def receivable_by?(user)
-    !suggestion? && user.looks_after?(owner)
+    !suggestion? && !removed? && user.looks_after?(owner)
   end
 
   def receive

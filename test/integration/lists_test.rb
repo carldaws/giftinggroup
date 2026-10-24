@@ -232,11 +232,97 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "removing an item" do
+  test "removing an item nobody has picked" do
     sign_in_as users(:alice)
 
     assert_difference -> { Item.count }, -1 do
+      delete item_path(items(:socks))
+    end
+  end
+
+  test "removing an item someone has picked hides it from the owner but not from the buyer" do
+    sign_in_as users(:alice)
+
+    assert_no_difference -> { Item.count } do
       delete item_path(items(:scarf))
+    end
+    get person_path(users(:alice))
+    assert_select "h3", text: items(:scarf).name, count: 0
+
+    get edit_item_path(items(:scarf))
+    assert_response :forbidden
+
+    delete session_path
+    sign_in_as users(:bob)
+    get root_path
+    assert_select "#shopping-list .row-title", text: items(:scarf).name
+    assert_select "#shopping-list", text: /#{I18n.t("groups.shopping_list.removed")}/
+
+    get person_path(users(:alice))
+    assert_select "h3", text: items(:scarf).name, count: 0
+  end
+
+  test "a removed item is hidden from everyone who didn't pick it" do
+    items(:scarf).remove
+    sign_in_as users(:carol)
+
+    get person_path(users(:alice))
+
+    assert_select "h3", text: items(:scarf).name, count: 0
+  end
+
+  test "a bought item that's taken off the list says so" do
+    reservations(:bob_reserved_scarf).buy
+    items(:scarf).remove
+    sign_in_as users(:bob)
+
+    get root_path
+
+    assert_select "#shopping-list details", text: /#{I18n.t("groups.shopping_list.removed")}/
+    assert_select "#shopping-list details form[action=?]", item_reservation_path(items(:scarf))
+  end
+
+  test "a removed item is forgotten once the last person lets it go" do
+    items(:socks).reserve_for(users(:bob))
+    items(:socks).reserve_for(users(:carol))
+    items(:socks).remove
+
+    sign_in_as users(:bob)
+    assert_no_difference -> { Item.count } do
+      delete item_reservation_path(items(:socks))
+    end
+
+    delete session_path
+    sign_in_as users(:carol)
+    assert_difference -> { Item.count }, -1 do
+      delete item_reservation_path(items(:socks))
+    end
+  end
+
+  test "leaving the group forgets a removed item you'd picked" do
+    items(:scarf).remove
+    sign_in_as users(:bob)
+
+    assert_difference -> { Item.count }, -1 do
+      delete group_membership_path(groups(:hollies), memberships(:bob_in_hollies))
+    end
+  end
+
+  test "letting go of a removed item forgets it" do
+    items(:scarf).remove
+    sign_in_as users(:bob)
+
+    assert_difference -> { Item.count }, -1 do
+      delete item_reservation_path(items(:scarf))
+    end
+  end
+
+  test "nobody can pick a removed item" do
+    items(:scarf).remove
+    sign_in_as users(:carol)
+
+    assert_no_difference -> { Reservation.count } do
+      post item_reservation_path(items(:scarf))
     end
   end
 
