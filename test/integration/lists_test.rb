@@ -198,7 +198,7 @@ class ListsTest < ActionDispatch::IntegrationTest
 
     post person_items_path(users(:alice)), params: { item: { name: "Fleece jacket", photos: [ fixture_file_upload("saved-photo", "application/octet-stream") ] } }
 
-    assert_equal [ "image/avif" ], users(:alice).items.last.photos.map(&:content_type)
+    assert_equal [ Marcel::MimeType.for(file_fixture("saved-photo")) ], users(:alice).items.last.photos.map(&:content_type)
   end
 
   test "adding a photo while editing keeps the existing ones" do
