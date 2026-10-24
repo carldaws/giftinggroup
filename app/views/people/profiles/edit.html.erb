@@ -28,9 +28,22 @@
           </div>
         </fieldset>
 
+        <fieldset class="field">
+          <legend class="label mb-2"><%= t(".picture") %></legend>
+          <div class="flex flex-wrap gap-3">
+            <% [ nil, *User::AVATAR_CHARACTERS ].each do |character| %>
+              <label class="group relative cursor-pointer rounded-full p-1 ring-2 ring-transparent has-checked:ring-clay has-focus-visible:outline-2 has-focus-visible:outline-clay">
+                <%= form.radio_button :avatar_character, character.to_s, checked: @person.avatar_character_name == character, class: "sr-only" %>
+                <%= avatar_tag @person, character:, tooltip: false, ring: false %>
+                <span class="tooltip"><%= character.present? ? t(".characters.#{character}") : t(".initials") %></span>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+
         <fieldset class="field" aria-describedby="birthday-hint">
           <legend class="label mb-2"><%= t(".birthday") %></legend>
-          <div class="grid grid-cols-[5.5rem_minmax(0,1fr)_6rem] gap-2">
+          <div class="grid grid-cols-[6.5rem_minmax(0,1fr)_6rem] gap-2">
             <%= form.label :birthday_day, t(".day"), class: "sr-only" %>
             <%= form.select :birthday_day, 1..31, { include_blank: t(".day") }, class: "input select" %>
             <%= form.label :birthday_month, t(".month"), class: "sr-only" %>

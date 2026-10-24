@@ -13,11 +13,19 @@ module ApplicationHelper
     "plum" => "bg-[var(--avatar-plum)] text-[var(--avatar-plum-ink)]"
   }.freeze
 
-  def avatar_tag(user, size: :md, tone: user.avatar_tone_name, tooltip: true, ring: true)
+  def avatar_tag(user, size: :md, tone: user.avatar_tone_name, character: user.avatar_character_name, tooltip: true, ring: true)
     tag.span aria: { hidden: true },
       class: class_names("group/avatar relative inline-flex shrink-0 items-center justify-center rounded-full font-semibold leading-none",
         AVATAR_SIZES.fetch(size), AVATAR_TONE_CLASSES.fetch(tone), "ring-2 ring-surface": ring) do
-      safe_join [ avatar_initials(user), (tag.span(user.name, class: "tooltip") if tooltip.present?) ]
+      safe_join [ avatar_face(user, character), (tag.span(user.name, class: "tooltip") if tooltip.present?) ]
+    end
+  end
+
+  def avatar_face(user, character)
+    if character.present?
+      image_tag "characters/#{character}.svg", alt: "", class: "size-[70%]"
+    else
+      avatar_initials(user)
     end
   end
 

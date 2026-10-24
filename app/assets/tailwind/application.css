@@ -447,6 +447,7 @@
 
   .group:hover > .tooltip,
   .group:focus-visible > .tooltip,
+  .group:has(> input:focus-visible) > .tooltip,
   .group\/avatar:hover > .tooltip {
     @apply opacity-100;
   }

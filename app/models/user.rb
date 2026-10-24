@@ -24,11 +24,14 @@ class User < ApplicationRecord
   end
 
   AVATAR_TONES = %w[ clay sage honey plum ].freeze
+  AVATAR_CHARACTERS = %w[ tree gift santa snowman snowflake bow bell teddy cake balloon popper star pumpkin ghost leaf heart chick rabbit shamrock lantern diya penguin fox owl ].freeze
 
   normalizes :email_address, with: ->(email_address) { email_address.strip.downcase.presence }
+  normalizes :avatar_character, with: ->(character) { character.presence }
 
   validates :name, presence: true
   validates :avatar_tone, inclusion: { in: 0...AVATAR_TONES.size }, allow_nil: true
+  validates :avatar_character, inclusion: { in: AVATAR_CHARACTERS }, allow_nil: true
   validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_nil: true
   validates :email_address, presence: true, on: %i[ registration credentials ]
   validates :email_address, presence: true, if: -> { email_address_in_database.present? }
@@ -57,7 +60,11 @@ class User < ApplicationRecord
   end
 
   def avatar_tone_name
-    AVATAR_TONES[avatar_tone || id % AVATAR_TONES.size]
+    AVATAR_TONES[avatar_tone.presence_in(0...AVATAR_TONES.size) || id % AVATAR_TONES.size]
+  end
+
+  def avatar_character_name
+    avatar_character.presence_in(AVATAR_CHARACTERS)
   end
 
   def looks_after?(user)

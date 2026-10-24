@@ -311,6 +311,33 @@ en:
           sage: Green
           honey: Yellow
           plum: Purple
+        picture: Picture
+        initials: Initials
+        characters:
+          tree: Christmas tree
+          gift: Present
+          santa: Father Christmas
+          snowman: Snowman
+          snowflake: Snowflake
+          bow: Bow
+          bell: Bell
+          teddy: Teddy bear
+          cake: Birthday cake
+          balloon: Balloon
+          popper: Party popper
+          star: Star
+          pumpkin: Pumpkin
+          ghost: Ghost
+          leaf: Autumn leaf
+          heart: Heart
+          chick: Chick
+          rabbit: Rabbit
+          shamrock: Shamrock
+          lantern: Lantern
+          diya: Diya lamp
+          penguin: Penguin
+          fox: Fox
+          owl: Owl
         email_address: Email address
         password_challenge: Current password
         password_challenge_hint: Only needed if you're changing your email address.

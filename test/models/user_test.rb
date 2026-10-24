@@ -53,6 +53,14 @@ class UserTest < ActiveSupport::TestCase
     users(:bob).avatar_tone = User::AVATAR_TONES.size
 
     assert_not users(:bob).valid?
+    assert_includes User::AVATAR_TONES, users(:bob).avatar_tone_name
+  end
+
+  test "avatar characters come from the set, falling back to initials" do
+    users(:bob).avatar_character = "dragon"
+
+    assert_not users(:bob).valid?
+    assert_nil users(:bob).avatar_character_name
   end
 
   test "people look after themselves and their dependants" do

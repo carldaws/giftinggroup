@@ -17,9 +17,9 @@ class People::ProfilesController < ApplicationController
   private
     def profile_params
       if @person == Current.user
-        params.expect(user: [ :name, :avatar_tone, :birthday_day, :birthday_month, :birth_year, :email_address, :password_challenge ])
+        params.expect(user: [ :name, :avatar_tone, :avatar_character, :birthday_day, :birthday_month, :birth_year, :email_address, :password_challenge ])
       else
-        params.expect(user: [ :name, :avatar_tone, :birthday_day, :birthday_month, :birth_year ])
+        params.expect(user: [ :name, :avatar_tone, :avatar_character, :birthday_day, :birthday_month, :birth_year ])
       end
     end
 end

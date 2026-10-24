@@ -28,3 +28,5 @@ bin/rubocop
 ## Licence
 
 [AGPL-3.0](LICENSE). If you run a modified copy as a website, you have to publish your changes under the same licence.
+
+The avatar characters are from Microsoft's [Fluent Emoji](https://github.com/microsoft/fluentui-emoji), under the [MIT licence](app/assets/images/characters/LICENSE.txt).

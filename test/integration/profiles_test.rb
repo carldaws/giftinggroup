@@ -12,6 +12,39 @@ class ProfilesTest < ActionDispatch::IntegrationTest
     assert_equal User::AVATAR_TONES[2], users(:alice).avatar_tone_name
   end
 
+  test "choosing a character, and going back to initials" do
+    sign_in_as users(:alice)
+    character = User::AVATAR_CHARACTERS.first
+
+    patch person_profile_path(users(:alice)), params: { user: { avatar_character: character } }
+    assert_equal character, users(:alice).reload.avatar_character
+
+    get person_path(users(:alice))
+    assert_select ".page-header img[src*=?]", character
+
+    patch person_profile_path(users(:alice)), params: { user: { avatar_character: "" } }
+    assert_nil users(:alice).reload.avatar_character
+  end
+
+  test "guardians can choose a character for someone they look after" do
+    sign_in_as users(:alice)
+    character = User::AVATAR_CHARACTERS.last
+
+    patch person_profile_path(users(:dan)), params: { user: { avatar_character: character } }
+
+    assert_equal character, users(:dan).reload.avatar_character
+  end
+
+  test "only the characters on offer can be chosen" do
+    sign_in_as users(:alice)
+
+    patch person_profile_path(users(:alice)), params: { user: { avatar_character: "dragon" } }
+
+    assert_response :unprocessable_content
+    assert_select "input[name='user[avatar_character]'][value=''][checked]"
+    assert_nil users(:alice).reload.avatar_character
+  end
+
   test "changing your email address needs your current password" do
     sign_in_as users(:alice)
     new_email_address = "ally@example.com"
