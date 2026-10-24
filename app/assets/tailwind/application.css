@@ -335,14 +335,14 @@
   }
 
   .input[type="file"] {
-    @apply flex cursor-pointer items-center pl-1.5 text-base text-muted;
+    @apply cursor-pointer py-[5px] pl-[5px] text-base/8 text-muted;
     @apply file:mr-3 file:h-8 file:cursor-pointer file:rounded-full file:border file:border-line-strong file:bg-card file:px-4 file:font-semibold file:text-ink hover:file:bg-hover;
   }
 
   .select {
-    @apply appearance-none bg-no-repeat pr-11;
+    @apply appearance-none bg-no-repeat pr-9;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%236b6159' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8l5 5 5-5'/%3E%3C/svg%3E");
-    background-position: right 1rem center;
+    background-position: right 0.75rem center;
     background-size: 1.125rem;
   }
 

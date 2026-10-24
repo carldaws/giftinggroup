@@ -43,7 +43,7 @@
 
         <fieldset class="field" aria-describedby="birthday-hint">
           <legend class="label mb-2"><%= t(".birthday") %></legend>
-          <div class="grid grid-cols-[6.5rem_minmax(0,1fr)_6rem] gap-2">
+          <div class="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-2 sm:grid-cols-[6.5rem_minmax(0,1fr)_6rem]">
             <%= form.label :birthday_day, t(".day"), class: "sr-only" %>
             <%= form.select :birthday_day, 1..31, { include_blank: t(".day") }, class: "input select" %>
             <%= form.label :birthday_month, t(".month"), class: "sr-only" %>
