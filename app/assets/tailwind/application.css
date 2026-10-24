@@ -180,6 +180,10 @@
     @apply lg:pr-[24.5rem];
   }
 
+  .page--centered {
+    @apply max-w-xl;
+  }
+
   .page-header {
     @apply mt-6 mb-8 sm:mt-8;
   }
