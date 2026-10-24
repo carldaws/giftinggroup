@@ -96,12 +96,50 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_select "##{dom_id(items(:scarf_gloves_suggestion))} span", text: I18n.t("items.item.idea_from", name: users(:bob).name)
   end
 
-  test "guardians see reservations on the list they look after" do
+  test "a list you look after starts with surprises hidden, so it can be shared with the person it's for" do
+    idea = users(:dan).items.create!(name: "Dinosaur book", suggested_by: users(:carol))
     sign_in_as users(:alice)
 
     get person_path(users(:dan))
 
+    assert_select "h3", text: items(:lego).name
+    assert_no_match idea.name, response.body
+    assert_no_match I18n.t("items.item.status.they_bought", name: users(:carol).name), response.body
+    assert_select "a[href=?]", group_membership_messages_path(groups(:hollies), memberships(:dan_in_hollies)), count: 0
+    assert_select "a[href=?][aria-label=?]", person_path(users(:dan), surprises: "shown"), I18n.t("people.show.show_surprises")
+  end
+
+  test "a list you look after looks the same with surprises hidden whatever others reserve, buy or suggest" do
+    sign_in_as users(:alice)
+    get person_path(users(:dan))
+    before = page_without_tokens
+
+    reservations(:carol_bought_lego).destroy!
+    items(:lego).reservations.create!(user: users(:bob)).buy
+    users(:dan).items.create!(name: "Secret idea", suggested_by: users(:carol))
+    get person_path(users(:dan))
+
+    assert_equal before, page_without_tokens
+  end
+
+  test "guardians can show the surprises on the list they look after" do
+    sign_in_as users(:alice)
+
+    get person_path(users(:dan), surprises: "shown")
+
     assert_select "li", text: /#{I18n.t("items.item.status.they_bought", name: users(:carol).name)}/
+    assert_select "a[href^=?]", group_membership_messages_path(groups(:hollies), memberships(:dan_in_hollies))
+    assert_select "a[href=?][aria-label=?]", person_path(users(:dan)), I18n.t("people.show.hide_surprises")
+  end
+
+  test "surprises stay hidden on your own list" do
+    sign_in_as users(:alice)
+
+    get person_path(users(:alice), surprises: "shown")
+
+    assert_no_match items(:scarf_gloves_suggestion).name, response.body
+    assert_no_match I18n.t("items.item.status.they_getting", name: users(:bob).name), response.body
+    assert_select "a[aria-label=?]", I18n.t("people.show.show_surprises"), count: 0
   end
 
   test "people outside your groups can't see your list" do
@@ -348,7 +386,7 @@ class ListsTest < ActionDispatch::IntegrationTest
     users(:dan).items.create!(name: "Dinosaur book", suggested_by: users(:carol))
     sign_in_as users(:alice)
 
-    get person_path(users(:dan))
+    get person_path(users(:dan), surprises: "shown")
 
     assert_select "h3", text: users(:dan).items.last.name
     assert_select "a[href=?]", new_person_item_path(users(:dan)), count: 1
