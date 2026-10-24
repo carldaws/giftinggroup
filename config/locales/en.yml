@@ -92,6 +92,15 @@ en:
       rate_limited: Too many tries. Please wait a few minutes and try again.
 
   groups:
+    your_lists:
+      heading: Lists
+      yours: Your list
+      theirs: "%{name}'s list"
+      things:
+        one: 1 thing on it
+        other: "%{count} things on it"
+      empty_yours: Nothing here yet. Add the things you'd love, big or small.
+      empty_theirs: Nothing here yet. Add the things %{name} would love, big or small.
     shopping_list:
       heading: Your shopping list
       for: For %{name}
