@@ -193,6 +193,14 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert item.reload.photos.attached?
   end
 
+  test "adding a photo saved from a shop's website, even without a file extension" do
+    sign_in_as users(:alice)
+
+    post person_items_path(users(:alice)), params: { item: { name: "Fleece jacket", photos: [ fixture_file_upload("saved-photo", "application/octet-stream") ] } }
+
+    assert_equal [ Marcel::MimeType.for(file_fixture("saved-photo")) ], users(:alice).items.last.photos.map(&:content_type)
+  end
+
   test "adding a photo while editing keeps the existing ones" do
     sign_in_as users(:alice)
     post person_items_path(users(:alice)), params: { item: { name: "Walking boots", photos: [ fixture_file_upload("photo.png", "image/png") ] } }

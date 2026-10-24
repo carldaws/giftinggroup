@@ -1,5 +1,5 @@
 class Item < ApplicationRecord
-  PHOTO_CONTENT_TYPES = %w[ image/jpeg image/png image/webp image/gif image/heic image/heif ].freeze
+  PHOTO_CONTENT_TYPES = %w[ image/jpeg image/png image/webp image/avif image/gif image/heic image/heif ].freeze
   PHOTO_MAX_SIZE = 15.megabytes
   PHOTO_MAX_COUNT = 6
 

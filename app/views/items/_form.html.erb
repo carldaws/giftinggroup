@@ -33,8 +33,7 @@
 
     <div class="field">
       <%= form.label :photos, (item.photos_attachments.any?(&:persisted?) ? t("items.form.more_photos") : t("items.form.photos")), class: "label" %>
-      <%= form.file_field :photos, multiple: true, include_hidden: false, accept: Item::PHOTO_CONTENT_TYPES.join(","),
-            class: "input", aria: { describedby: "item-photos-hint" }, data: { clear_files_target: "input" } %>
+      <%= form.file_field :photos, multiple: true, include_hidden: false, class: "input", aria: { describedby: "item-photos-hint" }, data: { clear_files_target: "input" } %>
       <p id="item-photos-hint" class="hint"><%= t("items.form.photos_hint", count: Item::PHOTO_MAX_COUNT) %></p>
     </div>
 

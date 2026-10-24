@@ -642,7 +642,7 @@ en:
         in_the_future: can't be in the future
         for_no_one: Pick at least one person it's for.
         too_many: can't be more than %{count}
-        not_an_image: need to be JPEG, PNG, WebP, GIF or HEIC images
+        not_an_image: need to be JPEG, PNG, WebP, AVIF, GIF or HEIC images
         too_large: must be smaller than %{size}
       models:
         user:
