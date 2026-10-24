@@ -2,3 +2,7 @@ inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
 plugins:
   - rubocop-guardrails
+
+Guardrails/NoTestStrings:
+  Exclude:
+    - test/system/**/*
