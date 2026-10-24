@@ -21,7 +21,7 @@ class LinkPreviewsController < ApplicationController
   private
     def preview_json(preview)
       if preview.product?
-        { title: preview.title, price: preview.price, photo: photo_json(preview) }
+        { title: preview.title, photo: photo_json(preview) }
       else
         {}
       end

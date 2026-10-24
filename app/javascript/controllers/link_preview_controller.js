@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "url", "name", "price", "preview", "image", "photo", "status" ]
+  static targets = [ "url", "name", "preview", "image", "photo", "status" ]
   static values = { endpoint: String }
 
   pasted() {
@@ -38,9 +38,8 @@ export default class extends Controller {
     }
   }
 
-  #fill({ title, price, photo }) {
+  #fill({ title, photo }) {
     if (title && this.nameTarget.value.trim() === "") this.nameTarget.value = title
-    if (price && this.priceTarget.value.trim() === "") this.priceTarget.value = price
     this.#showPhoto(photo)
   }
 

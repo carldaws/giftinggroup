@@ -378,7 +378,7 @@ en:
     form:
       name: What is it?
       url: Link
-      url_hint: Optional. Paste a link and the name, price and a photo are filled in where possible.
+      url_hint: Optional. Paste a link and the name and a photo are filled in where possible.
       looking: Looking at the link…
       use_photo: Use this photo
       price: Price

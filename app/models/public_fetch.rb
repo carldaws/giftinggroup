@@ -19,6 +19,10 @@ class PublicFetch
       new(url, limit:, give_up_at:).get
     end
 
+    def redirect_location(url, give_up_at: deadline)
+      new(url, limit: 16.kilobytes, give_up_at:, redirects: 0).redirect_location
+    end
+
     def deadline
       now + TIME_ALLOWED
     end
@@ -49,6 +53,15 @@ class PublicFetch
     end
   rescue URI::Error, IPAddr::Error, Resolv::ResolvError, Timeout::Error, SystemCallError
     raise Refused
+  end
+
+  def redirect_location
+    if fetchable?
+      status, location = download
+      location if status.in?(300..399) && location.present?
+    end
+  rescue Refused, URI::Error, IPAddr::Error, Resolv::ResolvError, Timeout::Error, SystemCallError
+    nil
   end
 
   private
