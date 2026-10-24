@@ -160,6 +160,11 @@ class SmokeTest < ApplicationSystemTestCase
       assert_link t("people.show.show_surprises")
       within(item_card(book)) { assert_no_text t("items.item.status.they_getting", name: bob) }
 
+      click_on t("people.show.edit_details")
+      select carol, from: t("people.profiles.edit.add_guardian_label", name: rebecca)
+      click_on t("people.profiles.edit.add_guardian")
+      assert_text t("people.guardianships.create.added", name: carol, dependant: rebecca)
+
       go_home
       open_group group
       open_member_menu rebecca

@@ -79,4 +79,41 @@
       </div>
     <% end %>
   </div>
+
+  <% unless yours %>
+    <% guardianships = @person.guardianships_as_dependant.includes(:guardian).by_name.to_a %>
+    <% possible_guardians = @person.possible_guardians.by_name.to_a %>
+
+    <section id="guardians" aria-labelledby="guardians-heading" class="section mt-10">
+      <%= section_header t(".guardians_heading", name:), id: "guardians-heading" %>
+
+      <ul class="card card--flush list">
+        <% guardianships.each do |guardianship| %>
+          <% guardian = guardianship.guardian %>
+          <% you = guardian == Current.user %>
+          <li class="row">
+            <%= avatar_tag guardian, size: :sm, tooltip: false %>
+            <span class="row-title min-w-0 flex-1"><%= you ? t(".you") : guardian.name %></span>
+            <% if guardianships.size > 1 %>
+              <%= button_to (you ? t(".stop_looking_after") : t(".remove_guardian")), person_guardianship_path(@person, guardianship), method: :delete,
+                    class: "button button--secondary button--small",
+                    form: { data: { turbo_confirm: (you ? t(".stop_confirm", name:) : t(".remove_confirm", guardian: guardian.name, name:)) } } %>
+            <% end %>
+          </li>
+        <% end %>
+
+        <% if possible_guardians.any? %>
+          <li class="row">
+            <%= form_with model: Guardianship.new, url: person_guardianships_path(@person), class: "flex w-full flex-wrap gap-2" do |form| %>
+              <%= form.label :guardian_id, t(".add_guardian_label", name:), class: "sr-only" %>
+              <%= form.select :guardian_id, possible_guardians.map { [ it.name, it.id ] }, { prompt: t(".add_guardian_prompt") },
+                    required: true, class: "input select min-w-0 flex-1" %>
+              <%= form.submit t(".add_guardian"), class: "button button--secondary" %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+      <p class="hint mt-3"><%= t(".guardians_hint", name:) %></p>
+    </section>
+  <% end %>
 </div>

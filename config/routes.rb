@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       resources :items, only: %i[ new create ]
       resources :interests, only: %i[ create destroy ]
       resources :sizes, only: %i[ create destroy ]
+      resources :guardianships, only: %i[ create destroy ]
     end
   end
 
