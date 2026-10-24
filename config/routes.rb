@@ -27,9 +27,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :people, only: %i[ show destroy ] do
+  resources :people, only: :show do
     scope module: :people do
       resource :profile, only: %i[ edit update ]
+      resource :deletion, only: %i[ new create ]
       resources :items, only: %i[ new create ]
       resources :interests, only: %i[ create destroy ]
       resources :sizes, only: %i[ create destroy ]
