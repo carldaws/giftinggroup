@@ -3,7 +3,7 @@ class Message < ApplicationRecord
   belongs_to :subject, class_name: "Membership", optional: true
   belongs_to :author, class_name: "User", optional: true
 
-  broadcasts_refreshes_to ->(message) { message.subject.presence || [ message.group, :chat ] }
+  broadcasts_refreshes_to ->(message) { message.subject || [ message.group, :chat ] }
 
   normalizes :body, with: ->(body) { body.gsub("\r\n", "\n").strip }
 
