@@ -514,7 +514,7 @@ en:
         body: People in your groups see your list, your birthday, the things you love and your sizes. A chat is seen by everyone in the group except the person it's about.
       not_done:
         heading: What's done with it
-        body: Nothing else. It isn't read, sold, shared, analysed or used for any other purpose. There are no ads, no tracking, no analytics and no emails. Cookies are only used to keep you signed in and to protect forms, and nothing is loaded from anyone else's servers.
+        body: Nothing else. It isn't read, sold, shared, analysed or used for any other purpose. There are no ads, no tracking, no analytics and no emails. Cookies are only used to keep you signed in and to protect forms, and nothing is loaded from anyone else's servers. Visits pass through Cloudflare, which protects the site from attacks.
       leaving:
         heading: Leaving
         body: You can delete your account from Your details at any time. Your list goes. Your chat messages stay, under your name, so the conversation still makes sense.

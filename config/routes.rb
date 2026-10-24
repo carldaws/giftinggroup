@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  constraints(host: "www.giftinglists.com") do
+    get "(*path)", to: redirect(host: "giftinglists.com"), format: false # rubocop:disable Guardrails/RestfulRoutes
+  end
+
   resource :session, only: %i[ new create destroy ]
   resource :registration, only: %i[ new create ]
   resource :account_deletion, only: %i[ new create ]

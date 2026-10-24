@@ -87,9 +87,10 @@ test:
 production:
   primary: &primary_production
     <<: *default
+    host: <%= ENV["DB_HOST"] %>
     database: gifting_production
     username: gifting
-    password: <%= ENV["GIFTING_DATABASE_PASSWORD"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: gifting_production_cache
