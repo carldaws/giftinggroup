@@ -1,6 +1,8 @@
 class Groups::DependantsController < ApplicationController
   include GroupScoped
 
+  before_action :set_existing_dependants
+
   def new
     @dependant = User.new
   end
@@ -14,4 +16,9 @@ class Groups::DependantsController < ApplicationController
       render :new, status: :unprocessable_content
     end
   end
+
+  private
+    def set_existing_dependants
+      @existing_dependants = Current.user.dependants_outside(@group).by_name.to_a
+    end
 end

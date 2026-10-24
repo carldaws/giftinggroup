@@ -41,6 +41,7 @@ class User < ApplicationRecord
   after_update :stop_being_looked_after, if: -> { saved_change_to_email_address? && signs_in? }
   after_update :sign_out_everywhere, if: :saved_change_to_password_digest?
 
+  scope :by_name, -> { order(Arel.sql("lower(users.name)")) }
   scope :visible_to, ->(user) do
     where(id: Membership.where(group_id: user.memberships.select(:group_id)).select(:user_id))
       .or(where(id: user.id))
@@ -61,6 +62,10 @@ class User < ApplicationRecord
 
   def looks_after?(user)
     user == self || dependants.to_a.include?(user)
+  end
+
+  def dependants_outside(group)
+    dependants.where.not(id: group.memberships.select(:user_id))
   end
 
   def shopping_list

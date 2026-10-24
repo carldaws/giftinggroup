@@ -1,0 +1,16 @@
+<%# locals: (dependant:, group:, autofocus:) %>
+<div class="card">
+  <%= form_with model: dependant, url: group_dependants_path(group) do |form| %>
+    <%= render "shared/errors", record: dependant %>
+
+    <div class="field">
+      <%= form.label :name, t(".name"), class: "label" %>
+      <%= form.text_field :name, required: true, autofocus:, class: "input", aria: { describedby: "dependant-name-hint" } %>
+      <p id="dependant-name-hint" class="hint"><%= t(".hint") %></p>
+    </div>
+
+    <div class="form-actions">
+      <%= form.submit t(".submit"), class: "button button--wide" %>
+    </div>
+  <% end %>
+</div>

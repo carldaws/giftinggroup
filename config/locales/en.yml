@@ -163,6 +163,8 @@ en:
       remove: Remove from group
       remove_confirm: Remove %{name} from the group?
     memberships:
+      create:
+        added: "%{name} has been added."
       destroy:
         left: You've left %{group}.
         removed: "%{name} has been removed."
@@ -193,9 +195,13 @@ en:
     dependants:
       new:
         title: Add someone
-        back: Back to %{group}
         heading: Add someone you look after
         intro: Like a child, or a grandparent who won't sign in themselves. They'll be part of the group, and you'll manage their list for them.
+        existing_heading: Someone you already look after
+        add: Add
+        add_label: Add %{name} to the group
+        new_heading: Someone new
+      form:
         name: Their name
         hint: They can set up their own account later if they want one.
         submit: Add them

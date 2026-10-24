@@ -1,9 +1,14 @@
 class Groups::MembershipsController < ApplicationController
   include GroupScoped
 
-  before_action :set_membership
+  before_action :set_membership, except: :create
   before_action :ensure_admin, only: :update
   before_action :ensure_removable, only: :destroy
+
+  def create
+    @group.join(dependant)
+    redirect_to @group, notice: t(".added", name: dependant.name)
+  end
 
   def update
     if @membership.update(params.expect(membership: [ :admin ]))
@@ -24,6 +29,10 @@ class Groups::MembershipsController < ApplicationController
   private
     def set_membership
       @membership = @group.memberships.find(params[:id])
+    end
+
+    def dependant
+      @dependant ||= Current.user.dependants.find(params.expect(membership: [ :user_id ]).fetch(:user_id))
     end
 
     def ensure_removable

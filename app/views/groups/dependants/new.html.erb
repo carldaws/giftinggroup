@@ -3,19 +3,27 @@
 <div class="page page--single">
   <%= page_header t(".heading"), crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ], subtitle: t(".intro") %>
 
-  <div class="card">
-    <%= form_with model: @dependant, url: group_dependants_path(@group) do |form| %>
-      <%= render "shared/errors", record: @dependant %>
+  <% if @existing_dependants.any? %>
+    <section aria-labelledby="existing-heading" class="section">
+      <%= section_header t(".existing_heading"), id: "existing-heading" %>
 
-      <div class="field">
-        <%= form.label :name, t(".name"), class: "label" %>
-        <%= form.text_field :name, required: true, autofocus: true, class: "input", aria: { describedby: "dependant-name-hint" } %>
-        <p id="dependant-name-hint" class="hint"><%= t(".hint") %></p>
-      </div>
+      <ul class="card card--flush list">
+        <% @existing_dependants.each do |dependant| %>
+          <li class="row">
+            <%= avatar_tag dependant, tooltip: false %>
+            <p class="row-title min-w-0 flex-1"><%= dependant.name %></p>
+            <%= button_to t(".add"), group_memberships_path(@group), params: { membership: { user_id: dependant.id } },
+                  class: "button button--secondary button--small", aria: { label: t(".add_label", name: dependant.name) } %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
 
-      <div class="form-actions">
-        <%= form.submit t(".submit"), class: "button button--wide" %>
-      </div>
-    <% end %>
-  </div>
+    <section aria-labelledby="new-heading" class="section">
+      <%= section_header t(".new_heading"), id: "new-heading" %>
+      <%= render "groups/dependants/form", dependant: @dependant, group: @group, autofocus: false %>
+    </section>
+  <% else %>
+    <%= render "groups/dependants/form", dependant: @dependant, group: @group, autofocus: true %>
+  <% end %>
 </div>

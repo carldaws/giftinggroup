@@ -7,7 +7,7 @@ class Membership < ApplicationRecord
 
   scope :admins, -> { where(admin: true) }
   scope :with_chat_visible_to, ->(user) { where(group_id: user.memberships.select(:group_id)).where.not(user:) }
-  scope :by_name, -> { joins(:user).order(Arel.sql("lower(users.name)")) }
+  scope :by_name, -> { joins(:user).merge(User.by_name) }
 
   validate :dependants_are_not_admins
   validate :group_keeps_an_admin, on: :update, if: :will_save_change_to_admin?
@@ -30,7 +30,7 @@ class Membership < ApplicationRecord
   end
 
   def chat_readers
-    group.members.where.not(id: user_id).where.not(email_address: nil).order(Arel.sql("lower(users.name)"))
+    group.members.where.not(id: user_id).where.not(email_address: nil).by_name
   end
 
   def mark_read_by(reader)

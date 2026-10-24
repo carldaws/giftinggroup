@@ -182,6 +182,52 @@ class GroupsTest < ActionDispatch::IntegrationTest
     assert_includes groups(:hollies).members, users(:carol).dependants.sole
   end
 
+  test "adding someone you already look after to another group" do
+    groups(:ivies).join(users(:alice))
+    sign_in_as users(:alice)
+
+    get new_group_dependant_path(groups(:ivies))
+    assert_select "#existing-heading"
+    assert_select ".row-title", text: users(:dan).name
+
+    post group_memberships_path(groups(:ivies)), params: { membership: { user_id: users(:dan).id } }
+
+    assert_redirected_to groups(:ivies)
+    assert_includes groups(:ivies).members, users(:dan)
+
+    get new_group_dependant_path(groups(:ivies))
+    assert_select "#existing-heading", count: 0
+  end
+
+  test "adding someone who is already in the group changes nothing" do
+    groups(:ivies).join(users(:alice))
+    groups(:ivies).join(users(:dan))
+    sign_in_as users(:alice)
+
+    assert_no_difference -> { groups(:ivies).memberships.count } do
+      post group_memberships_path(groups(:ivies)), params: { membership: { user_id: users(:dan).id } }
+    end
+    assert_redirected_to groups(:ivies)
+  end
+
+  test "you can't add someone you don't look after" do
+    sign_in_as users(:carol)
+
+    post group_memberships_path(groups(:ivies)), params: { membership: { user_id: users(:dan).id } }
+
+    assert_response :not_found
+    assert_not_includes groups(:ivies).members, users(:dan)
+  end
+
+  test "you can't add someone you look after to a group you're not in" do
+    sign_in_as users(:alice)
+
+    post group_memberships_path(groups(:ivies)), params: { membership: { user_id: users(:dan).id } }
+
+    assert_response :not_found
+    assert_not_includes groups(:ivies).members, users(:dan)
+  end
+
   test "admins can make a sign-in link that lets someone choose a new password" do
     sign_in_as users(:alice)
     get group_membership_sign_in_link_path(groups(:hollies), memberships(:bob_in_hollies))
