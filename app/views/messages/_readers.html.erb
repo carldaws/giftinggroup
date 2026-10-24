@@ -1,0 +1,12 @@
+<%# locals: (group:, readers:) %>
+<span class="flex flex-wrap items-center gap-x-3 gap-y-1">
+  <span><%= group.name %></span>
+  <span class="flex gap-1" role="img" aria-label="<%= t(".readers", names: readers.map(&:name).to_sentence) %>">
+    <% readers.first(8).each do |reader| %>
+      <%= avatar_tag reader, size: :xs %>
+    <% end %>
+    <% if readers.size > 8 %>
+      <span class="inline-flex size-6 items-center justify-center rounded-full bg-line text-[0.625rem] font-semibold text-ink ring-2 ring-surface">+<%= readers.size - 8 %></span>
+    <% end %>
+  </span>
+</span>

@@ -1,14 +1,17 @@
 about_alice:
   subject: alice_in_hollies
+  group: hollies
   author: bob
   body: I'll get the scarf, could someone do the gloves?
 
 about_dan:
   subject: dan_in_hollies
+  group: hollies
   author: carol
   body: Lego's sorted. Alice, does he still like dinosaurs?
 
 about_erin:
   subject: erin_in_ivies
+  group: ivies
   author: carol
   body: Erin mentioned a new tent

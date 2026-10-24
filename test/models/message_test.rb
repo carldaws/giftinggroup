@@ -72,6 +72,29 @@ class MessageUnreadTest < ActiveSupport::TestCase
     assert_not_includes Message.unread_by(users(:alice)), messages(:about_alice)
   end
 
+  test "a message about someone belongs to their group" do
+    message = memberships(:erin_in_ivies).messages_about.create!(author: users(:carol), body: "Tent ideas?")
+
+    assert_equal groups(:ivies), message.group
+  end
+
+  test "only group members can post for everyone" do
+    message = groups(:hollies).messages.new(author: users(:erin), body: "Hello")
+
+    assert_not message.valid?
+    assert message.errors.of_kind?(:author, :not_in_the_group)
+  end
+
+  test "messages for everyone count as unread until the group chat is opened" do
+    message = groups(:hollies).messages.create!(author: users(:bob), body: "Secret Santa?")
+
+    assert_includes Message.unread_by(users(:alice)), message
+
+    groups(:hollies).mark_read_by(users(:alice))
+
+    assert_not_includes Message.unread_by(users(:alice)), message
+  end
+
   test "line breaks are stored the way the browser counts them" do
     lines = %w[ Scarf Gloves ]
 

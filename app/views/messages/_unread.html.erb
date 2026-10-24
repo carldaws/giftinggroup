@@ -1,19 +1,24 @@
-<% unread = Message.unread_by(Current.user).includes(:author, subject: %i[ user group ]).chronologically.group_by(&:subject) %>
+<% unread = Message.unread_by(Current.user).includes(:author, :group, subject: :user).chronologically.group_by { [ it.group, it.subject ] } %>
 
 <% if unread.any? %>
   <section aria-labelledby="unread-heading" class="section">
     <%= section_header t(".heading"), id: "unread-heading" %>
 
     <ul class="card card--flush list">
-      <% unread.sort_by { |_, messages| messages.last.created_at }.reverse_each do |membership, messages| %>
+      <% unread.sort_by { |_, messages| messages.last.created_at }.reverse_each do |(group, membership), messages| %>
         <% latest = messages.last %>
         <li>
-          <%= link_to group_membership_messages_path(membership.group, membership, anchor: "new"), data: { turbo_prefetch: false }, class: "row row--link" do %>
-            <%= avatar_tag membership.user, tooltip: false %>
+          <%= link_to (membership.present? ? group_membership_messages_path(group, membership, anchor: "new") : group_messages_path(group, anchor: "new")),
+                data: { turbo_prefetch: false }, class: "row row--link" do %>
+            <% if membership.present? %>
+              <%= avatar_tag membership.user, tooltip: false %>
+            <% end %>
             <span class="min-w-0 flex-1">
-              <span class="row-title block"><%= t(".about", name: membership.user.name) %></span>
+              <span class="row-title block"><%= membership.present? ? t(".about", name: membership.user.name) : t(".everyone", group: group.name) %></span>
               <span class="row-meta block truncate"><%= latest.author_name %>: <%= latest.body %></span>
-              <span class="row-meta block"><%= membership.group.name %></span>
+              <% if membership.present? %>
+                <span class="row-meta block"><%= group.name %></span>
+              <% end %>
             </span>
             <span class="count">
               <span aria-hidden="true"><%= messages.size %></span>

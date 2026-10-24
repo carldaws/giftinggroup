@@ -6,6 +6,8 @@ class Group < ApplicationRecord
   has_many :members, through: :memberships, source: :user
   has_many :occasions, dependent: :destroy
   has_many :group_holidays, dependent: :destroy
+  has_many :messages, dependent: :destroy
+  has_many :readings, dependent: :delete_all
 
   normalizes :join_code, with: ->(join_code) { join_code.upcase.gsub(/[^A-Z0-9]/, "") }
 
@@ -50,6 +52,15 @@ class Group < ApplicationRecord
 
   def celebrates?(key)
     group_holidays.any? { it.key == key }
+  end
+
+  def chat_readers
+    members.where.not(email_address: nil).by_name
+  end
+
+  def mark_read_by(reader)
+    Reading.upsert({ user_id: reader.id, group_id: id, membership_id: nil, read_at: Time.current },
+      unique_by: :index_readings_on_user_id_and_group_id_for_group_chats)
   end
 
   def admin?(user)

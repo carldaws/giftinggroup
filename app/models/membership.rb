@@ -30,11 +30,11 @@ class Membership < ApplicationRecord
   end
 
   def chat_readers
-    group.members.where.not(id: user_id).where.not(email_address: nil).by_name
+    group.chat_readers.where.not(id: user_id)
   end
 
   def mark_read_by(reader)
-    Reading.upsert({ user_id: reader.id, membership_id: id, read_at: Time.current }, unique_by: %i[ user_id membership_id ])
+    Reading.upsert({ user_id: reader.id, membership_id: id, group_id:, read_at: Time.current }, unique_by: %i[ user_id membership_id ])
   end
 
   private

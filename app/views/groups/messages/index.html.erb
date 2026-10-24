@@ -1,0 +1,15 @@
+<% messages = @group.messages.for_everyone %>
+<% content_for :title, t(".title", group: @group.name) %>
+<% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
+<%= turbo_stream_from @group, :chat %>
+
+<div class="page page--single">
+  <%= page_header t(".heading"), crumb: t(".heading"), subtitle: render("messages/readers", group: @group, readers: @group.chat_readers.to_a),
+        crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ] %>
+
+  <p class="notice notice--honey mb-4"><%= t(".for_everyone") %></p>
+
+  <%= render "messages/chat", messages: messages.includes(:author).chronologically,
+        first_unread: messages.unread_by(Current.user).chronologically.first,
+        message: @message, url: group_messages_path(@group), label: t(".label", group: @group.name) %>
+</div>
