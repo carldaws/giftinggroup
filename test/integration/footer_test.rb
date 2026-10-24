@@ -6,7 +6,7 @@ class FooterTest < ActionDispatch::IntegrationTest
       get new_session_path
     end
 
-    assert_select "footer a[href=?]", "https://github.com/carldaws/giftinggroup"
+    assert_select "footer a[href=?]", "https://github.com/carldaws/giftinglists"
     assert_select "footer a[href=?]", "https://github.com/carldaws"
     assert_select "footer", text: /#{I18n.t("seasonal_greetings.halloween")}/
   end
