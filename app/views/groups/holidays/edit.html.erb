@@ -1,6 +1,7 @@
 <% welcome = params[:welcome].present? %>
 <% members = @group.memberships.by_name.includes(:user).map(&:user) %>
 <% celebrated = @group.group_holidays.includes(:recipients).index_by(&:key) %>
+<% holidays = welcome ? Holiday.all.select(&:for_everyone?) : Holiday.all %>
 <% content_for :title, t(".title") %>
 
 <div class="page page--narrow">
@@ -12,7 +13,7 @@
 
     <div class="card card--flush">
       <ul class="list">
-        <% Holiday.all.sort_by(&:next_date).each do |holiday| %>
+        <% holidays.sort_by(&:next_date).each do |holiday| %>
           <% group_holiday = celebrated[holiday.key] %>
           <% checked = group_holiday.present? || (welcome && celebrated.empty? && holiday.key == "christmas_day") %>
           <li class="group/holiday">
@@ -45,7 +46,7 @@
       </ul>
 
       <div class="card-footer">
-        <p class="hint"><%= t(".custom_hint") %></p>
+        <p class="hint"><%= welcome ? t(".welcome_hint") : t(".custom_hint") %></p>
         <div class="form-actions mt-4">
           <%= form.submit welcome ? t(".continue") : t(".save"), class: "button button--wide" %>
         </div>

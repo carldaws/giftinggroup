@@ -15,6 +15,19 @@ class HolidaysTest < ActionDispatch::IntegrationTest
     assert_select "input#holiday_easter_sunday[checked]", count: 0
   end
 
+  test "a new group is only offered the holidays everyone celebrates" do
+    sign_in_as users(:erin)
+    post groups_path, params: { group: { name: "The Oaks" } }
+    follow_redirect!
+
+    assert_select "input#holiday_easter_sunday"
+    assert_select "input#holiday_mothers_day_uk", count: 0
+
+    get edit_group_holidays_path(Group.find_by!(name: "The Oaks"))
+
+    assert_select "input#holiday_mothers_day_uk"
+  end
+
   test "picking holidays for a group" do
     sign_in_as users(:alice)
 

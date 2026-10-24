@@ -213,6 +213,7 @@ en:
         intro: Tick the ones your group celebrates. Birthdays are added for you, and you can add your own occasions too.
         who_for: Who's %{holiday} for?
         custom_hint: Something else, like an anniversary or a graduation? Add it as an occasion from your group page.
+        welcome_hint: Mother's Day, Father's Day and Valentine's Day are for particular people, so you can add them from your group page once people have joined.
         continue: Continue
         save: Save
       update:
