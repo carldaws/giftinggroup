@@ -128,7 +128,6 @@ en:
       submit: Start the group
     edit:
       title: Rename group
-      back: Back to %{group}
       heading: Rename group
       submit: Save
     update:
@@ -174,7 +173,6 @@ en:
         index:
           title: Chat about %{name}
           heading: Chat about %{name}
-          back: Back to %{name}'s page
           new: New
           empty: No messages yet.
           readers: "In this chat: %{names}"
@@ -184,7 +182,6 @@ en:
       sign_in_links:
         show:
           title: Sign-in link
-          back: Back to %{group}
           heading: A link for %{name}
           reset_intro: Send this to %{name}. It lets them choose a new password.
           set_up_intro: Send this to %{name}. It lets them set up their own account. After that they'll look after their own list and won't see what people get them.
@@ -215,7 +212,6 @@ en:
     holidays:
       edit:
         title: Holidays
-        back: Back to %{group}
         welcome_heading: Which occasions does %{group} give presents for?
         heading: Holidays
         intro: Tick the ones your group celebrates. Birthdays are added for you, and you can add your own occasions too.
@@ -247,13 +243,11 @@ en:
         clear_all: Clear all
       new:
         title: Add an occasion
-        back: Back to %{group}
         heading: Add an occasion
         intro: Christmas, a graduation, an anniversary, a housewarming. Birthdays are added for you.
         submit: Add the occasion
       edit:
         title: Edit occasion
-        back: Back to %{group}
         heading: Edit occasion
         submit: Save
         remove: Remove the occasion
@@ -369,7 +363,6 @@ en:
       new:
         title: Add something
         suggest_title: Add a surprise idea for %{name}
-        back: Back to %{name}
         your_list: your page
         their_list: "%{name}"
         heading: Add something
@@ -433,7 +426,6 @@ en:
       edit: Edit
     edit:
       title: Edit
-      back: Back to the list
       heading: Edit
       photos: Photos
       remove_photo: Remove photo
