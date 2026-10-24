@@ -1,8 +1,9 @@
 en:
   app:
-    name: gifting.group
+    name: Gifting Lists
     name_lead: gifting
-    name_tail: .group
+    name_tail: lists
+    description: Wishlists for groups of people who buy each other presents.
 
   layouts:
     header:

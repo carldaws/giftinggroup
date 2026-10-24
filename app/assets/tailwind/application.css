@@ -131,6 +131,11 @@
 }
 
 @layer components {
+  .wordmark {
+    @apply inline-flex items-center gap-2 font-display text-2xl font-semibold tracking-tight text-ink;
+    font-variation-settings: "SOFT" 100;
+  }
+
   .page {
     @apply mx-auto w-full max-w-5xl;
   }
