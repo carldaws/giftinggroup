@@ -78,19 +78,25 @@ class Item < ApplicationRecord
     end
   end
 
-  def surprise_choosable_by?(user)
-    user.dependants.include?(owner) && (suggested_by.nil? || suggested_by == user)
+  def asked_for
+    !suggestion?
   end
 
-  def choose_surprise(asked_for, by:)
-    self.suggested_by = (asked_for.present? ? nil : by) if surprise_choosable_by?(by)
+  def surprise_choosable_by?(user)
+    !received? && user.dependants.include?(owner) && (suggested_by.nil? || suggested_by.looks_after?(owner))
+  end
+
+  def mark_asked_for(asked_for, by:)
+    if surprise_choosable_by?(by)
+      self.suggested_by = asked_for == true ? nil : by
+    end
   end
 
   def editable_by?(user)
     if removed?
       false
     elsif suggestion?
-      suggested_by == user
+      suggested_by == user || (user.looks_after?(owner) && suggested_by.looks_after?(owner))
     else
       user.looks_after?(owner)
     end

@@ -40,8 +40,7 @@
     <div class="grid gap-4">
       <% if item.surprise_choosable_by?(Current.user) %>
         <label class="choice">
-          <%= hidden_field_tag :asked_for, "0", id: nil %>
-          <%= check_box_tag :asked_for, "1", !item.suggestion?, class: "checkbox" %>
+          <%= form.check_box :asked_for, class: "checkbox" %>
           <span>
             <span class="block font-semibold"><%= t("items.form.asked_for", name: item.owner.name) %></span>
             <span class="hint block"><%= t("items.form.asked_for_hint", name: item.owner.name) %></span>
