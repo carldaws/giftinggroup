@@ -9,6 +9,28 @@ class OccasionsTest < ActionDispatch::IntegrationTest
     assert_select "section[aria-labelledby=occasions-heading] li p", text: occasions(:christmas).name
   end
 
+  test "coming up only looks six months ahead" do
+    far_off = groups(:hollies).occasions.create!(name: "Summer barbecue", date: Date.current + 8.months, for_everyone: true)
+    sign_in_as users(:carol)
+
+    get group_path(groups(:hollies))
+
+    assert_select "section[aria-labelledby=occasions-heading] li p", text: occasions(:christmas).name
+    assert_select "section[aria-labelledby=occasions-heading] li p", text: far_off.name, count: 0
+  end
+
+  test "when nothing is coming up in the next six months, the next occasion still shows" do
+    groups(:hollies).occasions.destroy_all
+    far_off = groups(:hollies).occasions.create!(name: "Summer barbecue", date: Date.current + 8.months, for_everyone: true)
+    later = groups(:hollies).occasions.create!(name: "Autumn walk", date: Date.current + 10.months, for_everyone: true)
+    sign_in_as users(:carol)
+
+    get group_path(groups(:hollies))
+
+    assert_select "section[aria-labelledby=occasions-heading] li p", text: far_off.name
+    assert_select "section[aria-labelledby=occasions-heading] li p", text: later.name, count: 0
+  end
+
   test "occasions you can change have an edit button" do
     sign_in_as users(:bob)
 

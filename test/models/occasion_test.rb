@@ -141,4 +141,13 @@ class OccasionTest < ActiveSupport::TestCase
     assert_includes Occasion.recent, past
     assert_not_includes Occasion.upcoming, past
   end
+
+  test "coming up runs from today to six months ahead" do
+    travel_to Date.new(2026, 8, 31) do
+      dates = [ Date.current - 1.day, Date.current, Date.current + 6.months, Date.current + 6.months + 1.day ]
+      occasions = dates.map { |date| groups(:hollies).occasions.create!(name: "On #{date}", date:, for_everyone: true) }
+
+      assert_equal occasions[1..2], Occasion.where(id: occasions).coming_up.soonest_first.to_a
+    end
+  end
 end
