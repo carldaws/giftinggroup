@@ -71,6 +71,12 @@ class User < ApplicationRecord
     user == self || dependants.to_a.include?(user)
   end
 
+  def possible_guardians
+    User.where(id: Membership.where(group_id: memberships.select(:group_id)).select(:user_id))
+      .where.not(email_address: nil)
+      .where.not(id: guardianships_as_dependant.select(:guardian_id))
+  end
+
   def dependants_outside(group)
     dependants.where.not(id: group.memberships.select(:user_id))
   end
