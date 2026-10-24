@@ -1,5 +1,6 @@
 class Backup
   LOCAL_DUMPS_KEPT = 7
+  HOST = "giftinglists"
 
   attr_reader :storage_box, :ssh_key, :dumps, :storage
 
@@ -13,8 +14,8 @@ class Backup
     keep_recent_dumps
 
     restic "init" unless restic?("cat", "config")
-    restic "backup", dumps.to_s, storage.to_s
-    restic "forget", "--keep-daily", "7", "--keep-weekly", "4", "--keep-monthly", "12", "--prune"
+    restic "backup", "--host", HOST, dumps.to_s, storage.to_s
+    restic "forget", "--host", HOST, "--keep-daily", "7", "--keep-weekly", "4", "--keep-monthly", "12", "--prune"
   end
 
   def restic(*arguments)
