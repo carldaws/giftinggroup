@@ -21,7 +21,7 @@ class Occasion < ApplicationRecord
   after_save :save_recipients, if: -> { !@chosen_recipient_ids.nil? }
 
   scope :upcoming, -> { where(date: Date.current..) }
-  scope :coming_up, -> { where(date: Date.current..(Date.current + COMING_UP)) }
+  scope :coming_up, -> { upcoming.where(date: ..(Date.current + COMING_UP)) }
   scope :recent, -> { where(date: (Date.current - RECENT)...Date.current) }
   scope :soonest_first, -> { order(:date) }
   scope :birthdays, -> { where.not(person_id: nil) }

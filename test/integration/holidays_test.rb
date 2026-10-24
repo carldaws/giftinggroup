@@ -62,8 +62,10 @@ class HolidaysTest < ActionDispatch::IntegrationTest
     groups(:hollies).celebrate([ "christmas_day", "fathers_day" ], people: { "fathers_day" => [ users(:bob).id ] })
     sign_in_as users(:carol)
 
-    get group_path(groups(:hollies))
-    assert_select "section[aria-labelledby=occasions-heading] li p", text: Holiday.find("christmas_day").name
+    travel_to Holiday.find("christmas_day").next_date - 1.month do
+      get group_path(groups(:hollies))
+      assert_select "section[aria-labelledby=occasions-heading] li p", text: Holiday.find("christmas_day").name
+    end
 
     travel_to Holiday.find("fathers_day").next_date - 1.month do
       get group_path(groups(:hollies))
