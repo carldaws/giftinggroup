@@ -13,9 +13,10 @@ class LinkPreviewTest < ActiveSupport::TestCase
   end
 
   test "reads the tags whichever way the shop writes them" do
-    preview = parse("<meta name='og:title' content='Lint roller'>")
+    name = "Lint roller"
+    preview = parse("<meta name='og:title' content='#{name}'>")
 
-    assert_equal "Lint roller", preview.title
+    assert_equal name, preview.title
   end
 
   test "a page that shares nothing gives nothing" do
