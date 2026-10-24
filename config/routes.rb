@@ -3,6 +3,8 @@ Rails.application.routes.draw do
     get "(*path)", to: redirect(host: "giftinglists.com"), format: false # rubocop:disable Guardrails/RestfulRoutes
   end
 
+  match "/rails/active_storage/direct_uploads", to: proc { [ 404, {}, [] ] }, via: :all # rubocop:disable Guardrails/RestfulRoutes
+
   resource :session, only: %i[ new create destroy ]
   resource :registration, only: %i[ new create ]
   resource :account_deletion, only: %i[ new create ]
