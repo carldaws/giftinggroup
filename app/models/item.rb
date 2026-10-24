@@ -111,9 +111,15 @@ class Item < ApplicationRecord
 
     def photos_are_acceptable
       errors.add(:photos, :too_many, count: PHOTO_MAX_COUNT) if photos.size > PHOTO_MAX_COUNT
-      photos.each do |photo|
-        errors.add(:photos, :not_an_image) unless photo.content_type.in?(PHOTO_CONTENT_TYPES)
-        errors.add(:photos, :too_large, size: PHOTO_MAX_SIZE.to_fs(:human_size)) if photo.byte_size > PHOTO_MAX_SIZE
-      end
+      errors.add(:photos, :not_an_image) if photos.any? { !it.content_type.in?(PHOTO_CONTENT_TYPES) } || uploaded_photos.any? { !image_file?(it) }
+      errors.add(:photos, :too_large, size: PHOTO_MAX_SIZE.to_fs(:human_size)) if photos.any? { it.byte_size > PHOTO_MAX_SIZE }
+    end
+
+    def uploaded_photos
+      attachment_changes.key?("photos") ? attachment_changes["photos"].attachables.grep(ActionDispatch::Http::UploadedFile) : []
+    end
+
+    def image_file?(upload)
+      Marcel::MimeType.for(Pathname(upload.path)).in?(PHOTO_CONTENT_TYPES)
     end
 end

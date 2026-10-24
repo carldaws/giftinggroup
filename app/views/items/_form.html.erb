@@ -1,5 +1,5 @@
 <%# locals: (item:, url:, submit:) %>
-<%= form_with model: item, url: do |form| %>
+<%= form_with model: item, url:, data: { controller: "clear-files", action: "turbo:submit-end->clear-files#clear" } do |form| %>
   <%= render "shared/errors", record: item %>
 
   <div class="fields">
@@ -32,9 +32,9 @@
     </div>
 
     <div class="field">
-      <%= form.label :photos, (item.photos.attached? ? t("items.form.more_photos") : t("items.form.photos")), class: "label" %>
+      <%= form.label :photos, (item.photos_attachments.any?(&:persisted?) ? t("items.form.more_photos") : t("items.form.photos")), class: "label" %>
       <%= form.file_field :photos, multiple: true, include_hidden: false, accept: Item::PHOTO_CONTENT_TYPES.join(","),
-            class: "input", aria: { describedby: "item-photos-hint" } %>
+            class: "input", aria: { describedby: "item-photos-hint" }, data: { clear_files_target: "input" } %>
       <p id="item-photos-hint" class="hint"><%= t("items.form.photos_hint", count: Item::PHOTO_MAX_COUNT) %></p>
     </div>
 
