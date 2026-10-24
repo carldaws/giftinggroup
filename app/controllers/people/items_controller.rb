@@ -1,5 +1,5 @@
 class People::ItemsController < ApplicationController
-  include PersonScoped
+  include PersonScoped, ItemPhotos
 
   def new
     @item = @person.build_item({ little: params[:little].present? }, by: Current.user)
@@ -17,7 +17,7 @@ class People::ItemsController < ApplicationController
 
   private
     def item_params
-      params.expect(item: [ :name, :url, :price, :notes, :quantity, :most_wanted, :little, photos: [] ])
+      with_own_fetched_photos(params.expect(item: [ :name, :url, :price, :notes, :quantity, :most_wanted, :little, photos: [] ]))
     end
 
     def added_notice
