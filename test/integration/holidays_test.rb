@@ -63,9 +63,12 @@ class HolidaysTest < ActionDispatch::IntegrationTest
     sign_in_as users(:carol)
 
     get group_path(groups(:hollies))
-
     assert_select "section[aria-labelledby=occasions-heading] li p", text: Holiday.find("christmas_day").name
-    assert_select "section[aria-labelledby=occasions-heading] li p", text: /#{I18n.t("groups.coming_up.for_people", names: users(:bob).name)}/
+
+    travel_to Holiday.find("fathers_day").next_date - 1.month do
+      get group_path(groups(:hollies))
+      assert_select "section[aria-labelledby=occasions-heading] li p", text: /#{I18n.t("groups.coming_up.for_people", names: users(:bob).name)}/
+    end
   end
 
   test "the nudge for a holiday has no group in its title" do

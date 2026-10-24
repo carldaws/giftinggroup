@@ -1,5 +1,6 @@
 <%# locals: (group:) %>
-<% occasions = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :recipients) %>
+<% upcoming = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :recipients) %>
+<% occasions = upcoming.coming_up.presence || upcoming.limit(1) %>
 <% gifts_to_choose = Current.user.gifts_to_choose(in_group: group).to_h { |occasion, people, everyone| [ occasion, { people:, everyone: } ] } %>
 
 <section aria-labelledby="occasions-heading" class="section">
