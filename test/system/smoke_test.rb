@@ -14,6 +14,7 @@ class SmokeTest < ApplicationSystemTestCase
     scarf = "Green wool scarf"
     gloves = "Matching gloves"
     book = "Dinosaur book"
+    kite = "Rainbow kite"
     hobby = "Hiking"
     plan = "I've got the scarf, could someone do the gloves?"
     reply = "Leave the gloves with me"
@@ -39,7 +40,14 @@ class SmokeTest < ApplicationSystemTestCase
       click_on t("groups.dependants.form.submit")
       open_person rebecca
       assert_link t("people.show.edit_details")
-      add_item book
+      add_item book, asked_for_by: rebecca
+
+      click_on t("people.show.add_item")
+      fill_in t("items.form.name"), with: kite
+      click_on t("people.items.new.submit")
+      assert_text t("people.items.create.added_quietly")
+      assert_selector "#list h3", text: book
+      assert_no_selector "#list h3", text: kite
 
       open_your_page alice
       add_item scarf, photo: file_fixture("photo.png")
@@ -145,6 +153,8 @@ class SmokeTest < ApplicationSystemTestCase
       assert_no_text t("messages.unread.about", name: alice)
       within("section[aria-labelledby=unread-heading]") { click_on t("messages.unread.everyone", group:) }
       assert_text secret_santa
+      go_home
+      assert_no_text t("messages.unread.everyone", group:)
 
       open_your_page alice
       within(item_card(scarf)) { assert_no_text bob }
@@ -292,10 +302,11 @@ class SmokeTest < ApplicationSystemTestCase
       connect_turbo_cable_stream_sources
     end
 
-    def add_item(name, photo: nil)
+    def add_item(name, photo: nil, asked_for_by: nil)
       click_on t("people.show.add_item")
       fill_in t("items.form.name"), with: name
       attach_file t("items.form.photos"), photo if photo.present?
+      check t("items.form.asked_for", name: asked_for_by) if asked_for_by.present?
       click_on t("people.items.new.submit")
       assert_selector "#list h3", text: name
     end

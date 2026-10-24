@@ -406,6 +406,7 @@ en:
       create:
         added: "%{name} added."
         suggested: Surprise idea added.
+        added_quietly: Added.
 
   items:
     something_from: Something from %{shop}
@@ -426,6 +427,8 @@ en:
       most_wanted_hint: Shows at the top, with a label.
       little: A little thing
       little_hint: Goes in Little things, for when money's tight.
+      asked_for: "%{name} asked for this"
+      asked_for_hint: Tick this to show it on %{name}'s page, as if %{name} added it themselves.
     item:
       most_wanted: Most wanted
       little: Little thing

@@ -55,11 +55,27 @@ class ItemTest < ActiveSupport::TestCase
     assert item.errors.of_kind?(:suggested_by, :owns_the_list)
   end
 
-  test "guardians add items directly rather than suggesting them" do
-    item = users(:dan).items.build(name: "Kite", suggested_by: users(:alice))
+test "only people who look after someone choose whether their things were asked for" do
+  assert items(:lego).surprise_choosable_by?(users(:alice))
+  assert_not items(:lego).surprise_choosable_by?(users(:carol))
+  assert_not items(:scarf).surprise_choosable_by?(users(:alice))
+end
 
-    assert_not item.valid?
-  end
+test "other people's ideas, and things already received, can't be switched" do
+  idea = users(:dan).items.create!(name: "Dinosaur book", suggested_by: users(:carol))
+  items(:lego).receive
+
+  assert_not idea.surprise_choosable_by?(users(:alice))
+  assert_not items(:lego).surprise_choosable_by?(users(:alice))
+end
+
+test "marking something as asked for, or not" do
+  items(:lego).mark_asked_for(false, by: users(:alice))
+  assert_equal users(:alice), items(:lego).suggested_by
+
+  items(:lego).mark_asked_for(true, by: users(:bob))
+  assert_nil items(:lego).suggested_by
+end
 
   test "people who can't see the list can't make suggestions on it" do
     item = users(:alice).items.build(name: "Gloves", suggested_by: users(:erin))

@@ -6,8 +6,10 @@ class ItemsController < ApplicationController
   end
 
   def update
+    @item.mark_asked_for(params.dig(:item, :asked_for) == "1", by: Current.user) if params.dig(:item, :asked_for).present?
+
     if @item.update(item_params_keeping_existing_photos)
-      redirect_to person_path(@item.owner), notice: t(".updated", name: @item.title)
+      redirect_to list_path_for(@item), notice: t(".updated", name: @item.title)
     else
       render :edit, status: :unprocessable_content
     end
@@ -15,7 +17,7 @@ class ItemsController < ApplicationController
 
   def destroy
     @item.remove
-    redirect_to person_path(@item.owner), notice: t(".removed", name: @item.title)
+    redirect_to list_path_for(@item), notice: t(".removed", name: @item.title)
   end
 
   private

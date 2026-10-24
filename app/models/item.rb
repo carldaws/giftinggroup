@@ -19,7 +19,7 @@ class Item < ApplicationRecord
   validates :quantity, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validate :url_is_a_web_address, if: -> { url.present? }
   validate :suggester_can_see_the_owner, if: -> { suggestion? && owner.present? }
-  validate :suggester_does_not_manage_the_list, on: :create, if: -> { suggestion? && owner.present? }
+  validate :suggester_is_not_the_owner, if: -> { suggestion? && owner.present? }
   validate :photos_are_acceptable
 
   scope :listed, -> { where(removed_at: nil) }
@@ -78,11 +78,25 @@ class Item < ApplicationRecord
     end
   end
 
+  def asked_for
+    !suggestion?
+  end
+
+  def surprise_choosable_by?(user)
+    !received? && user.dependants.include?(owner) && (suggested_by.nil? || suggested_by.looks_after?(owner))
+  end
+
+  def mark_asked_for(asked_for, by:)
+    if surprise_choosable_by?(by)
+      self.suggested_by = asked_for == true ? nil : by
+    end
+  end
+
   def editable_by?(user)
     if removed?
       false
     elsif suggestion?
-      suggested_by == user
+      suggested_by == user || (user.looks_after?(owner) && suggested_by.looks_after?(owner))
     else
       user.looks_after?(owner)
     end
@@ -118,8 +132,8 @@ class Item < ApplicationRecord
       errors.add(:suggested_by, :cannot_see_the_list) unless owner.visible_to?(suggested_by)
     end
 
-    def suggester_does_not_manage_the_list
-      errors.add(:suggested_by, :owns_the_list) if suggested_by.looks_after?(owner)
+    def suggester_is_not_the_owner
+      errors.add(:suggested_by, :owns_the_list) if suggested_by == owner
     end
 
     def title_for(name, url)

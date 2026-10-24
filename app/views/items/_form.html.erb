@@ -38,6 +38,15 @@
     </div>
 
     <div class="grid gap-4">
+      <% if item.surprise_choosable_by?(Current.user) %>
+        <label class="choice">
+          <%= form.check_box :asked_for, class: "checkbox" %>
+          <span>
+            <span class="block font-semibold"><%= t("items.form.asked_for", name: item.owner.name) %></span>
+            <span class="hint block"><%= t("items.form.asked_for_hint", name: item.owner.name) %></span>
+          </span>
+        </label>
+      <% end %>
       <label class="choice">
         <%= form.check_box :most_wanted, class: "checkbox" %>
         <span>
