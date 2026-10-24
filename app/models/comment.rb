@@ -16,6 +16,6 @@ class Comment < ApplicationRecord
 
   private
     def item_is_an_idea_the_author_can_see
-      errors.add(:item, :not_an_idea) unless item.suggestion? && Item.visible_to(author).exists?(item.id)
+      errors.add(:item, :not_an_idea) unless item.suggestion? && !item.removed? && Item.visible_to(author).exists?(item.id)
     end
 end

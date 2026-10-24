@@ -7,7 +7,7 @@ class Item < ApplicationRecord
   belongs_to :suggested_by, class_name: "User", optional: true
 
   has_many :reservations, dependent: :destroy
-  has_many :comments, dependent: :destroy
+  has_many :comments, -> { chronologically }, dependent: :destroy
 
   has_many_attached :photos do |attachable|
     attachable.variant :thumb, resize_to_fill: [ 240, 240 ], format: :webp, preprocessed: true

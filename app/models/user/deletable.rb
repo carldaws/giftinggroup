@@ -50,6 +50,7 @@ module User::Deletable
     def take_back_suggestions
       suggestions.find_each do |item|
         if item.reservations.exists?
+          item.comments.delete_all
           item.update_columns(suggested_by_id: nil, removed_at: Time.current)
         else
           item.destroy!

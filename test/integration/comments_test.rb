@@ -66,6 +66,45 @@ class CommentsTest < ActionDispatch::IntegrationTest
     assert_match idea.comments.last.body, response.body
   end
 
+  test "commenting brings you back to the idea, with surprises showing on a list you look after" do
+    idea = users(:dan).items.create!(name: "Dinosaur book", suggested_by: users(:carol))
+    sign_in_as users(:alice)
+
+    post item_comments_path(idea), params: { comment: { body: "He has this one" } }
+
+    assert_redirected_to person_path(users(:dan), surprises: "shown", anchor: dom_id(idea))
+  end
+
+  test "empty or very long comments aren't added, and say why" do
+    sign_in_as users(:carol)
+
+    [ "   ", "x" * 501 ].each do |body|
+      post item_comments_path(items(:scarf_gloves_suggestion)), params: { comment: { body: } }
+
+      assert flash[:alert].present?
+    end
+    assert_empty items(:scarf_gloves_suggestion).comments
+  end
+
+  test "a removed idea takes no new comments" do
+    items(:scarf_gloves_suggestion).reservations.create!(user: users(:carol))
+    items(:scarf_gloves_suggestion).remove
+    comment = items(:scarf_gloves_suggestion).comments.new(author: users(:carol), body: "Still want these?")
+
+    assert_not comment.valid?
+    assert comment.errors.of_kind?(:item, :not_an_idea)
+  end
+
+  test "when someone who suggested an idea leaves, its comments go with the idea" do
+    items(:scarf_gloves_suggestion).comments.create!(author: users(:carol), body: "Already has some")
+    items(:scarf_gloves_suggestion).reservations.create!(user: users(:carol))
+
+    users(:bob).delete_account
+
+    assert_not items(:scarf_gloves_suggestion).reload.suggestion?
+    assert_empty items(:scarf_gloves_suggestion).comments
+  end
+
   test "comments stay, under their name, when someone deletes their account" do
     comment = items(:scarf_gloves_suggestion).comments.create!(author: users(:carol), body: "Already has some")
 

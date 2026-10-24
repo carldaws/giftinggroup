@@ -1,5 +1,5 @@
 <%# locals: (item:) %>
-<% comments = item.comments.sort_by { [ it.created_at, it.id ] } %>
+<% comments = item.comments.to_a %>
 
 <div class="grid gap-2">
   <% if comments.any? %>

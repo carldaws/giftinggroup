@@ -52,7 +52,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_213318) do
     t.index ["author_id"], name: "index_comments_on_author_id"
     t.index ["item_id"], name: "index_comments_on_item_id"
   end
-  
+
   create_table "group_holiday_recipients", force: :cascade do |t|
     t.bigint "group_holiday_id", null: false
     t.bigint "user_id", null: false
