@@ -41,4 +41,5 @@ Rails.application.routes.draw do
   root "groups#index"
 
   get "up" => "rails/health#show", as: :rails_health_check # rubocop:disable Guardrails/RestfulRoutes
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest # rubocop:disable Guardrails/RestfulRoutes
 end
