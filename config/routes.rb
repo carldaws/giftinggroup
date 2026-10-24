@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resource :registration, only: %i[ new create ]
   resource :account_deletion, only: %i[ new create ]
   resource :privacy, only: :show, controller: :privacy
+  resource :link_preview, only: :create
   resources :passwords, only: %i[ edit update ], param: :token
 
   resources :groups, only: %i[ index new create show edit update ] do

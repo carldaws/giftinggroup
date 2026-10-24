@@ -1,4 +1,6 @@
 class ItemsController < ApplicationController
+  include ItemPhotos
+
   before_action :set_item
   before_action :ensure_item_editable
 
@@ -28,7 +30,7 @@ class ItemsController < ApplicationController
     end
 
     def item_params_keeping_existing_photos
-      params.expect(item: [ :name, :url, :price, :notes, :quantity, :most_wanted, :little, photos: [] ]).tap do |attributes|
+      with_own_fetched_photos(params.expect(item: [ :name, :url, :price, :notes, :quantity, :most_wanted, :little, photos: [] ])).tap do |attributes|
         attributes[:photos] = @item.photos.blobs + attributes[:photos] if attributes[:photos].present?
       end
     end
