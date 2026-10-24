@@ -16,3 +16,6 @@ production:
   schedule_birthdays:
     command: "Occasion.schedule_all"
     schedule: every day at 12:05am
+  backup:
+    class: BackupJob
+    schedule: every day at 3am Europe/London
