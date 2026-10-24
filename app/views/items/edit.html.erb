@@ -1,8 +1,8 @@
 <% content_for :title, t(".title") %>
 <% saved_photos = @item.photos_attachments.includes(:blob).order(:id) %>
 
-<div class="page page--narrow">
-  <%= page_header @item.name_was, crumbs: [ [ t("layouts.header.home"), root_path ], [ @item.owner.name, person_path(@item.owner) ] ] %>
+<div class="page page--single">
+  <%= page_header @item.name_was, crumb: @item.name_was, crumbs: [ [ t("layouts.header.home"), root_path ], [ @item.owner.name, person_path(@item.owner) ] ] %>
 
   <div class="card">
     <% if saved_photos.any? %>

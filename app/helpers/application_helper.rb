@@ -25,9 +25,9 @@ module ApplicationHelper
     user.name.split.first(2).map(&:first).join.upcase
   end
 
-  def page_header(title, crumbs: [], subtitle: nil, avatar: nil, &actions)
+  def page_header(title, crumbs: [], crumb: nil, subtitle: nil, avatar: nil, &actions)
     content_for :title, title unless content_for?(:title)
-    render "shared/page_header", title:, crumbs:, subtitle:, avatar:, actions: (capture(&actions) if block_given?)
+    render "shared/page_header", title:, crumbs:, crumb: crumb || content_for(:title), subtitle:, avatar:, actions: (capture(&actions) if block_given?)
   end
 
   def section_header(title, id:, &actions)

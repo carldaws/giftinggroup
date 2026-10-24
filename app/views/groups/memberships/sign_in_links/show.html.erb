@@ -2,7 +2,7 @@
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 <% person = @membership.user %>
 
-<div class="page page--narrow">
+<div class="page page--single">
   <%= page_header t(".heading", name: person.name), crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ],
         subtitle: (@membership.dependant? ? t(".set_up_intro", name: person.name) : t(".reset_intro", name: person.name)) %>
 

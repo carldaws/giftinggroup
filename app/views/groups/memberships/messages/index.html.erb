@@ -6,7 +6,7 @@
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 <%= turbo_stream_from @membership %>
 
-<div class="page page--narrow">
+<div class="page page--single">
   <% subtitle = capture do %>
     <span class="flex flex-wrap items-center gap-x-3 gap-y-1">
       <span><%= @group.name %></span>

@@ -4,9 +4,9 @@
 <% holidays = welcome ? Holiday.all.select(&:for_everyone?) : Holiday.all %>
 <% content_for :title, t(".title") %>
 
-<div class="page page--narrow">
+<div class="page page--single">
   <%= page_header (welcome ? t(".welcome_heading", group: @group.name) : t(".heading")),
-        crumbs: (welcome ? [] : [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ]), subtitle: t(".intro") %>
+        crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ], subtitle: t(".intro") %>
 
   <%= form_with url: group_holidays_path(@group, welcome: (1 if welcome)), method: :patch do |form| %>
     <%= hidden_field_tag "keys[]", "" %>

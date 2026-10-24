@@ -2,7 +2,7 @@
 <% name = @person.name_was %>
 <% heading = yours ? t(".your_details") : t(".their_details", name:) %>
 
-<div class="page page--narrow">
+<div class="page page--single">
   <%= page_header heading, crumbs: [ [ t("layouts.header.home"), root_path ], [ name, person_path(@person) ] ] %>
 
   <div class="card">

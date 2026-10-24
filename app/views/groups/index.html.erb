@@ -1,7 +1,7 @@
 <% content_for :title, t(".title") %>
 
-<div class="page page--narrow">
-  <%= page_header t(".heading", name: Current.user.name.split.first) %>
+<div class="page page--single">
+  <%= page_header t(".heading", name: Current.user.name.split.first), crumb: t("layouts.header.home") %>
 
   <%= render "messages/unread" %>
   <%= render "occasions/gifts_to_choose" %>

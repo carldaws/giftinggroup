@@ -140,12 +140,8 @@
     @apply mx-auto w-full max-w-5xl;
   }
 
-  .page--narrow {
-    @apply max-w-2xl;
-  }
-
-  .page--compact {
-    @apply max-w-md;
+  .page--single {
+    @apply lg:pr-[24.5rem];
   }
 
   .page-header {
@@ -161,11 +157,19 @@
   }
 
   .crumbs {
-    @apply mb-3 flex flex-wrap items-center gap-x-1.5 text-base text-muted;
+    @apply flex h-11 min-w-0 items-center gap-x-2 overflow-x-auto px-4 text-base whitespace-nowrap text-muted [scrollbar-width:none] sm:px-6;
+  }
+
+  .crumbs > * {
+    @apply shrink-0;
   }
 
   .crumbs a {
-    @apply underline decoration-line underline-offset-4 hover:text-ink hover:decoration-current;
+    @apply no-underline hover:text-ink hover:underline;
+  }
+
+  .crumbs [aria-current] {
+    @apply min-w-0 shrink truncate font-semibold text-ink;
   }
 
   .columns {

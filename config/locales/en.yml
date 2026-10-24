@@ -6,6 +6,8 @@ en:
     description: Wishlists for groups of people who buy each other presents.
 
   layouts:
+    application:
+      breadcrumb: Breadcrumb
     header:
       home: Home
     groups_menu:
@@ -33,8 +35,6 @@ en:
     everyday: Happy gifting 🎁
 
   shared:
-    page_header:
-      breadcrumb: Breadcrumb
     password_field:
       show: Show
       hide: Hide

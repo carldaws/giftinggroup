@@ -45,6 +45,12 @@
       </div>
     </header>
 
+    <% if content_for?(:crumbs) %>
+      <nav aria-label="<%= t(".breadcrumb") %>" class="mt-2 border-y border-line bg-card/95">
+        <div class="page crumbs"><%= yield :crumbs %></div>
+      </nav>
+    <% end %>
+
     <main class="page flex-1 px-4 pb-16 sm:px-6">
       <%= render "layouts/flash" %>
       <%= yield %>

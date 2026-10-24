@@ -2,7 +2,7 @@
 <% content_for :title, suggesting ? t(".suggest_title", name: @person.name) : t(".title") %>
 <% heading = if suggesting then t(".suggest_heading", name: @person.name) elsif @item.little? then t(".little_heading") else t(".heading") end %>
 
-<div class="page page--narrow">
+<div class="page page--single">
   <%= page_header heading, crumbs: [ [ t("layouts.header.home"), root_path ], [ @person.name, person_path(@person) ] ], subtitle: t(".intro") %>
 
   <div class="card">

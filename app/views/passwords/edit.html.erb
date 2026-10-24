@@ -2,7 +2,7 @@
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 <% setting_up = @user.email_address_in_database.blank? %>
 
-<div class="page page--compact">
+<div class="page page--single">
   <%= page_header (setting_up ? t(".set_up_heading", name: @user.name) : t(".reset_heading", name: @user.name)),
         subtitle: (setting_up ? t(".set_up_intro") : t(".reset_intro")) %>
 
