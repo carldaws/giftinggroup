@@ -85,6 +85,14 @@ class GroupsTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_join_path
   end
 
+  test "an invite link's title reads properly in link previews" do
+    title = [ I18n.t("joins.show.title"), I18n.t("app.name") ].join(" · ")
+
+    get join_path(groups(:hollies).join_code)
+
+    assert_select "title", text: title
+  end
+
   test "following an invite link while signed out, then creating an account, comes back to the invite" do
     get join_path(groups(:hollies).join_code)
     assert_response :success
