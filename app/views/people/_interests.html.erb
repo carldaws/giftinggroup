@@ -7,7 +7,7 @@
       <% if person.interests.any? %>
         <ul class="flex flex-wrap gap-2">
           <% person.interests.order(:created_at).each do |interest| %>
-            <li class="tag <%= "pr-3.5" unless manages %>">
+            <li class="tag">
               <%= interest.name %>
               <% if manages %>
                 <%= button_to person_interest_path(person, interest), method: :delete, class: "icon-button icon-button--small",
