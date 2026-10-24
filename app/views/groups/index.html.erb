@@ -3,6 +3,7 @@
 <div class="page page--single">
   <%= page_header t(".heading", name: Current.user.name.split.first), crumb: t("layouts.header.home") %>
 
+  <%= render "groups/your_lists" %>
   <%= render "messages/unread" %>
   <%= render "occasions/gifts_to_choose" %>
   <%= render "groups/shopping_list" %>
