@@ -78,6 +78,14 @@ class Item < ApplicationRecord
     end
   end
 
+  def surprise_choosable_by?(user)
+    user.dependants.include?(owner) && (suggested_by.nil? || suggested_by == user)
+  end
+
+  def choose_surprise(asked_for, by:)
+    self.suggested_by = (asked_for.present? ? nil : by) if surprise_choosable_by?(by)
+  end
+
   def editable_by?(user)
     if removed?
       false

@@ -6,6 +6,8 @@ class ItemsController < ApplicationController
   end
 
   def update
+    @item.choose_surprise(params[:asked_for] == "1", by: Current.user) if params.key?(:asked_for)
+
     if @item.update(item_params_keeping_existing_photos)
       redirect_to list_path_for(@item), notice: t(".updated", name: @item.title)
     else

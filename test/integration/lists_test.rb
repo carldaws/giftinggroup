@@ -246,21 +246,21 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_equal 2, item.reload.photos.count
   end
 
-  test "guardians add straight to the list they look after" do
+  test "guardians add things the person asked for straight to their list" do
     sign_in_as users(:bob)
 
-    post person_items_path(users(:dan)), params: { item: { name: "Kite" } }
+    post person_items_path(users(:dan)), params: { item: { name: "Kite" }, asked_for: "1" }
 
     assert_not users(:dan).items.last.suggestion?
   end
 
-  test "guardians can add a surprise to the list they look after, hidden until they show surprises" do
+  test "what guardians add is a surprise unless the person asked for it, hidden until they show surprises" do
     sign_in_as users(:bob)
 
     get new_person_item_path(users(:dan))
-    assert_select "input[type=checkbox][name=surprise]"
+    assert_select "input[type=checkbox][name=asked_for]:not([checked])"
 
-    post person_items_path(users(:dan)), params: { item: { name: "Kite" }, surprise: "1" }
+    post person_items_path(users(:dan)), params: { item: { name: "Kite" }, asked_for: "0" }
     surprise = users(:dan).items.last
     assert surprise.suggestion?
     assert_equal I18n.t("people.items.create.added_quietly"), flash[:notice]
@@ -273,7 +273,7 @@ class ListsTest < ActionDispatch::IntegrationTest
   end
 
   test "editing or removing a surprise goes back to the list with surprises showing" do
-    surprise = users(:dan).build_item({ name: "Kite" }, by: users(:alice), surprise: true).tap(&:save!)
+    surprise = users(:dan).build_item({ name: "Kite" }, by: users(:alice)).tap(&:save!)
     sign_in_as users(:alice)
 
     get edit_item_path(surprise)
@@ -286,18 +286,42 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_redirected_to person_path(users(:dan), surprises: "shown")
   end
 
-  test "a surprise that doesn't save keeps its tick and the usual wording" do
+  test "something that doesn't save keeps its asked-for tick and the usual wording" do
     sign_in_as users(:alice)
 
-    post person_items_path(users(:dan)), params: { item: { name: "" }, surprise: "1" }
-
+    post person_items_path(users(:dan)), params: { item: { name: "" }, asked_for: "1" }
     assert_response :unprocessable_content
-    assert_select "input[type=checkbox][name=surprise][checked]"
+    assert_select "input[type=checkbox][name=asked_for][checked]"
+
+    post person_items_path(users(:dan)), params: { item: { name: "" }, asked_for: "0" }
+    assert_select "input[type=checkbox][name=asked_for]:not([checked])"
     assert_select "h1", text: I18n.t("people.items.new.heading")
   end
 
+  test "guardians can change their mind about whether something was asked for" do
+    sign_in_as users(:alice)
+
+    patch item_path(items(:lego)), params: { item: { name: items(:lego).name }, asked_for: "0" }
+    assert_equal users(:alice), items(:lego).reload.suggested_by
+    assert_redirected_to person_path(users(:dan), surprises: "shown")
+
+    patch item_path(items(:lego)), params: { item: { name: items(:lego).name }, asked_for: "1" }
+    assert_not items(:lego).reload.suggestion?
+  end
+
+  test "someone else's idea can't be turned into something the person asked for" do
+    idea = users(:dan).items.create!(name: "Dinosaur book", suggested_by: users(:carol))
+    sign_in_as users(:carol)
+
+    get edit_item_path(idea)
+    assert_select "input[name=asked_for]", count: 0
+
+    patch item_path(idea), params: { item: { name: idea.name }, asked_for: "1" }
+    assert_equal users(:carol), idea.reload.suggested_by
+  end
+
   test "other people who look after them see the surprise, but only whoever added it can change it" do
-    surprise = users(:dan).build_item({ name: "Kite" }, by: users(:alice), surprise: true).tap(&:save!)
+    surprise = users(:dan).build_item({ name: "Kite" }, by: users(:alice)).tap(&:save!)
     sign_in_as users(:bob)
 
     get person_path(users(:dan), surprises: "shown")
@@ -308,27 +332,29 @@ class ListsTest < ActionDispatch::IntegrationTest
   end
 
   test "a surprise stays hidden when the person gets their own account" do
-    surprise = users(:dan).build_item({ name: "Kite" }, by: users(:alice), surprise: true).tap(&:save!)
+    surprise = users(:dan).build_item({ name: "Kite" }, by: users(:alice)).tap(&:save!)
 
     users(:dan).update!(email_address: "dan@example.com", password: "a long enough password")
 
     assert_not_includes Item.visible_to(users(:dan)), surprise
   end
 
-  test "asking for a surprise on your own list just adds it" do
+  test "your own list is never a surprise, and other people's always is" do
     sign_in_as users(:alice)
 
-    post person_items_path(users(:alice)), params: { item: { name: "Walking boots" }, surprise: "1" }
-
+    post person_items_path(users(:alice)), params: { item: { name: "Walking boots" }, asked_for: "0" }
     assert_not users(:alice).items.last.suggestion?
+
+    post person_items_path(users(:carol)), params: { item: { name: "Book token" }, asked_for: "1" }
+    assert users(:carol).items.last.suggestion?
   end
 
-  test "the surprise choice only appears on lists you look after, not your own or other people's" do
+  test "the asked-for choice only appears on lists you look after, not your own or other people's" do
     sign_in_as users(:alice)
 
     [ users(:alice), users(:carol) ].each do |person|
       get new_person_item_path(person)
-      assert_select "input[name=surprise]", count: 0
+      assert_select "input[name=asked_for]", count: 0
     end
   end
 

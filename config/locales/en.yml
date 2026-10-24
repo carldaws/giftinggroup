@@ -427,8 +427,8 @@ en:
       most_wanted_hint: Shows at the top, with a label.
       little: A little thing
       little_hint: Goes in Little things, for when money's tight.
-      surprise: Keep it a surprise
-      surprise_hint: It only shows when you choose Show surprises, so %{name} won't spot it.
+      asked_for: "%{name} asked for this"
+      asked_for_hint: Leave it unticked to keep it a surprise. It'll only show when you choose Show surprises.
     item:
       most_wanted: Most wanted
       little: Little thing

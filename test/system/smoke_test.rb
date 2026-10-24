@@ -40,11 +40,10 @@ class SmokeTest < ApplicationSystemTestCase
       click_on t("groups.dependants.form.submit")
       open_person rebecca
       assert_link t("people.show.edit_details")
-      add_item book
+      add_item book, asked_for_by: rebecca
 
       click_on t("people.show.add_item")
       fill_in t("items.form.name"), with: kite
-      check t("items.form.surprise")
       click_on t("people.items.new.submit")
       assert_text t("people.items.create.added_quietly")
       assert_selector "#list h3", text: book
@@ -303,10 +302,11 @@ class SmokeTest < ApplicationSystemTestCase
       connect_turbo_cable_stream_sources
     end
 
-    def add_item(name, photo: nil)
+    def add_item(name, photo: nil, asked_for_by: nil)
       click_on t("people.show.add_item")
       fill_in t("items.form.name"), with: name
       attach_file t("items.form.photos"), photo if photo.present?
+      check t("items.form.asked_for", name: asked_for_by) if asked_for_by.present?
       click_on t("people.items.new.submit")
       assert_selector "#list h3", text: name
     end

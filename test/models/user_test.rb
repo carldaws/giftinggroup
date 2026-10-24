@@ -1,14 +1,15 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
-  test "guardians add items directly unless they choose a surprise" do
-    assert_not users(:dan).build_item({ name: "Kite" }, by: users(:alice)).suggestion?
-    assert users(:dan).build_item({ name: "Kite" }, by: users(:alice), surprise: true).suggestion?
-    assert users(:dan).build_item({ name: "Kite" }, by: users(:alice), surprise: true).valid?
+  test "what guardians add is a surprise unless the person asked for it" do
+    assert users(:dan).build_item({ name: "Kite" }, by: users(:alice)).suggestion?
+    assert users(:dan).build_item({ name: "Kite" }, by: users(:alice)).valid?
+    assert_not users(:dan).build_item({ name: "Kite" }, by: users(:alice), asked_for: true).suggestion?
   end
 
-  test "nobody can make a surprise for themselves" do
-    assert_not users(:alice).build_item({ name: "Gloves" }, by: users(:alice), surprise: true).suggestion?
+  test "your own list is never a surprise, and other people's always is" do
+    assert_not users(:alice).build_item({ name: "Gloves" }, by: users(:alice)).suggestion?
+    assert users(:carol).build_item({ name: "Gloves" }, by: users(:alice), asked_for: true).suggestion?
   end
 
   test "email addresses are normalised" do

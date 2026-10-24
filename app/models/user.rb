@@ -109,9 +109,9 @@ class User < ApplicationRecord
     User.where(id: picks.merge(Item.listed).or(picks.where.not(bought_at: nil)).select("items.owner_id"))
   end
 
-  def build_item(attributes, by:, surprise: false)
+  def build_item(attributes, by:, asked_for: false)
     items.build(attributes).tap do |item|
-      item.suggested_by = by if surprise ? by != self : !by.looks_after?(self)
+      item.suggested_by = by unless by == self || (asked_for && by.looks_after?(self))
     end
   end
 

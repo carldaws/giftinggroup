@@ -1,4 +1,4 @@
-<%# locals: (item:, url:, submit:, surprise_for: nil) %>
+<%# locals: (item:, url:, submit:) %>
 <%= form_with model: item, url:, data: { controller: "clear-files", action: "turbo:submit-end->clear-files#clear" } do |form| %>
   <%= render "shared/errors", record: item %>
 
@@ -38,12 +38,13 @@
     </div>
 
     <div class="grid gap-4">
-      <% if surprise_for.present? %>
+      <% if item.surprise_choosable_by?(Current.user) %>
         <label class="choice">
-          <%= check_box_tag :surprise, "1", item.suggestion?, class: "checkbox" %>
+          <%= hidden_field_tag :asked_for, "0", id: nil %>
+          <%= check_box_tag :asked_for, "1", !item.suggestion?, class: "checkbox" %>
           <span>
-            <span class="block font-semibold"><%= t("items.form.surprise") %></span>
-            <span class="hint block"><%= t("items.form.surprise_hint", name: surprise_for.name) %></span>
+            <span class="block font-semibold"><%= t("items.form.asked_for", name: item.owner.name) %></span>
+            <span class="hint block"><%= t("items.form.asked_for_hint", name: item.owner.name) %></span>
           </span>
         </label>
       <% end %>
