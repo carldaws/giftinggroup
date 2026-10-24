@@ -183,6 +183,41 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_not item.suggestion?
   end
 
+  test "adding just a link" do
+    sign_in_as users(:alice)
+
+    post person_items_path(users(:alice)), params: { item: { name: "", url: "https://www.uniqlo.com/uk/en/products/E486177-000" } }
+    follow_redirect!
+
+    assert_select "h3", text: I18n.t("items.something_from", shop: "uniqlo.com")
+  end
+
+  test "adding nothing at all asks for a name or a link" do
+    sign_in_as users(:alice)
+
+    assert_no_difference -> { Item.count } do
+      post person_items_path(users(:alice)), params: { item: { name: "", url: "" } }
+    end
+
+    assert_response :unprocessable_content
+    assert_match I18n.t("activerecord.errors.messages.name_or_link"), response.body
+  end
+
+  test "a name can be taken off an item that has a link, but not both" do
+    items(:scarf).update!(url: "https://www.example.com/scarf")
+    sign_in_as users(:alice)
+
+    patch item_path(items(:scarf)), params: { item: { name: "", url: "" } }
+
+    assert_response :unprocessable_content
+    assert_select "h1", text: items(:scarf).name
+
+    patch item_path(items(:scarf)), params: { item: { name: "" } }
+
+    assert_nil items(:scarf).reload.name
+    assert_equal I18n.t("items.something_from", shop: "example.com"), items(:scarf).title
+  end
+
   test "adding a photo with an item, and keeping it when the item is edited" do
     sign_in_as users(:alice)
     post person_items_path(users(:alice)), params: { item: { name: "Walking boots", photos: [ fixture_file_upload("photo.png", "image/png") ] } }

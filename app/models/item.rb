@@ -13,9 +13,9 @@ class Item < ApplicationRecord
     attachable.variant :large, resize_to_limit: [ 1600, 1600 ], format: :webp
   end
 
-  normalizes :url, with: ->(url) { url.strip.presence }
+  normalizes :name, :url, with: ->(text) { text.strip.presence }
 
-  validates :name, presence: true
+  validate :has_a_name_or_link
   validates :quantity, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validate :url_is_a_web_address, if: -> { url.present? }
   validate :suggester_can_see_the_owner, :suggester_does_not_manage_the_list, if: -> { suggestion? && owner.present? }
@@ -29,6 +29,18 @@ class Item < ApplicationRecord
   scope :in_list_order, -> { order(Arel.sql("suggested_by_id IS NOT NULL"), most_wanted: :desc, created_at: :desc) }
   scope :visible_to, ->(user) do
     where(owner: User.visible_to(user)).where.not(id: suggestions.where(owner: user))
+  end
+
+  def title
+    title_for(name, url)
+  end
+
+  def saved_title
+    title_for(name_in_database, url_in_database)
+  end
+
+  def shop
+    shop_for(url)
   end
 
   def suggestion?
@@ -107,6 +119,20 @@ class Item < ApplicationRecord
 
     def suggester_does_not_manage_the_list
       errors.add(:suggested_by, :owns_the_list) if suggested_by.looks_after?(owner)
+    end
+
+    def title_for(name, url)
+      name.presence || I18n.t("items.something_from", shop: shop_for(url))
+    end
+
+    def shop_for(url)
+      URI.parse(url).host.to_s.downcase.delete_prefix("www.").presence || url
+    rescue URI::InvalidURIError
+      url
+    end
+
+    def has_a_name_or_link
+      errors.add(:base, :name_or_link) if name.blank? && url.blank?
     end
 
     def photos_are_acceptable

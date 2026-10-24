@@ -5,7 +5,7 @@ class Items::ReceiptsController < ApplicationController
 
   def create
     @item.receive
-    redirect_to person_path(@item.owner), notice: t(".received", name: @item.name)
+    redirect_to person_path(@item.owner), notice: t(".received", name: @item.title)
   end
 
   def destroy

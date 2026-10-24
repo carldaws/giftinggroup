@@ -14,10 +14,4 @@ module ItemsHelper
       t("items.item.status.#{who}_#{what}", name: reservation.user.name)
     end
   end
-
-  def link_host(url)
-    URI.parse(url).host.to_s.delete_prefix("www.").presence || url
-  rescue URI::InvalidURIError
-    url
-  end
 end

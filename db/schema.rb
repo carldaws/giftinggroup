@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_130631) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_24_202844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -87,7 +87,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_130631) do
 
   create_table "items", force: :cascade do |t|
     t.bigint "suggested_by_id"
-    t.string "name", null: false
+    t.string "name"
     t.string "url"
     t.text "notes"
     t.string "price"
@@ -102,6 +102,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_130631) do
     t.string "released_by_name"
     t.index ["owner_id"], name: "index_items_on_owner_id"
     t.index ["suggested_by_id"], name: "index_items_on_suggested_by_id"
+    t.check_constraint "name IS NOT NULL OR url IS NOT NULL", name: "items_have_a_name_or_link"
   end
 
   create_table "memberships", force: :cascade do |t|

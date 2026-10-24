@@ -9,7 +9,7 @@ class People::ItemsController < ApplicationController
     @item = @person.build_item(item_params, by: Current.user)
 
     if @item.save
-      redirect_to person_path(@person), notice: t(@item.suggestion? ? ".suggested" : ".added", name: @item.name)
+      redirect_to person_path(@person), notice: t(@item.suggestion? ? ".suggested" : ".added", name: @item.title)
     else
       render :new, status: :unprocessable_content
     end

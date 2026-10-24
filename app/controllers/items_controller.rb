@@ -7,7 +7,7 @@ class ItemsController < ApplicationController
 
   def update
     if @item.update(item_params_keeping_existing_photos)
-      redirect_to person_path(@item.owner), notice: t(".updated", name: @item.name)
+      redirect_to person_path(@item.owner), notice: t(".updated", name: @item.title)
     else
       render :edit, status: :unprocessable_content
     end
@@ -15,7 +15,7 @@ class ItemsController < ApplicationController
 
   def destroy
     @item.remove
-    redirect_to person_path(@item.owner), notice: t(".removed", name: @item.name)
+    redirect_to person_path(@item.owner), notice: t(".removed", name: @item.title)
   end
 
   private

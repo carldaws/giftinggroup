@@ -10,6 +10,15 @@ class ShoppingListTest < ActionDispatch::IntegrationTest
     assert_select "#shopping-list a", text: items(:lego).name, count: 0
   end
 
+  test "something with only a link shows on the shopping list by its shop" do
+    items(:scarf).update!(name: nil, url: "https://www.uniqlo.com/uk/en/products/E486177-000")
+    sign_in_as users(:bob)
+
+    get root_path
+
+    assert_select "#shopping-list a", text: I18n.t("items.something_from", shop: "uniqlo.com")
+  end
+
   test "there's no shopping list until you've reserved something" do
     sign_in_as users(:erin)
 

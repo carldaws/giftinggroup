@@ -369,7 +369,7 @@ en:
         heading: Add something
         little_heading: Add a little thing
         suggest_heading: Add a surprise idea for %{name}
-        intro: Only the name is needed. A link, photos and notes help people get exactly the right thing.
+        intro: A name or a link is all it needs. Photos and notes help people get exactly the right thing.
         submit: Add to the list
         suggest_submit: Add the idea
       create:
@@ -377,10 +377,11 @@ en:
         suggested: Surprise idea added.
 
   items:
+    something_from: Something from %{shop}
     form:
       name: What is it?
       url: Link
-      url_hint: Optional. Where to find it online.
+      url_hint: Where to find it online. A name or a link is all it needs.
       price: Price
       price_placeholder: For example, about £20
       quantity: How many?
@@ -440,7 +441,7 @@ en:
       removed: "%{name} removed."
     receipts:
       create:
-        received: Ticked off %{name}. It's in your received list if you change your mind.
+        received: "%{name} ticked off. It's in your received list if you change your mind."
 
   joins:
     rate_limited: Too many tries. Please wait a few minutes and try again.
@@ -644,6 +645,7 @@ en:
         too_many: can't be more than %{count}
         not_an_image: need to be JPEG, PNG, WebP, AVIF, GIF or HEIC images
         too_large: must be smaller than %{size}
+        name_or_link: Add a name or a link, so everyone knows what it is.
       models:
         user:
           attributes:
