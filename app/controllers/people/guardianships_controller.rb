@@ -5,18 +5,18 @@ class People::GuardianshipsController < ApplicationController
 
   def create
     guardian = @person.possible_guardians.find(params.expect(guardianship: [ :guardian_id ]).fetch(:guardian_id))
-    @person.guardianships_as_dependant.create!(guardian:)
+    @person.guardianships_as_dependant.create_or_find_by!(guardian:)
     redirect_to edit_person_profile_path(@person, anchor: "guardians"), notice: t(".added", name: guardian.name, dependant: @person.name)
   end
 
   def destroy
     guardianship = @person.guardianships_as_dependant.find(params[:id])
+    guardianship.release
 
-    if guardianship.removable?
-      guardianship.destroy!
-      redirect_after_removing(guardianship.guardian)
+    if guardianship.destroyed?
+      redirect_after_releasing(guardianship.guardian)
     else
-      redirect_to edit_person_profile_path(@person, anchor: "guardians")
+      redirect_to edit_person_profile_path(@person, anchor: "guardians"), alert: guardianship.errors.full_messages.to_sentence
     end
   end
 
@@ -25,11 +25,13 @@ class People::GuardianshipsController < ApplicationController
       head :not_found if @person.signs_in?
     end
 
-    def redirect_after_removing(guardian)
-      if guardian == Current.user
+    def redirect_after_releasing(guardian)
+      if guardian != Current.user
+        redirect_to edit_person_profile_path(@person, anchor: "guardians"), notice: t(".removed", name: guardian.name, dependant: @person.name)
+      elsif @person.visible_to?(Current.user)
         redirect_to person_path(@person), notice: t(".stopped", name: @person.name)
       else
-        redirect_to edit_person_profile_path(@person, anchor: "guardians"), notice: t(".removed", name: guardian.name, dependant: @person.name)
+        redirect_to root_path, notice: t(".stopped", name: @person.name)
       end
     end
 end

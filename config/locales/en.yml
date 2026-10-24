@@ -302,16 +302,16 @@ en:
         added: "%{name} is looking after %{dependant} too now."
       destroy:
         removed: "%{name} no longer looks after %{dependant}."
-        stopped: You no longer look after %{name}. You'll still see their list, like everyone else.
+        stopped: You no longer look after %{name}.
     profiles:
       edit:
         guardians_heading: Looking after %{name}
-        guardians_hint: Everyone here can add to %{name}'s list and keep their sizes and details up to date.
+        guardians_hint: Everyone here can add to %{name}'s list, keep their details up to date and change who looks after them.
         you: You
         stop_looking_after: Stop looking after
-        stop_confirm: Stop looking after %{name}? You'll still see their list, like everyone else.
+        stop_confirm: Stop looking after %{name}?
         remove_guardian: Remove
-        remove_confirm: "%{guardian} will no longer look after %{name}."
+        remove_confirm: Stop %{guardian} looking after %{name}?
         add_guardian_label: Someone else to look after %{name}
         add_guardian_prompt: Choose someone
         add_guardian: Add
@@ -659,6 +659,7 @@ en:
         is_the_guardian: can't look after themselves
         does_not_sign_in: needs their own account to look after someone
         not_in_a_group_together: needs to be in a group with them
+        last_guardian: Someone needs to keep looking after them, so add someone else first.
         too_long_for_bcrypt: is too long. Please use a shorter one.
         last_admin: Every group needs at least one admin. Make someone else an admin first.
         dependant_admin: Only people with their own account can be admins.

@@ -81,7 +81,7 @@
   </div>
 
   <% unless yours %>
-    <% guardianships = @person.guardianships_as_dependant.includes(:guardian).sort_by { it.guardian.name.downcase } %>
+    <% guardianships = @person.guardianships_as_dependant.includes(:guardian).by_name.to_a %>
     <% possible_guardians = @person.possible_guardians.by_name.to_a %>
 
     <section id="guardians" aria-labelledby="guardians-heading" class="section mt-10">

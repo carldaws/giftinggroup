@@ -21,34 +21,56 @@ class GuardiansTest < ActionDispatch::IntegrationTest
     assert users(:carol).reload.looks_after?(users(:dan))
   end
 
-  test "only people with an account who share a group can be added" do
+  test "only people with their own account who share a group can be added" do
+    toddler = groups(:hollies).add_dependant({ name: "Toddler" }, guardian: users(:alice))
     sign_in_as users(:alice)
 
-    post person_guardianships_path(users(:dan)), params: { guardianship: { guardian_id: users(:erin).id } }
+    [ users(:erin), toddler ].each do |someone|
+      post person_guardianships_path(users(:dan)), params: { guardianship: { guardian_id: someone.id } }
 
-    assert_response :not_found
-    assert_not users(:erin).looks_after?(users(:dan))
+      assert_response :not_found
+      assert_not someone.looks_after?(users(:dan))
+    end
   end
 
-  test "removing someone, or stepping back yourself, while someone is still looking after them" do
+  test "removing someone else who looks after them" do
     sign_in_as users(:alice)
 
     delete person_guardianship_path(users(:dan), guardianships(:bob_looks_after_dan))
-    assert_not users(:bob).reload.looks_after?(users(:dan))
 
-    users(:dan).guardianships_as_dependant.create!(guardian: users(:carol))
+    assert_redirected_to edit_person_profile_path(users(:dan), anchor: "guardians")
+    assert_not users(:bob).reload.looks_after?(users(:dan))
+  end
+
+  test "stepping back yourself while someone else still looks after them" do
+    sign_in_as users(:alice)
+
     delete person_guardianship_path(users(:dan), guardianships(:alice_looks_after_dan))
 
     assert_redirected_to person_path(users(:dan))
     assert_not users(:alice).reload.looks_after?(users(:dan))
   end
 
-  test "the last person looking after someone can't be removed" do
+  test "stepping back from someone you'll no longer see takes you home" do
+    toddler = groups(:hollies).add_dependant({ name: "Toddler" }, guardian: users(:alice))
+    groups(:ivies).join(toddler)
+    toddler.reload.guardianships_as_dependant.create!(guardian: users(:erin))
+    sign_in_as users(:alice)
+
+    delete person_guardianship_path(toddler, toddler.guardianships_as_dependant.find_by!(guardian: users(:alice)))
+
+    assert_redirected_to root_path
+    assert_not toddler.visible_to?(users(:alice))
+  end
+
+  test "the last person looking after someone can't be removed, and is told why" do
     guardianships(:bob_looks_after_dan).destroy!
     sign_in_as users(:alice)
 
     delete person_guardianship_path(users(:dan), guardianships(:alice_looks_after_dan))
 
+    assert_redirected_to edit_person_profile_path(users(:dan), anchor: "guardians")
+    assert_equal I18n.t("activerecord.errors.messages.last_guardian"), flash[:alert]
     assert users(:alice).reload.looks_after?(users(:dan))
   end
 
@@ -56,9 +78,21 @@ class GuardiansTest < ActionDispatch::IntegrationTest
     sign_in_as users(:carol)
 
     post person_guardianships_path(users(:dan)), params: { guardianship: { guardian_id: users(:carol).id } }
-
     assert_response :forbidden
-    assert_not users(:carol).looks_after?(users(:dan))
+
+    delete person_guardianship_path(users(:dan), guardianships(:bob_looks_after_dan))
+    assert_response :forbidden
+    assert users(:bob).reload.looks_after?(users(:dan))
+  end
+
+  test "a guardianship can only be changed through the person it's about" do
+    toddler = groups(:hollies).add_dependant({ name: "Toddler" }, guardian: users(:alice))
+    sign_in_as users(:alice)
+
+    delete person_guardianship_path(toddler, guardianships(:bob_looks_after_dan))
+
+    assert_response :not_found
+    assert users(:bob).reload.looks_after?(users(:dan))
   end
 
   test "people with their own account aren't looked after" do

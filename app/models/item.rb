@@ -18,7 +18,8 @@ class Item < ApplicationRecord
   validate :has_a_name_or_link
   validates :quantity, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   validate :url_is_a_web_address, if: -> { url.present? }
-  validate :suggester_can_see_the_owner, :suggester_does_not_manage_the_list, if: -> { suggestion? && owner.present? }
+  validate :suggester_can_see_the_owner, if: -> { suggestion? && owner.present? }
+  validate :suggester_does_not_manage_the_list, on: :create, if: -> { suggestion? && owner.present? }
   validate :photos_are_acceptable
 
   scope :listed, -> { where(removed_at: nil) }
