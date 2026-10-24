@@ -17,7 +17,7 @@ class ItemTest < ActiveSupport::TestCase
   test "an item with only a link is called after its shop" do
     item = users(:alice).items.build(url: "https://www.uniqlo.com/uk/en/products/E486177-000")
 
-    assert_equal I18n.t("items.something_from", shop: URI(item.url).host.delete_prefix("www.")), item.title
+    assert_equal I18n.t("items.something_from", shop: "uniqlo.com"), item.title
   end
 
   test "the owner never sees suggestions on their own list" do

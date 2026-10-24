@@ -369,7 +369,7 @@ en:
         heading: Add something
         little_heading: Add a little thing
         suggest_heading: Add a surprise idea for %{name}
-        intro: Only the name is needed. A link, photos and notes help people get exactly the right thing.
+        intro: A name or a link is all it needs. Photos and notes help people get exactly the right thing.
         submit: Add to the list
         suggest_submit: Add the idea
       create:
@@ -441,7 +441,7 @@ en:
       removed: "%{name} removed."
     receipts:
       create:
-        received: Ticked off %{name}. It's in your received list if you change your mind.
+        received: "%{name} ticked off. It's in your received list if you change your mind."
 
   joins:
     rate_limited: Too many tries. Please wait a few minutes and try again.

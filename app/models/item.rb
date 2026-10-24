@@ -126,7 +126,7 @@ class Item < ApplicationRecord
     end
 
     def shop_for(url)
-      URI.parse(url.to_s).host.to_s.delete_prefix("www.").presence || url
+      URI.parse(url).host.to_s.downcase.delete_prefix("www.").presence || url
     rescue URI::InvalidURIError
       url
     end
