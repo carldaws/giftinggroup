@@ -1,7 +1,8 @@
 <% yours = @person == Current.user %>
 <% manages = Current.user.looks_after?(@person) %>
-<% surprises = ("shown" if manages && !yours && params[:surprises] == "shown") %>
-<% surprises_hidden = manages && surprises.nil? %>
+<% guardian = manages && !yours %>
+<% surprises_shown = guardian && params[:surprises] == "shown" %>
+<% surprises_hidden = manages && !surprises_shown %>
 <% items = @person.items.listed.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order %>
 <% items = items.where(suggested_by: nil) if surprises_hidden %>
 <% wanted = items.wanted %>
@@ -25,10 +26,10 @@
         <span class="tooltip" aria-hidden="true"><%= details %></span>
       <% end %>
     <% end %>
-    <% if manages && !yours %>
+    <% if guardian %>
       <% toggle = surprises_hidden ? t(".show_surprises") : t(".hide_surprises") %>
       <%= link_to person_path(@person, show: ("little" if little_only), surprises: ("shown" if surprises_hidden)),
-            class: "icon-button icon-button--outlined group", aria: { label: toggle } do %>
+            class: "icon-button icon-button--outlined group", aria: { label: toggle }, data: { turbo_action: "replace" } do %>
         <% if surprises_hidden %>
           <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5c2 3 4.5 4.5 7.5 4.5s5.5-1.5 7.5-4.5M10 13v2.5M5.5 11.8l-1.4 2M14.5 11.8l1.4 2"/></svg>
         <% else %>
@@ -46,10 +47,10 @@
       <% end %>
 
       <nav aria-label="<%= t(".filter") %>" class="tabs mb-4">
-        <%= link_to person_path(@person, surprises:, anchor: "list"), class: "tab", aria: { current: ("page" unless little_only) } do %>
+        <%= link_to person_path(@person, surprises: ("shown" if surprises_shown), anchor: "list"), class: "tab", aria: { current: ("page" unless little_only) } do %>
           <%= t(".everything") %> <span class="text-muted"><%= wanted.size %></span>
         <% end %>
-        <%= link_to person_path(@person, show: "little", surprises:, anchor: "list"), class: "tab", aria: { current: ("page" if little_only) } do %>
+        <%= link_to person_path(@person, show: "little", surprises: ("shown" if surprises_shown), anchor: "list"), class: "tab", aria: { current: ("page" if little_only) } do %>
           <%= t(".little_things") %> <span class="text-muted"><%= wanted.little.size %></span>
         <% end %>
       </nav>
