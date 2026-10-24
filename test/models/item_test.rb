@@ -113,6 +113,15 @@ class ItemTest < ActiveSupport::TestCase
     assert items(:scarf).valid?
   end
 
+  test "photos are resized for the list and for viewing" do
+    items(:scarf).photos.attach(io: file_fixture("photo.png").open, filename: "photo.png")
+    photo = items(:scarf).photos.first
+
+    %i[ thumb large ].each do |size|
+      assert_predicate photo.variant(size).processed.image.blob, :persisted?
+    end
+  end
+
   test "no more than six photos" do
     7.times { items(:scarf).photos.attach(io: file_fixture("photo.png").open, filename: "photo.png") }
 
