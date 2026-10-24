@@ -1,23 +1,37 @@
 require "test_helper"
 
 class YourListsTest < ActionDispatch::IntegrationTest
-  test "home links to your list and the lists you look after, with how much is on them" do
+  test "home links to your list, then the lists you look after, with how much is on them" do
     sign_in_as users(:alice)
 
     get root_path
 
+    assert_select "#your-lists a" do |rows|
+      assert_equal [ person_path(users(:alice)), person_path(users(:dan)) ], rows.map { it["href"] }
+    end
     assert_select "#your-lists a[href=?]", person_path(users(:alice)), text: /#{I18n.t("groups.your_lists.things", count: 2)}/
-    assert_select "#your-lists a[href=?]", person_path(users(:dan)), text: /#{I18n.t("groups.your_lists.theirs", name: users(:dan).name)}/
+    assert_select "#your-lists a[href=?]", person_path(users(:dan)), text: /#{I18n.t("groups.your_lists.things", count: 1)}/
   end
 
-  test "surprise ideas and things already received aren't counted" do
-    users(:alice).items.create!(name: "Secret idea", suggested_by: users(:carol))
+  test "surprise ideas, removed things and things already received aren't counted" do
+    users(:dan).items.create!(name: "Dinosaur book", suggested_by: users(:carol))
+    users(:alice).items.create!(name: "Old jumper").remove
     items(:socks).receive
     sign_in_as users(:alice)
 
     get root_path
 
     assert_select "#your-lists a[href=?]", person_path(users(:alice)), text: /#{I18n.t("groups.your_lists.things", count: 1)}/
+    assert_select "#your-lists a[href=?]", person_path(users(:dan)), text: /#{I18n.t("groups.your_lists.things", count: 1)}/
+  end
+
+  test "only lists you look after are shown" do
+    sign_in_as users(:erin)
+
+    get root_path
+
+    assert_select "#your-lists a", count: 1
+    assert_select "#your-lists a[href=?]", person_path(users(:erin))
   end
 
   test "an empty list gets a gentle nudge" do

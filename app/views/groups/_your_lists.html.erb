@@ -13,7 +13,7 @@
           <%= avatar_tag person, size: :sm, tooltip: false %>
           <div class="min-w-0 flex-1">
             <p class="row-title"><%= yours ? t(".yours") : t(".theirs", name: person.name) %></p>
-            <p class="<%= class_names("row-meta", "text-honey-ink": count.zero?) %>">
+            <p class="<%= class_names("row-meta", "text-clay": count.zero?) %>">
               <% if count.positive? %>
                 <%= t(".things", count:) %>
               <% elsif yours %>
