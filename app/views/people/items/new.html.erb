@@ -1,4 +1,5 @@
-<% suggesting = @item.suggestion? %>
+<% guardian = Current.user.dependants.include?(@person) %>
+<% suggesting = @item.suggestion? && !guardian %>
 <% content_for :title, suggesting ? t(".suggest_title", name: @person.name) : t(".title") %>
 <% heading = if suggesting then t(".suggest_heading", name: @person.name) elsif @item.little? then t(".little_heading") else t(".heading") end %>
 
@@ -7,6 +8,6 @@
 
   <div class="card">
     <%= render "items/form", item: @item, url: person_items_path(@person), submit: suggesting ? t(".suggest_submit") : t(".submit"),
-          surprise_for: (@person if @person != Current.user && Current.user.looks_after?(@person)) %>
+          surprise_for: (@person if guardian) %>
   </div>
 </div>

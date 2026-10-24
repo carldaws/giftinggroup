@@ -111,7 +111,7 @@ class User < ApplicationRecord
 
   def build_item(attributes, by:, surprise: false)
     items.build(attributes).tap do |item|
-      item.suggested_by = by if by != self && (surprise || !by.looks_after?(self))
+      item.suggested_by = by if surprise ? by != self : !by.looks_after?(self)
     end
   end
 

@@ -1,6 +1,16 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
+  test "guardians add items directly unless they choose a surprise" do
+    assert_not users(:dan).build_item({ name: "Kite" }, by: users(:alice)).suggestion?
+    assert users(:dan).build_item({ name: "Kite" }, by: users(:alice), surprise: true).suggestion?
+    assert users(:dan).build_item({ name: "Kite" }, by: users(:alice), surprise: true).valid?
+  end
+
+  test "nobody can make a surprise for themselves" do
+    assert_not users(:alice).build_item({ name: "Gloves" }, by: users(:alice), surprise: true).suggestion?
+  end
+
   test "email addresses are normalised" do
     typed = " #{users(:alice).email_address.upcase} "
 

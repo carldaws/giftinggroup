@@ -2,7 +2,7 @@
 <% saved_photos = @item.photos_attachments.includes(:blob).order(:id) %>
 
 <div class="page page--single">
-  <%= page_header @item.saved_title, crumb: @item.saved_title, crumbs: [ [ t("layouts.header.home"), root_path ], [ @item.owner.name, person_path(@item.owner) ] ] %>
+  <%= page_header @item.saved_title, crumb: @item.saved_title, crumbs: [ [ t("layouts.header.home"), root_path ], [ @item.owner.name, list_path_for(@item) ] ] %>
 
   <div class="card">
     <% if saved_photos.any? %>

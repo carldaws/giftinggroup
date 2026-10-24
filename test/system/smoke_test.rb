@@ -46,7 +46,7 @@ class SmokeTest < ApplicationSystemTestCase
       fill_in t("items.form.name"), with: kite
       check t("items.form.surprise")
       click_on t("people.items.new.submit")
-      assert_text t("people.items.create.suggested")
+      assert_text t("people.items.create.added_quietly")
       assert_selector "#list h3", text: book
       assert_no_selector "#list h3", text: kite
 
@@ -154,6 +154,8 @@ class SmokeTest < ApplicationSystemTestCase
       assert_no_text t("messages.unread.about", name: alice)
       within("section[aria-labelledby=unread-heading]") { click_on t("messages.unread.everyone", group:) }
       assert_text secret_santa
+      go_home
+      assert_no_text t("messages.unread.everyone", group:)
 
       open_your_page alice
       within(item_card(scarf)) { assert_no_text bob }

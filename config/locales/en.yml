@@ -406,6 +406,7 @@ en:
       create:
         added: "%{name} added."
         suggested: Surprise idea added.
+        added_quietly: Added.
 
   items:
     something_from: Something from %{shop}
@@ -427,7 +428,7 @@ en:
       little: A little thing
       little_hint: Goes in Little things, for when money's tight.
       surprise: Keep it a surprise
-      surprise_hint: Hidden in %{name}'s view, so it stays a surprise even with them beside you.
+      surprise_hint: It only shows when you choose Show surprises, so %{name} won't spot it.
     item:
       most_wanted: Most wanted
       little: Little thing

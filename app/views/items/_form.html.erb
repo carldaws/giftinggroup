@@ -40,7 +40,7 @@
     <div class="grid gap-4">
       <% if surprise_for.present? %>
         <label class="choice">
-          <%= check_box_tag :surprise, "1", params[:surprise] == "1", class: "checkbox" %>
+          <%= check_box_tag :surprise, "1", item.suggestion?, class: "checkbox" %>
           <span>
             <span class="block font-semibold"><%= t("items.form.surprise") %></span>
             <span class="hint block"><%= t("items.form.surprise_hint", name: surprise_for.name) %></span>
