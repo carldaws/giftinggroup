@@ -428,7 +428,7 @@ en:
       little: A little thing
       little_hint: Goes in Little things, for when money's tight.
       asked_for: "%{name} asked for this"
-      asked_for_hint: Leave it unticked to keep it a surprise. It'll only show when you choose Show surprises.
+      asked_for_hint: Tick this to show it on %{name}'s page, as if %{name} added it themselves.
     item:
       most_wanted: Most wanted
       little: Little thing
