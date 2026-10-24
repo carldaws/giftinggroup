@@ -505,7 +505,7 @@ en:
     show:
       title: Wishlists for groups
       heading: Wishlists for the people you buy for
-      intro: Make a group, share your lists and quietly sort out who's getting what. It's free, and the surprise stays a surprise.
+      intro: Make a group, share your lists and work out together who's getting what. It's free, and the surprise stays a surprise.
       create_account: Create an account
       sign_in: Sign in
       invited: Been sent an invite? Open the link to join.
@@ -526,8 +526,8 @@ en:
           heading: Add surprise ideas
           body: Spotted something they'd love that isn't on their list? Add it as an idea. Everyone else can see it and pick it, but they can't.
         chat:
-          heading: Talk about them behind their back
-          body: Everyone has a chat the rest of the group can see but they can't. Agree on the big present, or check a size without giving the game away.
+          heading: Plan presents together
+          body: Each person has a chat where everyone else can plan for them, so the surprise stays a surprise. Share an idea, team up on something bigger, or check a size.
         occasions:
           heading: Keep track of occasions
           body: Choose the holidays your group celebrates, add your own, and birthdays appear by themselves. You'll see who you still need to pick something for.
@@ -555,7 +555,7 @@ en:
         gloves: Matching gloves
         book: Dinosaur book
         chat_question: Does anyone know her glove size?
-        chat_answer: Medium. I asked her sister
+        chat_answer: Medium! Want to go halves on the scarf?
 
   privacy:
     show:
