@@ -354,6 +354,17 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", new_person_item_path(users(:dan)), count: 1
   end
 
+  test "a file that only claims to be a photo is turned away" do
+    sign_in_as users(:alice)
+
+    assert_no_difference -> { Item.count } do
+      post person_items_path(users(:alice)), params: { item: { name: "Walking boots", photos: [ fixture_file_upload("not-a-photo.png", "image/png") ] } }
+    end
+
+    assert_response :unprocessable_content
+    assert_select "[data-clear-files-target=input]"
+  end
+
   test "a failed edit with a new photo shows the form again" do
     sign_in_as users(:alice)
 
