@@ -46,7 +46,7 @@
     </header>
 
     <% if content_for?(:crumbs) %>
-      <nav aria-label="<%= t(".breadcrumb") %>" class="mt-2 border-y border-line bg-card/95">
+      <nav aria-label="<%= t(".breadcrumb") %>" class="border-b border-line bg-card">
         <div class="page crumbs"><%= yield :crumbs %></div>
       </nav>
     <% end %>
