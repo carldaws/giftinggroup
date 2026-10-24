@@ -1,0 +1,31 @@
+<% content_for :title, t(".title") %>
+<% dependants = Current.user.dependants_nobody_else_looks_after %>
+<% groups = Current.user.groups_without_another_adult %>
+
+<div class="page page--single">
+  <%= page_header t(".title"), crumbs: [ [ t("layouts.header.home"), root_path ], [ t(".your_details"), edit_person_profile_path(Current.user) ] ],
+        subtitle: t(".intro") %>
+
+  <div class="card">
+    <ul class="grid list-disc gap-2 pl-5 text-base">
+      <li><%= t(".your_list") %></li>
+      <li><%= t(".reservations") %></li>
+      <li><%= t(".ideas") %></li>
+      <li><%= t(".messages") %></li>
+      <% if dependants.any? %>
+        <li><%= t(".dependants_html", names: to_sentence(dependants.map { tag.strong(it.name) }), count: dependants.size) %></li>
+      <% end %>
+      <% if groups.any? %>
+        <li><%= t(".groups_html", names: to_sentence(groups.map { tag.strong(it.name) }), count: groups.size) %></li>
+      <% end %>
+    </ul>
+
+    <%= form_with url: account_deletion_path, class: "mt-6 border-t border-line pt-6" do |form| %>
+      <%= render "shared/password_field", form:, field: :password, autocomplete: "current-password", label: t(".password") %>
+
+      <div class="form-actions">
+        <%= form.submit t(".submit"), class: "button button--danger button--wide" %>
+      </div>
+    <% end %>
+  </div>
+</div>

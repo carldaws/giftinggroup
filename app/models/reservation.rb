@@ -8,6 +8,7 @@ class Reservation < ApplicationRecord
   validate :occasion_is_for_gifts_to_the_owner, if: -> { will_save_change_to_occasion_id? && occasion_id.present? && errors.none? }
   validate :given_gifts_keep_their_occasion, on: :update, if: :will_save_change_to_occasion_id?
 
+  after_create :clear_release_note, if: -> { item.released_by_name.present? }
   after_destroy :forget_removed_item, unless: :destroyed_with_item?
 
   scope :visible_to, ->(user) do
@@ -41,6 +42,10 @@ class Reservation < ApplicationRecord
 
     def item_is_still_listed
       errors.add(:item, :removed) if item.removed?
+    end
+
+    def clear_release_note
+      item.update_column(:released_by_name, nil)
     end
 
     def forget_removed_item

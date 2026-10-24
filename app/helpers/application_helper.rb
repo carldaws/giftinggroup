@@ -25,12 +25,12 @@ module ApplicationHelper
     if character.present?
       image_tag "characters/#{character}.svg", alt: "", class: "size-[70%]"
     else
-      avatar_initials(user)
+      avatar_initials(user.name)
     end
   end
 
-  def avatar_initials(user)
-    user.name.split.first(2).map(&:first).join.upcase
+  def avatar_initials(name)
+    name.split.first(2).map(&:first).join.upcase
   end
 
   def page_header(title, crumbs: [], crumb: nil, subtitle: nil, avatar: nil, &actions)

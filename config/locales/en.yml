@@ -23,8 +23,9 @@ en:
       sign_in: Sign in
       register: Create an account
     footer:
-      credit_html: Free and %{open_source}, by %{author}. %{greeting}
+      credit_html: Free and %{open_source}, by %{author}.
       open_source: open source
+      privacy: Privacy
 
   seasonal_greetings:
     new_year: Happy New Year ✨
@@ -98,7 +99,7 @@ en:
       for_occasion: For %{name} · %{occasion}, %{countdown}
       their_occasion: "%{occasion}, %{countdown}"
       already_has: "%{name} has ticked this off, so they may already have it."
-      removed: Taken off their list.
+      removed: No longer on the list.
       bought: Bought
       let_go: Let it go
       all_bought: You've bought everything on your list.
@@ -294,8 +295,7 @@ en:
       occasion_passed_for: "%{occasion} has just been. Tick off anything %{name} received, so it comes off their list."
     profiles:
       edit:
-        back_yours: Back to your page
-        back: Back to %{name}'s page
+        delete_account: Delete your account
         your_details: Your details
         their_details: "%{name}'s details"
         name: Name
@@ -428,6 +428,7 @@ en:
       bought_it: I've bought it
       not_bought: I haven't bought it yet
       let_go: Let someone else get it
+      released: "%{name} had picked this, then deleted their account. Check with the group before you get it."
       got_it: I got this
       edit: Edit
     edit:
@@ -509,7 +510,53 @@ en:
       heading: Still to choose for
       progress: You've picked for %{chosen} of %{total}
 
+  privacy:
+    show:
+      title: Privacy
+      intro: Gifting Lists is a gift, not a business. It's here to help groups of people sort out presents for each other.
+      kept:
+        heading: What's kept
+        body: What you put in, so the app can work. That's your name, email address and password (stored scrambled, so nobody can read it), your birthday if you add one, your list and its photos, the things you love, your sizes, what you've picked for other people, and chat messages. When you sign in, the device and internet address you used are noted, and the server keeps short-lived logs of requests. Backups are kept so nothing is lost if the server fails.
+      seen:
+        heading: Who sees it
+        body: People in your groups see your list, your birthday, the things you love and your sizes. A chat is seen by everyone in the group except the person it's about.
+      not_done:
+        heading: What's done with it
+        body: Nothing else. It isn't read, sold, shared, analysed or used for any other purpose. There are no ads, no tracking, no analytics and no emails. Cookies are only used to keep you signed in and to protect forms, and nothing is loaded from anyone else's servers.
+      leaving:
+        heading: Leaving
+        body: You can delete your account from Your details at any time. Your list goes. Your chat messages stay, under your name, so the conversation still makes sense.
+      check:
+        heading: Check for yourself
+        body_html: The %{code}, so anyone can see exactly what it does. If you have a question, %{issue}.
+        code: code is open source
+        issue: open an issue on GitHub
+
+  account_deletions:
+    new:
+      title: Delete your account
+      your_details: Your details
+      intro: This can't be undone.
+      your_list: Your list, the things you love and your sizes are deleted.
+      reservations: Anything you'd picked for someone is let go. People in your groups will see you'd picked it, so they can check before getting it.
+      ideas: Surprise ideas you added to other people's lists are removed.
+      messages: Your chat messages stay, under your name, marked as from someone who's left.
+      dependants_html:
+        one: "%{names}'s list is deleted too, as nobody else looks after it."
+        other: "%{names}'s lists are deleted too, as nobody else looks after them."
+      groups_html:
+        one: "%{names} is deleted, as nobody else in it has an account."
+        other: "%{names} are deleted, as nobody else in them has an account."
+      password: Your password
+      submit: Delete my account
+    create:
+      deleted: Your account has been deleted.
+      wrong_password: That password isn't right.
+      rate_limited: Too many tries. Please wait a few minutes and try again.
+
   messages:
+    message:
+      left: "%{name} (left)"
     just_now: Just now
     ago: "%{time} ago"
     unread:

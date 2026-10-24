@@ -1,8 +1,13 @@
 <footer class="border-t border-line">
-  <div class="page px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center text-base text-muted sm:px-6">
-    <%= t(".credit_html",
-          open_source: link_to(t(".open_source"), "https://github.com/carldaws/giftinglists", class: "link link--muted"),
-          author: link_to("carldaws", "https://github.com/carldaws", class: "link link--muted"),
-          greeting: tag.span(t(SeasonalGreeting.occasion_on(Time.zone.today), scope: :seasonal_greetings), class: "whitespace-nowrap")) %>
+  <div class="page flex flex-col items-center gap-1 px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center text-base text-muted sm:flex-row sm:justify-between sm:px-6 sm:text-left">
+    <div class="flex flex-col items-center gap-1 sm:flex-row sm:gap-[0.3em]">
+      <p>
+        <%= t(".credit_html",
+              open_source: link_to(t(".open_source"), "https://github.com/carldaws/giftinglists", class: "link link--muted"),
+              author: link_to("carldaws", "https://github.com/carldaws", class: "link link--muted")) %>
+      </p>
+      <p><%= t(SeasonalGreeting.occasion_on(Time.zone.today), scope: :seasonal_greetings) %></p>
+    </div>
+    <p><%= link_to t(".privacy"), privacy_path, class: "link link--muted" %></p>
   </div>
 </footer>

@@ -12,7 +12,7 @@
             <%= avatar_tag membership.user, tooltip: false %>
             <span class="min-w-0 flex-1">
               <span class="row-title block"><%= t(".about", name: membership.user.name) %></span>
-              <span class="row-meta block truncate"><%= latest.author.name %>: <%= latest.body %></span>
+              <span class="row-meta block truncate"><%= latest.author_name %>: <%= latest.body %></span>
               <span class="row-meta block"><%= membership.group.name %></span>
             </span>
             <span class="count">

@@ -10,7 +10,7 @@ class ApplicationHelperTest < ActionView::TestCase
   test "avatars show initials, or the character someone chose" do
     render html: avatar_tag(users(:alice))
     assert_select "img", count: 0
-    assert_includes rendered, avatar_initials(users(:alice))
+    assert_includes rendered, avatar_initials(users(:alice).name)
 
     users(:alice).avatar_character = User::AVATAR_CHARACTERS.first
     render html: avatar_tag(users(:alice))

@@ -72,5 +72,11 @@
         <%= form.submit t(".submit"), class: "button button--wide" %>
       </div>
     <% end %>
+
+    <% if yours %>
+      <div class="mt-6 border-t border-line pt-6">
+        <%= link_to t(".delete_account"), new_account_deletion_path, class: "button button--danger button--wide" %>
+      </div>
+    <% end %>
   </div>
 </div>

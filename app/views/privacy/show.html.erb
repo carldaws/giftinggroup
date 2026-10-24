@@ -1,0 +1,22 @@
+<% content_for :title, t(".title") %>
+
+<div class="page page--single">
+  <%= page_header t(".title"), crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: t(".intro") %>
+
+  <div class="card grid gap-6 text-base">
+    <% %w[ kept seen not_done leaving ].each do |part| %>
+      <section aria-labelledby="privacy-<%= part %>">
+        <h2 id="privacy-<%= part %>" class="section-title text-xl"><%= t(".#{part}.heading") %></h2>
+        <p class="mt-2 text-muted"><%= t(".#{part}.body") %></p>
+      </section>
+    <% end %>
+
+    <section aria-labelledby="privacy-check">
+      <h2 id="privacy-check" class="section-title text-xl"><%= t(".check.heading") %></h2>
+      <p class="mt-2 text-muted">
+        <%= t(".check.body_html", code: link_to(t(".check.code"), "https://github.com/carldaws/giftinglists", class: "link"),
+              issue: link_to(t(".check.issue"), "https://github.com/carldaws/giftinglists/issues", class: "link")) %>
+      </p>
+    </section>
+  </div>
+</div>

@@ -1,20 +1,28 @@
 class Message < ApplicationRecord
   belongs_to :subject, class_name: "Membership"
-  belongs_to :author, class_name: "User"
+  belongs_to :author, class_name: "User", optional: true
 
   broadcasts_refreshes_to :subject
 
   normalizes :body, with: ->(body) { body.gsub("\r\n", "\n").strip }
 
+  validates :author, presence: true, on: :create
   validates :body, presence: true, length: { maximum: 2000 }
   validate :author_is_in_the_group, :author_is_not_the_subject, if: -> { subject.present? && author.present? }
 
   scope :chronologically, -> { order(:created_at, :id) }
   scope :visible_to, ->(user) { where(subject: Membership.with_chat_visible_to(user)) }
-  scope :unread_by, ->(user) do
-    visible_to(user).where.not(author: user)
-      .joins(sanitize_sql_array([ "LEFT JOIN readings ON readings.membership_id = messages.subject_id AND readings.user_id = ?", user.id ]))
-      .where("readings.read_at IS NULL OR messages.created_at > readings.read_at")
+  scope :read_by, ->(user) do
+    joins(subject: :readings).where(readings: { user: }).where(Reading.arel_table[:read_at].gteq(arel_table[:created_at]))
+  end
+  scope :unread_by, ->(user) { visible_to(user).where(arel_table[:author_id].is_distinct_from(user.id)).where.not(id: read_by(user)) }
+
+  def author_name
+    author.present? ? author.name : super
+  end
+
+  def author_left?
+    author.nil?
   end
 
   private

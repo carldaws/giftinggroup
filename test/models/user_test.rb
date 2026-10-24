@@ -125,11 +125,13 @@ class UserTest < ActiveSupport::TestCase
     assert_not Item.exists?(suggestion.id)
   end
 
-  test "deleting someone deletes what they wrote" do
-    message = messages(:about_alice)
+  test "deleting someone keeps what they wrote, under their name" do
+    name = users(:bob).name
+
     users(:bob).destroy!
 
-    assert_not Message.exists?(message.id)
+    assert messages(:about_alice).reload.author_left?
+    assert_equal name, messages(:about_alice).author_name
   end
 
   private

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_124531) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_24_130631) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -99,6 +99,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_124531) do
     t.bigint "owner_id", null: false
     t.boolean "little", default: false, null: false
     t.datetime "removed_at"
+    t.string "released_by_name"
     t.index ["owner_id"], name: "index_items_on_owner_id"
     t.index ["suggested_by_id"], name: "index_items_on_suggested_by_id"
   end
@@ -115,10 +116,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_124531) do
 
   create_table "messages", force: :cascade do |t|
     t.bigint "subject_id", null: false
-    t.bigint "author_id", null: false
+    t.bigint "author_id"
     t.text "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "author_name"
     t.index ["author_id"], name: "index_messages_on_author_id"
     t.index ["subject_id"], name: "index_messages_on_subject_id"
   end

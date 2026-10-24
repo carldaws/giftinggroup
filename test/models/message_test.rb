@@ -58,6 +58,12 @@ class MessageUnreadTest < ActiveSupport::TestCase
     end
   end
 
+  test "messages from someone who has left still count as unread" do
+    users(:bob).delete_account
+
+    assert_includes Message.unread_by(users(:carol)), messages(:about_alice)
+  end
+
   test "your own messages are never unread" do
     assert_not_includes Message.unread_by(users(:bob)), messages(:about_alice)
   end
