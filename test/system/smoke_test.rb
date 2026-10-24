@@ -14,6 +14,7 @@ class SmokeTest < ApplicationSystemTestCase
     scarf = "Green wool scarf"
     gloves = "Matching gloves"
     book = "Dinosaur book"
+    kite = "Rainbow kite"
     hobby = "Hiking"
     plan = "I've got the scarf, could someone do the gloves?"
     reply = "Leave the gloves with me"
@@ -40,6 +41,14 @@ class SmokeTest < ApplicationSystemTestCase
       open_person rebecca
       assert_link t("people.show.edit_details")
       add_item book
+
+      click_on t("people.show.add_item")
+      fill_in t("items.form.name"), with: kite
+      check t("items.form.surprise")
+      click_on t("people.items.new.submit")
+      assert_text t("people.items.create.suggested")
+      assert_selector "#list h3", text: book
+      assert_no_selector "#list h3", text: kite
 
       open_your_page alice
       add_item scarf, photo: file_fixture("photo.png")

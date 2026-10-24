@@ -254,6 +254,33 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_not users(:dan).items.last.suggestion?
   end
 
+  test "guardians can add a surprise to the list they look after, hidden until they show surprises" do
+    sign_in_as users(:bob)
+
+    get new_person_item_path(users(:dan))
+    assert_select "input[type=checkbox][name=surprise]"
+
+    post person_items_path(users(:dan)), params: { item: { name: "Kite" }, surprise: "1" }
+    surprise = users(:dan).items.last
+    assert surprise.suggestion?
+    assert_equal I18n.t("people.items.create.suggested"), flash[:notice]
+
+    follow_redirect!
+    assert_no_match surprise.name, response.body
+
+    get person_path(users(:dan), surprises: "shown")
+    assert_select "h3", text: surprise.name
+  end
+
+  test "the surprise choice only appears on lists you look after, not your own or other people's" do
+    sign_in_as users(:alice)
+
+    [ users(:alice), users(:carol) ].each do |person|
+      get new_person_item_path(person)
+      assert_select "input[name=surprise]", count: 0
+    end
+  end
+
   test "adding to someone else's list makes a suggestion they can't see" do
     sign_in_as users(:carol)
 

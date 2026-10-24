@@ -6,6 +6,7 @@
   <%= page_header heading, crumbs: [ [ t("layouts.header.home"), root_path ], [ @person.name, person_path(@person) ] ], subtitle: t(".intro") %>
 
   <div class="card">
-    <%= render "items/form", item: @item, url: person_items_path(@person), submit: suggesting ? t(".suggest_submit") : t(".submit") %>
+    <%= render "items/form", item: @item, url: person_items_path(@person), submit: suggesting ? t(".suggest_submit") : t(".submit"),
+          surprise_for: (@person if @person != Current.user && Current.user.looks_after?(@person)) %>
   </div>
 </div>

@@ -6,7 +6,7 @@ class People::ItemsController < ApplicationController
   end
 
   def create
-    @item = @person.build_item(item_params, by: Current.user)
+    @item = @person.build_item(item_params, by: Current.user, surprise: params[:surprise] == "1")
 
     if @item.save
       redirect_to person_path(@person), notice: t(@item.suggestion? ? ".suggested" : ".added", name: @item.title)
