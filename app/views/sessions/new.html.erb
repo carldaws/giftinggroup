@@ -1,7 +1,7 @@
 <% content_for :title, t(".title") %>
 
-<div class="page page--single">
-  <%= page_header t(".heading"), subtitle: t(".pitch") %>
+<div class="page page--centered">
+  <%= page_header t(".heading") %>
 
   <div class="card">
     <%= form_with url: session_path do |form| %>

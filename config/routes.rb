@@ -44,7 +44,10 @@ Rails.application.routes.draw do
 
   resources :joins, path: "join", only: %i[ new create show ], param: :join_code
 
-  root "groups#index"
+  constraints(->(request) { Session.exists?(id: request.cookie_jar.signed[:session_id]) }) do
+    root "groups#index", as: :signed_in_root
+  end
+  root "home#show"
 
   get "up" => "rails/health#show", as: :rails_health_check # rubocop:disable Guardrails/RestfulRoutes
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest # rubocop:disable Guardrails/RestfulRoutes

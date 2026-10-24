@@ -95,9 +95,7 @@ class SmokeTest < ApplicationSystemTestCase
     end
 
     using_session(:carol) do
-      visit root_path
-      within("main") { click_on t("sessions.new.create_account") }
-      fill_in_registration carol, "carol@walkers.example"
+      sign_up carol, "carol@walkers.example"
       click_on t("groups.index.join")
       fill_in t("joins.new.code"), with: join_code.downcase
       click_on t("joins.new.submit")
@@ -220,7 +218,8 @@ class SmokeTest < ApplicationSystemTestCase
 
     def sign_up(name, email_address)
       visit root_path
-      within("main") { click_on t("sessions.new.create_account") }
+      assert_selector "h1", exact_text: t("home.show.heading")
+      click_on t("home.show.create_account"), match: :first
       fill_in_registration name, email_address
     end
 

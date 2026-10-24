@@ -18,7 +18,7 @@ class AccountDeletionTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to new_session_path
     assert_not User.exists?(bob.id)
-    get root_path
+    get new_group_path
     assert_redirected_to new_session_path
   end
 
