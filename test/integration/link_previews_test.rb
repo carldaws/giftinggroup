@@ -68,6 +68,6 @@ class LinkPreviewsTest < ActionDispatch::IntegrationTest
     end
 
     def link_photo_id(blob, fetched_for:)
-      blob.signed_id(purpose: LinkPreview.photo_purpose(fetched_for), expires_in: 6.hours)
+      blob.signed_id(purpose: LinkPreview.photo_purpose(fetched_for), expires_in: LinkPreview::PHOTO_LIFETIME)
     end
 end

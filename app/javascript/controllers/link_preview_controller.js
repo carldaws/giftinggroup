@@ -4,8 +4,8 @@ export default class extends Controller {
   static targets = [ "url", "name", "preview", "image", "photo", "status" ]
   static values = { endpoint: String }
 
-  pasted() {
-    setTimeout(() => this.look())
+  typed(event) {
+    if (event.inputType === "insertFromPaste") this.look()
   }
 
   look() {
@@ -39,7 +39,12 @@ export default class extends Controller {
   }
 
   #fill({ title, photo }) {
-    if (title && this.nameTarget.value.trim() === "") this.nameTarget.value = title
+    const name = this.nameTarget.value.trim()
+
+    if (title && (name === "" || name === this.filledTitle)) {
+      this.nameTarget.value = title
+      this.filledTitle = title
+    }
     this.#showPhoto(photo)
   }
 
@@ -48,7 +53,12 @@ export default class extends Controller {
     this.photoTarget.disabled = !photo
     this.photoTarget.checked = Boolean(photo)
     this.photoTarget.value = photo ? photo.signed_id : ""
-    this.imageTarget.src = photo ? photo.url : ""
+
+    if (photo) {
+      this.imageTarget.src = photo.url
+    } else {
+      this.imageTarget.removeAttribute("src")
+    }
   }
 
   get #csrfToken() {

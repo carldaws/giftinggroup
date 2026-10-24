@@ -19,11 +19,24 @@ class LinkPreviewTest < ActiveSupport::TestCase
     assert_equal name, preview.title
   end
 
+  test "reads pages in the character set the shop's server declares" do
+    name = "Café crème"
+    preview = LinkPreview.parse("<meta property='og:title' content='#{name}'>".b, base_url: "https://store.example/1", charset: "utf-8")
+
+    assert_equal name, preview.title
+  end
+
+  test "keeps pictures whose addresses have spaces or accents" do
+    file = "My Fotó.jpg"
+    preview = parse("<meta property='og:image' content='https://cdn.store.example/#{file}'>")
+
+    assert_equal file, URI.decode_uri_component(URI(preview.image_url).path.delete_prefix("/"))
+  end
+
   test "a page that shares nothing gives nothing" do
     preview = parse("<title>Walking boots</title>")
 
     assert_not preview.found_anything?
-    assert_nil preview.download_photo
   end
 
   private

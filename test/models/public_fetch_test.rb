@@ -19,6 +19,10 @@ class PublicFetchTest < ActiveSupport::TestCase
     assert_raises(PublicFetch::Refused) { PublicFetch.decompressed("\x1F\x8Bnot really".b, limit: 1.megabyte) }
   end
 
+  test "won't start a fetch with too little time left to limit it" do
+    assert_raises(PublicFetch::Refused) { PublicFetch.get("https://example.com/", limit: 1.kilobyte, give_up_at: PublicFetch.now + 0.2) }
+  end
+
   test "only fetches ordinary web addresses" do
     %w[ file:///etc/passwd ftp://example.com/ javascript:alert(1) not\ a\ url http://user:secret@example.com/ http://example.com:8080/ https://example.com:2375/ ].each do |url|
       assert_raises(PublicFetch::Refused) { PublicFetch.get(url, limit: 1.kilobyte) }

@@ -31,7 +31,7 @@ class LinkPreviewsController < ApplicationController
       photo = preview.download_photo if preview.image_url.present? && photo_allowance_left?
 
       if photo.present?
-        { signed_id: photo.signed_id(purpose: LinkPreview.photo_purpose(Current.user), expires_in: 6.hours), url: rails_blob_path(photo, only_path: true) }
+        { signed_id: photo.signed_id(purpose: LinkPreview.photo_purpose(Current.user), expires_in: LinkPreview::PHOTO_LIFETIME), url: rails_blob_path(photo, only_path: true) }
       end
     end
 

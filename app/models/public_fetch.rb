@@ -8,6 +8,7 @@ class PublicFetch
 
   TIME_ALLOWED = 8
   STEP_TIMEOUT = 3
+  SHORTEST_STEP = 0.5
   REDIRECTS = 3
   PORTS = [ 80, 443 ].freeze
   GZIP = "\x1F\x8B".b.freeze
@@ -68,11 +69,12 @@ class PublicFetch
     attr_reader :uri, :limit, :give_up_at, :redirects
 
     def fetchable?
-      uri.is_a?(URI::HTTP) && uri.hostname.present? && uri.userinfo.nil? && uri.port.in?(PORTS) && time_left.positive?
+      uri.is_a?(URI::HTTP) && uri.hostname.present? && uri.userinfo.nil? && uri.port.in?(PORTS) && time_left > SHORTEST_STEP
     end
 
     def download
       address = public_address
+      raise Refused unless time_left > SHORTEST_STEP
 
       Tempfile.create("public-fetch", binmode: true) do |file|
         written, _, status = Open3.capture3("curl", *curl_options(address, file.path), uri.to_s)
@@ -85,9 +87,9 @@ class PublicFetch
 
     def curl_options(address, output)
       [
-        "--silent", "--globoff", "--noproxy", "*", "--http1.1",
+        "--disable", "--silent", "--globoff", "--noproxy", "*", "--http1.1",
         "--proto", "=http,https", "--max-redirs", "0",
-        "--resolve", "#{uri.hostname}:#{uri.port}:#{address.ipv6? ? "[#{address}]" : address}",
+        "--connect-to", "::#{address.ipv6? ? "[#{address}]" : address}:",
         "--connect-timeout", format("%.1f", [ STEP_TIMEOUT, time_left ].min),
         "--max-time", format("%.1f", time_left),
         "--max-filesize", limit.to_s,
@@ -109,8 +111,9 @@ class PublicFetch
     def resolve(hostname)
       [ IPAddr.new(hostname) ]
     rescue IPAddr::InvalidAddressError
-      Timeout.timeout([ STEP_TIMEOUT, time_left ].min) do
-        Resolv::DNS.open { |dns| dns.getaddresses(hostname).map { IPAddr.new(it.to_s) } }
+      Resolv::DNS.open do |dns|
+        dns.timeouts = [ STEP_TIMEOUT, time_left ].min
+        dns.getaddresses(hostname).map { IPAddr.new(it.to_s) }
       end
     end
 

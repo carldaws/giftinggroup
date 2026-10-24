@@ -20,5 +20,5 @@ production:
     class: BackupJob
     schedule: every day at 3am Europe/London
   purge_abandoned_files:
-    command: "ActiveStorage::Blob.unattached.where(created_at: ..6.hours.ago).find_each(&:purge_later)"
+    command: "ActiveStorage::Blob.unattached.where(created_at: ..LinkPreview::PHOTO_LIFETIME.ago).find_each(&:purge_later)"
     schedule: every hour at minute 40
