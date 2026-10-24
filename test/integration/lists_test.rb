@@ -689,9 +689,4 @@ class ListsTest < ActionDispatch::IntegrationTest
     delete person_size_path(users(:alice), sizes(:alice_shoes))
     assert_response :forbidden
   end
-
-  private
-    def page_without_tokens
-      response.body.gsub(/name="(csrf-token|authenticity_token)" (content|value)="[^"]+"/, "")
-    end
 end

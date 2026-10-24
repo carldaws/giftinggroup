@@ -1,0 +1,30 @@
+<%# locals: (item:) %>
+<% comments = item.comments.sort_by { [ it.created_at, it.id ] } %>
+
+<div class="grid gap-2">
+  <% if comments.any? %>
+    <ul class="grid gap-2">
+      <% comments.each do |comment| %>
+        <% mine = comment.author == Current.user %>
+        <li id="<%= dom_id(comment) %>" class="flex items-start gap-2 text-base">
+          <p class="min-w-0 flex-1 break-words">
+            <span class="font-semibold"><%= mine ? t(".you") : comment.author_name %></span>
+            <%= comment.body %>
+          </p>
+          <% if mine %>
+            <%= button_to item_comment_path(item, comment), method: :delete, class: "icon-button icon-button--small",
+                  aria: { label: t(".delete") } do %>
+              <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= form_with model: Comment.new, url: item_comments_path(item), class: "flex gap-2" do |form| %>
+    <%= form.label :body, t(".label", name: item.title), class: "sr-only" %>
+    <%= form.text_field :body, required: true, maxlength: 500, autocomplete: "off", placeholder: t(".placeholder"), class: "input text-base" %>
+    <%= form.submit t(".add"), class: "button button--secondary button--small" %>
+  <% end %>
+</div>

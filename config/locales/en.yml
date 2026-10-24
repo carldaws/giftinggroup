@@ -447,6 +447,12 @@ en:
       little_hint: Goes in Little things, for when money's tight.
       asked_for: "%{name} asked for this"
       asked_for_hint: Tick this to show it on %{name}'s page, as if %{name} added it themselves.
+    comments:
+      you: You
+      delete: Delete your comment
+      label: Comment on %{name}
+      placeholder: Add a comment
+      add: Add
     item:
       most_wanted: Most wanted
       little: Little thing
@@ -697,6 +703,7 @@ en:
         last_guardian: Someone needs to keep looking after them, so add someone else first.
         too_long_for_bcrypt: is too long. Please use a shorter one.
         last_admin: Every group needs at least one admin. Make someone else an admin first.
+        not_an_idea: can only be commented on when it's a surprise idea you can see
         dependant_admin: Only people with their own account can be admins.
         fully_reserved: has already been taken by someone else
         received: has already been received

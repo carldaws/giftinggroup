@@ -3,7 +3,7 @@
 <% guardian = manages && !yours %>
 <% surprises_shown = guardian && params[:surprises] == "shown" %>
 <% surprises_hidden = manages && !surprises_shown %>
-<% items = @person.items.listed.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order %>
+<% items = @person.items.listed.visible_to(Current.user).includes(:suggested_by, comments: :author, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order %>
 <% items = items.where(suggested_by: nil) if surprises_hidden %>
 <% wanted = items.wanted %>
 <% little_only = params[:show] == "little" %>
