@@ -1,6 +1,25 @@
 require "test_helper"
 
 class ItemTest < ActiveSupport::TestCase
+  test "a name or a link is enough" do
+    assert users(:alice).items.build(name: "Walking boots").valid?
+    assert users(:alice).items.build(url: "https://www.uniqlo.com/uk/en/products/E486177-000").valid?
+  end
+
+  test "an item needs a name or a link" do
+    item = users(:alice).items.build(name: "  ", url: "")
+
+    assert_not item.valid?
+    assert item.errors.of_kind?(:base, :name_or_link)
+    assert_raises(ActiveRecord::StatementInvalid) { item.save!(validate: false) }
+  end
+
+  test "an item with only a link is called after its shop" do
+    item = users(:alice).items.build(url: "https://www.uniqlo.com/uk/en/products/E486177-000")
+
+    assert_equal I18n.t("items.something_from", shop: URI(item.url).host.delete_prefix("www.")), item.title
+  end
+
   test "the owner never sees suggestions on their own list" do
     assert_not_includes Item.visible_to(users(:alice)), items(:scarf_gloves_suggestion)
   end

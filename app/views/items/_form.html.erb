@@ -5,7 +5,7 @@
   <div class="fields">
     <div class="field">
       <%= form.label :name, t("items.form.name"), class: "label" %>
-      <%= form.text_field :name, required: true, autofocus: item.new_record?, class: "input" %>
+      <%= form.text_field :name, autofocus: item.new_record?, class: "input" %>
     </div>
 
     <div class="field">

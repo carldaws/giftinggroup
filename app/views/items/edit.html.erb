@@ -2,7 +2,7 @@
 <% saved_photos = @item.photos_attachments.includes(:blob).order(:id) %>
 
 <div class="page page--single">
-  <%= page_header @item.name_was, crumb: @item.name_was, crumbs: [ [ t("layouts.header.home"), root_path ], [ @item.owner.name, person_path(@item.owner) ] ] %>
+  <%= page_header @item.saved_title, crumb: @item.saved_title, crumbs: [ [ t("layouts.header.home"), root_path ], [ @item.owner.name, person_path(@item.owner) ] ] %>
 
   <div class="card">
     <% if saved_photos.any? %>
@@ -27,7 +27,7 @@
 
     <div class="mt-6 border-t border-line pt-6">
       <%= button_to t(".remove"), item_path(@item), method: :delete, class: "button button--danger button--wide",
-            form: { data: { turbo_confirm: t(".remove_confirm", name: @item.name) } } %>
+            form: { data: { turbo_confirm: t(".remove_confirm", name: @item.title) } } %>
     </div>
   </div>
 </div>

@@ -183,6 +183,26 @@ class ListsTest < ActionDispatch::IntegrationTest
     assert_not item.suggestion?
   end
 
+  test "adding just a link" do
+    sign_in_as users(:alice)
+
+    post person_items_path(users(:alice)), params: { item: { name: "", url: "https://www.uniqlo.com/uk/en/products/E486177-000" } }
+    follow_redirect!
+
+    assert_select "h3", text: users(:alice).items.last.title
+  end
+
+  test "adding nothing at all asks for a name or a link" do
+    sign_in_as users(:alice)
+
+    assert_no_difference -> { Item.count } do
+      post person_items_path(users(:alice)), params: { item: { name: "", url: "" } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_match I18n.t("activerecord.errors.messages.name_or_link"), response.body
+  end
+
   test "adding a photo with an item, and keeping it when the item is edited" do
     sign_in_as users(:alice)
     post person_items_path(users(:alice)), params: { item: { name: "Walking boots", photos: [ fixture_file_upload("photo.png", "image/png") ] } }
