@@ -303,6 +303,21 @@ en:
       birthday_passed: Your birthday has just been. Tick off anything you received, so it comes off your list.
       occasion_passed: "%{name} has just been. Tick off anything you received, so it comes off your list."
       occasion_passed_for: "%{occasion} has just been. Tick off anything %{name} received, so it comes off their list."
+    deletions:
+      new:
+        title: Delete %{name}'s page
+        intro: This can't be undone.
+        list: "%{name}'s list, the things they love, their sizes and their birthday are deleted."
+        chats: The chats about %{name} are deleted.
+        picked:
+          one: Someone has already picked a gift from the list. It goes from their shopping list.
+          other: People have already picked %{count} gifts from the list. They go from their shopping lists.
+        guardians:
+          one: "%{names} also looks after %{name}, and won't any more."
+          other: "%{names} also look after %{name}, and won't any more."
+        submit: Delete %{name}'s page
+      create:
+        deleted: "%{name}'s page has been deleted."
     guardianships:
       create:
         added: "%{name} is looking after %{dependant} too now."
@@ -322,6 +337,7 @@ en:
         add_guardian_prompt: Choose someone
         add_guardian: Add
         delete_account: Delete your account
+        delete_person: Delete %{name}'s page
         your_details: Your details
         their_details: "%{name}'s details"
         name: Name

@@ -115,5 +115,7 @@
       </ul>
       <p class="hint mt-3"><%= t(".guardians_hint", name:) %></p>
     </section>
+
+    <%= link_to t(".delete_person", name:), new_person_deletion_path(@person), class: "button button--danger button--wide" %>
   <% end %>
 </div>

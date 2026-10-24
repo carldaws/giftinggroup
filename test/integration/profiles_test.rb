@@ -120,4 +120,53 @@ class ProfilesTest < ActionDispatch::IntegrationTest
     delete session_path
     assert_redirected_to new_session_path
   end
+
+  test "the details page links to deleting someone you look after, and the page says what goes" do
+    sign_in_as users(:alice)
+
+    get edit_person_profile_path(users(:dan))
+    assert_select "a[href=?]", new_person_deletion_path(users(:dan))
+
+    get new_person_deletion_path(users(:dan))
+    assert_select "li", text: I18n.t("people.deletions.new.picked", count: 1)
+    assert_select "li", text: I18n.t("people.deletions.new.guardians", names: users(:bob).name, count: 1, name: users(:dan).name)
+  end
+
+  test "deleting someone you look after takes their list, and the gifts picked from it" do
+    lego, carols_gift = items(:lego), reservations(:carol_bought_lego)
+    sign_in_as users(:alice)
+
+    post person_deletion_path(users(:dan))
+
+    assert_redirected_to root_path
+    assert_equal I18n.t("people.deletions.create.deleted", name: users(:dan).name), flash[:notice]
+    assert_not User.exists?(users(:dan).id)
+    assert_not Item.exists?(lego.id)
+    assert_not Reservation.exists?(carols_gift.id)
+    assert_empty users(:bob).reload.dependants
+  end
+
+  test "only people who look after someone can delete them" do
+    sign_in_as users(:carol)
+
+    get new_person_deletion_path(users(:dan))
+    assert_response :forbidden
+
+    post person_deletion_path(users(:dan))
+    assert_response :forbidden
+    assert User.exists?(users(:dan).id)
+  end
+
+  test "nobody with their own account can be deleted this way, yourself included" do
+    sign_in_as users(:alice)
+
+    post person_deletion_path(users(:alice))
+    assert_response :not_found
+
+    post person_deletion_path(users(:bob))
+    assert_response :forbidden
+
+    assert User.exists?(users(:alice).id)
+    assert User.exists?(users(:bob).id)
+  end
 end
