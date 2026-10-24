@@ -41,14 +41,19 @@
       <% } %>
 
       <%= render "home/step", number: 2, name: "list", demo: capture { %>
-        <div class="card">
-          <span class="badge badge--honey"><%= t("items.item.most_wanted") %></span>
-          <p class="mt-2 text-lg font-semibold"><%= t(".demo.scarf") %></p>
-          <p class="row-meta"><%= t(".demo.scarf_price") %></p>
-          <p class="mt-2 text-base"><%= t(".demo.scarf_notes") %></p>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <span class="tag"><%= t(".demo.love_walking") %></span>
-            <span class="tag"><%= t(".demo.love_chocolate") %></span>
+        <div class="card card--flush">
+          <div class="p-5 sm:p-6">
+            <span class="badge badge--honey"><%= t("items.item.most_wanted") %></span>
+            <p class="mt-2 text-lg font-semibold"><%= t(".demo.scarf") %></p>
+            <p class="row-meta"><%= t(".demo.scarf_price") %></p>
+            <p class="mt-2 text-base"><%= t(".demo.scarf_notes") %></p>
+          </div>
+          <div class="card-footer">
+            <p class="mb-2 text-sm text-muted"><%= t("people.interests.heading", name: alice.name) %></p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag"><%= t(".demo.love_walking") %></span>
+              <span class="tag"><%= t(".demo.love_chocolate") %></span>
+            </div>
           </div>
         </div>
       <% } %>
