@@ -18,6 +18,7 @@ class SmokeTest < ApplicationSystemTestCase
     plan = "I've got the scarf, could someone do the gloves?"
     reply = "Leave the gloves with me"
     draft = "Half a thought about"
+    secret_santa = "Shall we do Secret Santa this year?"
     invite = nil
     join_code = nil
     set_up_link = nil
@@ -103,7 +104,7 @@ class SmokeTest < ApplicationSystemTestCase
 
       open_person alice
       open_chat alice, group
-      assert_text t("groups.memberships.messages.index.empty")
+      assert_text t("messages.chat.empty")
       fill_in t("groups.memberships.messages.index.label", name: alice), with: draft
     end
 
@@ -128,12 +129,22 @@ class SmokeTest < ApplicationSystemTestCase
       open_person carol
       open_chat carol, group
       send_message "Any ideas for Carol?", about: carol
+
+      go_home
+      open_group group
+      click_on t("groups.show.chat", count: 0)
+      assert_text t("groups.messages.index.for_everyone")
+      fill_in t("groups.messages.index.label", group:), with: secret_santa
+      click_on t("messages.chat.send")
+      assert_text secret_santa
     end
 
     using_session(:alice) do
       go_home
       within("section[aria-labelledby=unread-heading]") { assert_text t("messages.unread.about", name: carol) }
       assert_no_text t("messages.unread.about", name: alice)
+      within("section[aria-labelledby=unread-heading]") { click_on t("messages.unread.everyone", group:) }
+      assert_text secret_santa
 
       open_your_page alice
       within(item_card(scarf)) { assert_no_text bob }
@@ -295,7 +306,7 @@ class SmokeTest < ApplicationSystemTestCase
 
     def send_message(body, about:)
       fill_in t("groups.memberships.messages.index.label", name: about), with: body
-      click_on t("groups.memberships.messages.index.send")
+      click_on t("messages.chat.send")
       assert_text body
       assert_field t("groups.memberships.messages.index.label", name: about), with: ""
       connect_turbo_cable_stream_sources

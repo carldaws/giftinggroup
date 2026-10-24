@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_202844) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -116,13 +116,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_202844) do
   end
 
   create_table "messages", force: :cascade do |t|
-    t.bigint "subject_id", null: false
+    t.bigint "subject_id"
     t.bigint "author_id"
     t.text "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "author_name"
+    t.bigint "group_id", null: false
     t.index ["author_id"], name: "index_messages_on_author_id"
+    t.index ["group_id"], name: "index_messages_on_group_id"
     t.index ["subject_id"], name: "index_messages_on_subject_id"
   end
 
@@ -155,11 +157,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_202844) do
 
   create_table "readings", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "membership_id", null: false
+    t.bigint "membership_id"
     t.datetime "read_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "group_id", null: false
+    t.index ["group_id"], name: "index_readings_on_group_id"
     t.index ["membership_id"], name: "index_readings_on_membership_id"
+    t.index ["user_id", "group_id"], name: "index_readings_on_user_id_and_group_id_for_group_chats", unique: true, where: "(membership_id IS NULL)"
     t.index ["user_id", "membership_id"], name: "index_readings_on_user_id_and_membership_id", unique: true
   end
 
@@ -219,6 +224,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_202844) do
   add_foreign_key "items", "users", column: "suggested_by_id"
   add_foreign_key "memberships", "groups"
   add_foreign_key "memberships", "users"
+  add_foreign_key "messages", "groups"
   add_foreign_key "messages", "memberships", column: "subject_id"
   add_foreign_key "messages", "users", column: "author_id"
   add_foreign_key "occasion_recipients", "occasions"
@@ -226,6 +232,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_202844) do
   add_foreign_key "occasions", "groups"
   add_foreign_key "occasions", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "occasions", "users", column: "person_id"
+  add_foreign_key "readings", "groups"
   add_foreign_key "readings", "memberships"
   add_foreign_key "readings", "users"
   add_foreign_key "reservations", "items"

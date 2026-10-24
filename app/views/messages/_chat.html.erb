@@ -1,0 +1,33 @@
+<%# locals: (messages:, first_unread:, message:, url:, label:) %>
+<div class="card card--flush">
+  <div class="px-5 py-5 sm:p-6">
+    <% if messages.any? %>
+      <ol class="grid gap-3">
+        <% messages.each do |message| %>
+          <% if message == first_unread %>
+            <li id="new" class="flex scroll-mt-24 items-center gap-3 text-sm font-semibold text-clay">
+              <span class="h-px flex-1 bg-clay/30"></span>
+              <%= t(".new") %>
+              <span class="h-px flex-1 bg-clay/30"></span>
+            </li>
+          <% end %>
+          <%= render "messages/message", message: %>
+        <% end %>
+      </ol>
+    <% else %>
+      <p class="empty py-6 text-center"><%= t(".empty") %></p>
+    <% end %>
+  </div>
+
+  <div id="latest" class="card-footer sticky bottom-0 bg-card pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <%= render "shared/errors", record: message %>
+
+    <%= form_with model: message, url:, class: "flex items-center gap-2",
+          data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" } do |form| %>
+      <%= form.label :body, label, class: "sr-only" %>
+      <%= form.text_field :body, required: true, maxlength: 2000, autocomplete: "off", placeholder: t(".placeholder"),
+            class: "input", data: { turbo_permanent: true } %>
+      <%= form.submit t(".send"), class: "button" %>
+    <% end %>
+  </div>
+</div>

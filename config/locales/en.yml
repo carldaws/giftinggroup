@@ -145,6 +145,11 @@ en:
         one: 1 person
         other: "%{count} people"
       rename: Rename
+      chat_tooltip: Chat with everyone
+      chat:
+        zero: Chat with everyone in the group
+        one: Chat with everyone in the group, 1 new message
+        other: Chat with everyone in the group, %{count} new messages
       people_heading: People
       add_dependant: Add someone you look after
       add_dependant_hint: Like a child, or a grandparent who won't sign in. You'll manage their list.
@@ -171,6 +176,12 @@ en:
       leave_confirm: Leave %{group}? You'll need a new invite to come back.
       remove: Remove from group
       remove_confirm: Remove %{name} from the group?
+    messages:
+      index:
+        title: Everyone in %{group}
+        heading: Everyone
+        for_everyone: Everyone in the group can see this chat. For anything about one person, use their own chat, so surprises stay surprises.
+        label: Message to everyone in %{group}
     memberships:
       create:
         added: "%{name} has been added."
@@ -181,12 +192,7 @@ en:
         index:
           title: Chat about %{name}
           heading: Chat about %{name}
-          new: New
-          empty: No messages yet.
-          readers: "In this chat: %{names}"
           label: Message about %{name}
-          placeholder: Write a message
-          send: Send
       sign_in_links:
         show:
           title: Sign-in link
@@ -634,9 +640,17 @@ en:
       left: "%{name} (left)"
     just_now: Just now
     ago: "%{time} ago"
+    chat:
+      new: New
+      empty: No messages yet.
+      placeholder: Write a message
+      send: Send
+    readers:
+      readers: "In this chat: %{names}"
     unread:
       heading: New messages
       about: Chat about %{name}
+      everyone: Everyone in %{group}
       count:
         one: 1 new message
         other: "%{count} new messages"

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
           resources :messages, only: %i[ index create ]
         end
       end
+      resources :messages, only: %i[ index create ]
       resources :dependants, only: %i[ new create ]
       resources :occasions, only: %i[ new create edit update destroy ]
       resource :holidays, only: %i[ edit update ]
