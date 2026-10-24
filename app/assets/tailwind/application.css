@@ -194,7 +194,25 @@
   }
 
   .card--flush {
-    @apply overflow-clip p-0 sm:p-0;
+    @apply p-0 sm:p-0;
+  }
+
+  .card--flush > :first-child,
+  .card--flush .list > li:first-child {
+    @apply rounded-t-[inherit];
+  }
+
+  .card--flush > :last-child,
+  .card--flush .list > li:last-child {
+    @apply rounded-b-[inherit];
+  }
+
+  .card--flush :is(.row--link, summary) {
+    @apply rounded-[inherit];
+  }
+
+  .card--flush details[open] > summary {
+    @apply rounded-b-none;
   }
 
   .list {
