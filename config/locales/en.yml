@@ -262,6 +262,8 @@ en:
     show:
       your_details: Your details
       edit_details: Edit details
+      show_surprises: Show surprises
+      hide_surprises: Hide surprises
       birthday: Birthday %{date} · %{countdown}
       your_list: Your list
       their_list: "%{name}'s list"

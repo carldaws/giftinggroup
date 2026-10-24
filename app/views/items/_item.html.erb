@@ -1,4 +1,4 @@
-<%# locals: (item:, reservations:, yours:, occasion_choices:) %>
+<%# locals: (item:, reservations:, surprises_hidden:, occasion_choices:) %>
 <% mine = reservations.find { it.user == Current.user } %>
 <% others = reservations - [ mine ] %>
 <% picking_occasion = mine.present? && !mine.given? && occasion_choices.any? %>
@@ -55,9 +55,9 @@
     </div>
   </div>
 
-  <% if !yours || editable || receivable %>
+  <% if !surprises_hidden || editable || receivable %>
     <div class="card-footer grid gap-3">
-      <% unless yours %>
+      <% unless surprises_hidden %>
         <% if reservations.any? %>
           <ul class="flex flex-wrap gap-2">
             <% reservations.each do |reservation| %>
@@ -84,7 +84,7 @@
       <% end %>
 
       <div class="flex flex-wrap gap-2">
-        <% unless yours %>
+        <% unless surprises_hidden %>
           <% if mine.nil? %>
             <% if item.unlimited? || others.size < item.quantity %>
               <%= button_to t(".reserve"), item_reservation_path(item), class: "button button--small" %>

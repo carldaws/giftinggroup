@@ -186,6 +186,14 @@
     @apply mt-6 mb-8 sm:mt-8;
   }
 
+  .page-actions {
+    @apply ml-auto flex shrink-0 flex-wrap items-center gap-2;
+  }
+
+  .page-actions > :last-child > .tooltip {
+    @apply right-0 left-auto translate-x-0;
+  }
+
   .page-title {
     @apply text-3xl leading-tight font-semibold break-words sm:text-4xl;
   }

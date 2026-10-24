@@ -153,7 +153,12 @@ class SmokeTest < ApplicationSystemTestCase
       go_home
       open_group group
       open_person rebecca
+      within(item_card(book)) { assert_no_text t("items.item.status.they_getting", name: bob) }
+      click_on t("people.show.show_surprises")
       within(item_card(book)) { assert_text t("items.item.status.they_getting", name: bob) }
+      click_on t("people.show.hide_surprises")
+      assert_link t("people.show.show_surprises")
+      within(item_card(book)) { assert_no_text t("items.item.status.they_getting", name: bob) }
 
       go_home
       open_group group
