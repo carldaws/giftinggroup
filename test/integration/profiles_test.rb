@@ -120,4 +120,33 @@ class ProfilesTest < ActionDispatch::IntegrationTest
     delete session_path
     assert_redirected_to new_session_path
   end
+
+  test "people who look after someone can delete them, list and all" do
+    lego = items(:lego)
+    sign_in_as users(:alice)
+
+    get edit_person_profile_path(users(:dan))
+    assert_select "form[action=?] button", person_path(users(:dan)), text: I18n.t("people.profiles.edit.delete_person", name: users(:dan).name)
+
+    delete person_path(users(:dan))
+
+    assert_redirected_to root_path
+    assert_not User.exists?(users(:dan).id)
+    assert_not Item.exists?(lego.id)
+  end
+
+  test "nobody else can delete someone, and nobody with their own account can be deleted this way" do
+    sign_in_as users(:carol)
+    delete person_path(users(:dan))
+    assert_response :forbidden
+
+    sign_in_as users(:alice)
+    [ users(:bob), users(:alice) ].each do |person|
+      delete person_path(person)
+      assert_response :forbidden
+    end
+
+    assert User.exists?(users(:dan).id)
+    assert User.exists?(users(:bob).id)
+  end
 end

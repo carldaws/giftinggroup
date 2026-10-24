@@ -73,11 +73,14 @@
       </div>
     <% end %>
 
-    <% if yours %>
-      <div class="mt-6 border-t border-line pt-6">
+    <div class="mt-6 border-t border-line pt-6">
+      <% if yours %>
         <%= link_to t(".delete_account"), new_account_deletion_path, class: "button button--danger button--wide" %>
-      </div>
-    <% end %>
+      <% else %>
+        <%= button_to t(".delete_person", name:), person_path(@person), method: :delete, class: "button button--danger button--wide",
+              form: { data: { turbo_confirm: t(".delete_person_confirm", name:) } } %>
+      <% end %>
+    </div>
   </div>
 
   <% unless yours %>

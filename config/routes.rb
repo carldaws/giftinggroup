@@ -27,7 +27,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :people, only: :show do
+  resources :people, only: %i[ show destroy ] do
     scope module: :people do
       resource :profile, only: %i[ edit update ]
       resources :items, only: %i[ new create ]
