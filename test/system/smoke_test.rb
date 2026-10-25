@@ -20,6 +20,7 @@ class SmokeTest < ApplicationSystemTestCase
     reply = "Leave the gloves with me"
     draft = "Half a thought about"
     secret_santa = "Shall we do Secret Santa this year?"
+    already_has = "She has gloves already"
     invite = nil
     join_code = nil
     set_up_link = nil
@@ -111,6 +112,12 @@ class SmokeTest < ApplicationSystemTestCase
       assert_text t("joins.create.joined", group:)
 
       open_person alice
+      within(item_card(gloves)) do
+        fill_in t("items.comments.label", name: gloves), with: already_has
+        click_on t("items.comments.add")
+      end
+      within(item_card(gloves)) { assert_text already_has }
+
       open_chat alice, group
       assert_text t("messages.chat.empty")
       fill_in t("groups.memberships.messages.index.label", name: alice), with: draft

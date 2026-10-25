@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :readings, dependent: :destroy
   has_many :suggestions, class_name: "Item", foreign_key: :suggested_by_id, inverse_of: :suggested_by, dependent: :destroy
   has_many :authored_messages, class_name: "Message", foreign_key: :author_id, inverse_of: :author
+  has_many :authored_comments, class_name: "Comment", foreign_key: :author_id, inverse_of: :author
 
   has_many :guardianships, foreign_key: :guardian_id, inverse_of: :guardian, dependent: :destroy
   has_many :dependants, through: :guardianships

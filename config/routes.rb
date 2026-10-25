@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       resource :purchase, only: %i[ create destroy ]
       resource :receipt, only: %i[ create destroy ]
       resources :photos, only: :destroy
+      resources :comments, only: %i[ create destroy ]
     end
   end
 

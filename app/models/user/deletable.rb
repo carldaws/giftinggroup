@@ -5,7 +5,7 @@ module User::Deletable
     has_many :occasion_recipients, dependent: :delete_all
     has_many :group_holiday_recipients, dependent: :delete_all
 
-    before_destroy :keep_authored_messages
+    before_destroy :keep_what_they_wrote
   end
 
   def delete_account
@@ -28,8 +28,9 @@ module User::Deletable
   end
 
   private
-    def keep_authored_messages
+    def keep_what_they_wrote
       authored_messages.update_all(author_id: nil, author_name: name)
+      authored_comments.update_all(author_id: nil, author_name: name)
     end
 
     def hand_over_admin
@@ -49,6 +50,7 @@ module User::Deletable
     def take_back_suggestions
       suggestions.find_each do |item|
         if item.reservations.exists?
+          item.comments.delete_all
           item.update_columns(suggested_by_id: nil, removed_at: Time.current)
         else
           item.destroy!

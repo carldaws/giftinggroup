@@ -26,6 +26,10 @@ module SignInHelper
   def sign_in_as(user, password: FixturePasswords::PASSWORD, headers: {})
     post session_path, params: { email_address: user.email_address, password: }, headers:
   end
+
+  def page_without_tokens
+    response.body.gsub(/name="(csrf-token|authenticity_token)" (content|value)="[^"]+"/, "")
+  end
 end
 
 class ActionDispatch::IntegrationTest

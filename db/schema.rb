@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_24_213318) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.bigint "item_id", null: false
+    t.bigint "author_id"
+    t.string "author_name"
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_comments_on_author_id"
+    t.index ["item_id"], name: "index_comments_on_item_id"
   end
 
   create_table "group_holiday_recipients", force: :cascade do |t|
@@ -214,6 +225,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "comments", "items"
+  add_foreign_key "comments", "users", column: "author_id"
   add_foreign_key "group_holiday_recipients", "group_holidays"
   add_foreign_key "group_holiday_recipients", "users"
   add_foreign_key "group_holidays", "groups"
