@@ -430,6 +430,8 @@ en:
       name: What is it?
       url: Link
       url_hint: Where to find it online. A name or a link is all it needs.
+      looking: Looking at the link…
+      use_photo: Use this photo
       price: Price
       price_placeholder: For example, about £20
       quantity: How many?
