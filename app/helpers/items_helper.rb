@@ -10,6 +10,17 @@ module ItemsHelper
     end
   end
 
+  def item_details_tag(item)
+    quantity = item.unlimited? ? t("items.item.as_many_as_you_like") : (t("items.item.wants", count: item.quantity) if item.quantity > 1)
+    details = [ item.price.presence, quantity ].compact
+
+    tag.p(details.join(" · "), class: "row-meta mt-0.5") if details.any?
+  end
+
+  def split_options_for(card)
+    (1..card.split_limit).map { [ t("items.item.split_others", count: it), it ] }
+  end
+
   def splitting_with(reservation)
     t("items.item.splitting_with", names: names_of(reservation.people - [ Current.user ]))
   end
