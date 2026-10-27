@@ -6,7 +6,7 @@
     <div class="card">
       <% if person.interests.any? %>
         <ul class="flex flex-wrap gap-2">
-          <% person.interests.order(:created_at).each do |interest| %>
+          <% person.interests.chronologically.each do |interest| %>
             <li class="tag">
               <%= interest.name %>
               <% if manages %>

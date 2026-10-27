@@ -13,6 +13,8 @@ class Group < ApplicationRecord
 
   validates :name, presence: true
 
+  scope :by_name, -> { order(:name) }
+
   before_validation :assign_join_code, on: :create
 
   class << self

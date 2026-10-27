@@ -4,4 +4,6 @@ class Interest < ApplicationRecord
   normalizes :name, with: ->(name) { name.squish }
 
   validates :name, presence: true, length: { maximum: 80 }
+
+  scope :chronologically, -> { order(:created_at) }
 end

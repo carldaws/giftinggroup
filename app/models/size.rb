@@ -4,4 +4,6 @@ class Size < ApplicationRecord
   normalizes :label, :value, with: ->(text) { text.squish }
 
   validates :label, :value, presence: true, length: { maximum: 80 }
+
+  scope :chronologically, -> { order(:created_at) }
 end
