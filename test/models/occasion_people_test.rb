@@ -51,7 +51,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
   end
 
   test "you're reminded about people you haven't picked anything for, never yourself" do
-    occasion, people = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { occasion:, still_to_choose: people }
 
     assert_equal occasions(:christmas), occasion
     assert_equal [ users(:alice), users(:carol), users(:dan) ].sort_by(&:id), people.sort_by(&:id)
@@ -60,7 +60,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
   test "picking something for someone for the occasion takes them off the reminder" do
     items(:books).reservations.create!(user: users(:bob), occasion: occasions(:christmas))
 
-    _, people = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { still_to_choose: people }
 
     assert_not_includes people, users(:carol)
   end
@@ -69,18 +69,18 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     reservation = items(:books).reservations.create!(user: users(:bob), occasion: occasions(:christmas))
     items(:books).remove
 
-    _, people = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { still_to_choose: people }
     assert_includes people, users(:carol)
 
     reservation.buy
-    _, people = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { still_to_choose: people }
     assert_not_includes people, users(:carol)
   end
 
   test "a birthday only reminds you about the birthday person" do
     users(:dan).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
 
-    occasion, people = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { occasion:, still_to_choose: people }
 
     assert occasion.birthday?
     assert_equal [ users(:dan) ], people
@@ -96,7 +96,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
   test "the next occasion always reminds you, however far away" do
     occasions(:christmas).update!(date: 10.weeks.from_now.to_date)
 
-    occasion, _ = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { occasion: }
 
     assert_equal occasions(:christmas), occasion
   end
@@ -109,7 +109,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     assert_empty users(:bob).gifts_to_choose
 
     far.update!(date: 5.weeks.from_now.to_date)
-    occasion, _ = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { occasion: }
     assert_equal far, occasion
   end
 
@@ -117,7 +117,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     groups(:ivies).join(users(:bob))
     ivies_christmas = groups(:ivies).occasions.create!(name: "Christmas", date: occasions(:christmas).date)
 
-    reminded = users(:bob).gifts_to_choose.map(&:first)
+    reminded = users(:bob).gifts_to_choose.map(&:occasion)
 
     assert_includes reminded, occasions(:christmas)
     assert_includes reminded, ivies_christmas
@@ -127,7 +127,7 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     users(:bob).update!(birthday_month: 1.week.from_now.month, birthday_day: 1.week.from_now.day)
     occasions(:christmas).update!(date: 10.weeks.from_now.to_date)
 
-    occasion, _ = users(:bob).gifts_to_choose.first
+    users(:bob).gifts_to_choose.first => { occasion: }
 
     assert_equal occasions(:christmas), occasion
   end
@@ -135,8 +135,8 @@ class OccasionPeopleTest < ActiveSupport::TestCase
   test "a group's reminders only cover its own occasions" do
     ivies_party = groups(:ivies).occasions.create!(name: "Party", date: 1.week.from_now.to_date)
 
-    assert_equal [ ivies_party ], users(:carol).gifts_to_choose(in_group: groups(:ivies)).map(&:first)
-    assert_not_includes users(:carol).gifts_to_choose(in_group: groups(:hollies)).map(&:first), ivies_party
+    assert_equal [ ivies_party ], users(:carol).gifts_to_choose(in_group: groups(:ivies)).map(&:occasion)
+    assert_not_includes users(:carol).gifts_to_choose(in_group: groups(:hollies)).map(&:occasion), ivies_party
   end
 
   test "a group's reminder for a holiday only names people in that group" do
@@ -144,8 +144,8 @@ class OccasionPeopleTest < ActiveSupport::TestCase
     groups(:ivies).celebrate([ "christmas_day" ])
 
     travel_to Holiday.find("christmas_day").next_date - 2.weeks do
-      everywhere = users(:carol).gifts_to_choose.find { |occasion, _| occasion.holiday? }.second
-      in_ivies = users(:carol).gifts_to_choose(in_group: groups(:ivies)).find { |occasion, _| occasion.holiday? }.second
+      everywhere = users(:carol).gifts_to_choose.find { it.occasion.holiday? }.still_to_choose
+      in_ivies = users(:carol).gifts_to_choose(in_group: groups(:ivies)).find { it.occasion.holiday? }.still_to_choose
 
       assert_includes everywhere, users(:alice)
       assert_equal [ users(:erin) ], in_ivies

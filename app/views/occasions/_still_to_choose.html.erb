@@ -1,8 +1,8 @@
-<%# locals: (people:, everyone:) %>
+<%# locals: (choice:) %>
 <div role="group" aria-label="<%= t(".label") %>" class="mt-4">
   <p class="mb-2 text-base text-muted"><%= t(".heading") %></p>
   <ul class="flex flex-wrap gap-2">
-    <% people.each do |person| %>
+    <% choice.still_to_choose.each do |person| %>
       <li>
         <%= link_to person_path(person), class: "chip chip--link" do %>
           <%= avatar_tag person, size: :sm, tooltip: false, ring: false %>
@@ -12,11 +12,10 @@
     <% end %>
   </ul>
 
-  <% if everyone.size > 1 %>
-    <% chosen = everyone.size - people.size %>
+  <% if choice.progress? %>
     <div class="mt-4 flex items-center gap-3">
-      <progress value="<%= chosen %>" max="<%= everyone.size %>" aria-hidden="true" class="progress"></progress>
-      <p class="shrink-0 text-sm text-muted"><%= t(".progress", chosen:, total: everyone.size) %></p>
+      <progress value="<%= choice.chosen_count %>" max="<%= choice.everyone.size %>" aria-hidden="true" class="progress"></progress>
+      <p class="shrink-0 text-sm text-muted"><%= t(".progress", chosen: choice.chosen_count, total: choice.everyone.size) %></p>
     </div>
   <% end %>
 </div>

@@ -1,27 +1,15 @@
-<% people = [ Current.user, *Current.user.dependants.by_name ] %>
-<% counts = Item.listed.wanted.where(suggested_by: nil, owner: people).group(:owner_id).count %>
-
+<%# locals: (dashboard:) %>
 <section id="your-lists" aria-labelledby="your-lists-heading" class="section">
   <%= section_header t(".heading"), id: "your-lists-heading" %>
 
   <ul class="card card--flush list">
-    <% people.each do |person| %>
-      <% count = counts.fetch(person.id, 0) %>
-      <% yours = person == Current.user %>
+    <% dashboard.lists.each do |list| %>
       <li>
-        <%= link_to person_path(person), class: "row row--link" do %>
-          <%= avatar_tag person, size: :sm, tooltip: false %>
+        <%= link_to person_path(list.person), class: "row row--link" do %>
+          <%= avatar_tag list.person, size: :sm, tooltip: false %>
           <div class="min-w-0 flex-1">
-            <p class="row-title"><%= yours ? t(".yours") : t(".theirs", name: person.name) %></p>
-            <p class="<%= class_names("row-meta", "text-clay": count.zero?) %>">
-              <% if count.positive? %>
-                <%= t(".things", count:) %>
-              <% elsif yours %>
-                <%= t(".empty_yours") %>
-              <% else %>
-                <%= t(".empty_theirs", name: person.name) %>
-              <% end %>
-            </p>
+            <p class="row-title"><%= your_list_title_for(list) %></p>
+            <p class="<%= class_names("row-meta", "text-clay": list.wanted_count.zero?) %>"><%= your_list_summary_for(list) %></p>
           </div>
         <% end %>
       </li>

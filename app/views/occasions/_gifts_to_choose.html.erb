@@ -1,24 +1,23 @@
-<% gifts_to_choose = Current.user.gifts_to_choose %>
-
-<% if gifts_to_choose.any? %>
+<%# locals: (dashboard:) %>
+<% if dashboard.gifts_to_choose.any? %>
   <section aria-labelledby="gifts-to-choose-heading" class="section">
     <%= section_header t(".heading"), id: "gifts-to-choose-heading" %>
 
     <ul class="card card--flush list">
-      <% gifts_to_choose.each do |occasion, people, everyone| %>
+      <% dashboard.gifts_to_choose.each do |choice| %>
         <li>
-          <article aria-label="<%= t(".label", occasion: occasion_title(occasion)) %>" class="px-5 py-4 sm:px-6">
+          <article aria-label="<%= t(".label", occasion: occasion_title(choice.occasion)) %>" class="px-5 py-4 sm:px-6">
             <div class="flex items-center gap-4">
-              <%= render "occasions/date_badge", date: occasion.date %>
+              <%= render "occasions/date_badge", date: choice.occasion.date %>
               <div class="min-w-0 flex-1">
-                <p class="row-title"><%= occasion_title(occasion) %></p>
+                <p class="row-title"><%= occasion_title(choice.occasion) %></p>
                 <p class="row-meta">
-                  <%= countdown_to(occasion.date) %><% if occasion.custom? %> · <%= occasion.group.name %><% end %>
+                  <%= countdown_to(choice.occasion.date) %><% if choice.occasion.custom? %> · <%= choice.occasion.group.name %><% end %>
                 </p>
               </div>
             </div>
 
-            <%= render "occasions/still_to_choose", people:, everyone: %>
+            <%= render "occasions/still_to_choose", choice: %>
           </article>
         </li>
       <% end %>

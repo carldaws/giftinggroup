@@ -1,28 +1,25 @@
-<% unread = Message.unread_by(Current.user).includes(:author, :group, subject: :user).chronologically.group_by { [ it.group, it.subject ] } %>
-
-<% if unread.any? %>
+<%# locals: (dashboard:) %>
+<% if dashboard.unread_chats.any? %>
   <section aria-labelledby="unread-heading" class="section">
     <%= section_header t(".heading"), id: "unread-heading" %>
 
     <ul class="card card--flush list">
-      <% unread.sort_by { |_, messages| messages.last.created_at }.reverse_each do |(group, membership), messages| %>
-        <% latest = messages.last %>
+      <% dashboard.unread_chats.each do |chat| %>
         <li>
-          <%= link_to (membership.present? ? group_membership_messages_path(group, membership, anchor: "new") : group_messages_path(group, anchor: "new")),
-                data: { turbo_prefetch: false }, class: "row row--link" do %>
-            <% if membership.present? %>
-              <%= avatar_tag membership.user, tooltip: false %>
+          <%= link_to polymorphic_path([ chat.group, chat.subject, :messages ].compact, anchor: "new"), data: { turbo_prefetch: false }, class: "row row--link" do %>
+            <% if chat.about_someone? %>
+              <%= avatar_tag chat.subject.user, tooltip: false %>
             <% end %>
             <span class="min-w-0 flex-1">
-              <span class="row-title block"><%= membership.present? ? t(".about", name: membership.user.name) : t(".everyone", group: group.name) %></span>
-              <span class="row-meta block truncate"><%= latest.author_name %>: <%= latest.body %></span>
-              <% if membership.present? %>
-                <span class="row-meta block"><%= group.name %></span>
+              <span class="row-title block"><%= unread_chat_title(chat) %></span>
+              <span class="row-meta block truncate"><%= chat.latest.author_name %>: <%= chat.latest.body %></span>
+              <% if chat.about_someone? %>
+                <span class="row-meta block"><%= chat.group.name %></span>
               <% end %>
             </span>
             <span class="count">
-              <span aria-hidden="true"><%= messages.size %></span>
-              <span class="sr-only"><%= t(".count", count: messages.size) %></span>
+              <span aria-hidden="true"><%= chat.messages.size %></span>
+              <span class="sr-only"><%= t(".count", count: chat.messages.size) %></span>
             </span>
           <% end %>
         </li>

@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
   before_action :set_group, only: %i[ show edit update ]
 
   def index
-    @groups = Current.user.groups.includes(:members).order(:name)
+    @dashboard = Dashboard.new(Current.user)
   end
 
   def show

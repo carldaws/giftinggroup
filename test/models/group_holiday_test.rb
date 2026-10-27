@@ -59,8 +59,8 @@ class GroupHolidayTest < ActiveSupport::TestCase
 
     items(:books).reservations.create!(user: users(:bob), occasion: christmas_2026)
 
-    christmas_reminder = users(:bob).gifts_to_choose.find { |occasion, _| occasion == christmas_2026 }
-    assert_not_includes christmas_reminder.second, users(:carol)
+    christmas_reminder = users(:bob).gifts_to_choose.find { it.occasion == christmas_2026 }
+    assert_not_includes christmas_reminder.still_to_choose, users(:carol)
   end
 
   test "the holiday reminder covers everyone across your celebrating groups, once" do
@@ -69,11 +69,11 @@ class GroupHolidayTest < ActiveSupport::TestCase
     groups(:ivies).join(users(:bob))
     christmas_2026 = christmas.occasions.sole
 
-    reminders = users(:bob).gifts_to_choose.select { |occasion, _| occasion == christmas_2026 }
+    reminders = users(:bob).gifts_to_choose.select { it.occasion == christmas_2026 }
 
     assert_equal 1, reminders.size
-    assert_includes reminders.first.second, users(:erin)
-    assert_equal 1, reminders.first.second.count(users(:carol))
+    assert_includes reminders.first.still_to_choose, users(:erin)
+    assert_equal 1, reminders.first.still_to_choose.count(users(:carol))
   end
 
   test "switching a holiday off" do

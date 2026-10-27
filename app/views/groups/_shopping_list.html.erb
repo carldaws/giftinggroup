@@ -1,48 +1,28 @@
-<% shopping_list = Current.user.shopping_list %>
-<% to_buy = shopping_list.reject(&:bought?) %>
-<% bought = shopping_list.select { it.bought? && !it.given? } %>
-
-<% if to_buy.any? || bought.any? %>
+<%# locals: (dashboard:) %>
+<% if dashboard.shopping? %>
   <section id="shopping-list" aria-labelledby="shopping-list-heading" class="section">
     <%= section_header t(".heading"), id: "shopping-list-heading" %>
 
     <div class="card card--flush">
-      <% if to_buy.any? %>
+      <% if dashboard.to_buy.any? %>
         <ul class="list">
-          <% to_buy.each do |reservation| %>
-            <% item = reservation.item %>
+          <% dashboard.to_buy.each do |reservation| %>
             <li class="row">
-              <%= avatar_tag item.owner %>
+              <%= avatar_tag reservation.item.owner %>
               <div class="min-w-0 flex-1">
-                <% if item.removed? %>
-                  <p class="row-title"><%= item.title %></p>
-                <% else %>
-                  <%= link_to item.title, person_path(item.owner, anchor: dom_id(item)), class: "row-title link text-ink" %>
-                <% end %>
-                <p class="row-meta">
-                  <% if reservation.occasion.present? && reservation.occasion.person == item.owner %>
-                    <%= t(".their_occasion", occasion: reservation.occasion.title, countdown: countdown_to(reservation.occasion.date).downcase_first) %>
-                  <% elsif reservation.occasion.present? %>
-                    <%= t(".for_occasion", name: item.owner.name, occasion: reservation.occasion.title, countdown: countdown_to(reservation.occasion.date).downcase_first) %>
-                  <% else %>
-                    <%= t(".for", name: item.owner.name) %>
-                  <% end %>
-                </p>
+                <%= item_title_link(reservation.item) %>
+                <p class="row-meta"><%= shopping_list_occasion_for(reservation) %></p>
                 <% if reservation.split? %>
                   <p class="row-meta"><%= splitting_with(reservation) %></p>
                 <% end %>
-                <% if item.removed? %>
-                  <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".removed") %></p>
-                <% elsif item.received? %>
-                  <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".already_has", name: item.owner.name) %></p>
-                <% end %>
+                <%= shopping_list_note_tag(reservation) %>
               </div>
-              <% if reservation.user != Current.user %>
-                <%= button_to t(".leave_split"), item_split_share_path(item, reservation), method: :delete, class: "button button--secondary button--small" %>
-              <% elsif item.removed? || item.received? %>
-                <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
+              <% if reservation.joined_by?(Current.user) %>
+                <%= button_to t(".leave_split"), item_split_share_path(reservation.item, reservation), method: :delete, class: "button button--secondary button--small" %>
+              <% elsif !reservation.item.still_wanted? %>
+                <%= button_to t(".let_go"), item_reservation_path(reservation.item), method: :delete, class: "button button--secondary button--small" %>
               <% else %>
-                <%= button_to item_purchase_path(item), class: "button button--secondary button--small" do %>
+                <%= button_to item_purchase_path(reservation.item), class: "button button--secondary button--small" do %>
                   <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
                   <%= t(".bought") %>
                 <% end %>
@@ -54,31 +34,28 @@
         <p class="row empty"><%= t(".all_bought") %></p>
       <% end %>
 
-      <% if bought.any? %>
+      <% if dashboard.bought.any? %>
         <details class="border-t border-line">
           <summary class="row row--link cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden">
-            <%= t(".bought_count", count: bought.size) %>
+            <%= t(".bought_count", count: dashboard.bought.size) %>
           </summary>
           <ul class="list border-t border-line">
-            <% bought.each do |reservation| %>
-              <% item = reservation.item %>
+            <% dashboard.bought.each do |reservation| %>
               <li class="row">
                 <div class="min-w-0 flex-1">
-                  <p class="text-muted line-through"><%= item.title %></p>
-                  <p class="row-meta"><%= t(".for", name: item.owner.name) %></p>
+                  <p class="text-muted line-through"><%= reservation.item.title %></p>
+                  <p class="row-meta"><%= t(".for", name: reservation.item.owner.name) %></p>
                   <% if reservation.split? %>
                     <p class="row-meta"><%= splitting_with(reservation) %></p>
                   <% end %>
-                  <% if item.removed? %>
-                    <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".removed") %></p>
+                  <% if reservation.item.removed? %>
+                    <%= note_tag t(".removed") %>
                   <% end %>
                 </div>
-                <% if reservation.user == Current.user %>
-                  <% if item.removed? %>
-                    <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
-                  <% else %>
-                    <%= button_to t(".put_back"), item_purchase_path(item), method: :delete, class: "button button--secondary button--small" %>
-                  <% end %>
+                <% if reservation.started_by?(Current.user) && reservation.item.removed? %>
+                  <%= button_to t(".let_go"), item_reservation_path(reservation.item), method: :delete, class: "button button--secondary button--small" %>
+                <% elsif reservation.started_by?(Current.user) %>
+                  <%= button_to t(".put_back"), item_purchase_path(reservation.item), method: :delete, class: "button button--secondary button--small" %>
                 <% end %>
               </li>
             <% end %>

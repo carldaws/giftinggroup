@@ -66,6 +66,10 @@ class User < ApplicationRecord
     email_address.present?
   end
 
+  def first_name
+    name.split.first
+  end
+
   def avatar_tone_name
     AVATAR_TONES[avatar_tone.presence_in(0...AVATAR_TONES.size) || id % AVATAR_TONES.size]
   end
@@ -117,8 +121,8 @@ class User < ApplicationRecord
       .select { |_, recipients| recipients.any? }
       .with_index
       .take_while { |(occasion, _), index| index.zero? || occasion.date <= Date.current + within }
-      .map { |(occasion, recipients), _| [ occasion, recipients - people_chosen_for(occasion), recipients ] }
-      .select { |_, still_to_choose, _| still_to_choose.any? }
+      .map { |(occasion, recipients), _| Occasion::Choice.new(occasion:, still_to_choose: recipients - people_chosen_for(occasion), everyone: recipients) }
+      .select { it.still_to_choose.any? }
       .to_a
   end
 

@@ -30,11 +30,11 @@ class Wishlist
   end
 
   def wanted_count
-    wanted.size
+    @wanted_count ||= wanted.count
   end
 
   def little_count
-    wanted.little.size
+    @little_count ||= wanted.little.count
   end
 
   def cards

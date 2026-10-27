@@ -22,6 +22,14 @@ module Reservation::Splittable
     [ user, *sharers ]
   end
 
+  def started_by?(person)
+    user == person
+  end
+
+  def joined_by?(person)
+    sharers.include?(person)
+  end
+
   def places_left
     split? ? split_with - shares.size : 0
   end
