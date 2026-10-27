@@ -1,10 +1,10 @@
-<%# locals: (messages:, first_unread:, message:, url:, label:) %>
+<%# locals: (chat:, message:, url:, label:) %>
 <div class="card card--flush">
   <div class="px-5 py-5 sm:p-6">
-    <% if messages.any? %>
+    <% if chat.messages.any? %>
       <ol class="grid gap-3">
-        <% messages.each do |message| %>
-          <% if message == first_unread %>
+        <% chat.messages.each do |message| %>
+          <% if message == chat.first_unread %>
             <li id="new" class="flex scroll-mt-24 items-center gap-3 text-sm font-semibold text-clay">
               <span class="h-px flex-1 bg-clay/30"></span>
               <%= t(".new") %>

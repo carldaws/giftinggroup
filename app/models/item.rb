@@ -48,6 +48,10 @@ class Item < ApplicationRecord
     suggested_by.present?
   end
 
+  def surprise?
+    suggestion? && !suggested_by.looks_after?(owner)
+  end
+
   def unlimited?
     quantity.nil?
   end
@@ -66,6 +70,10 @@ class Item < ApplicationRecord
 
   def removed?
     removed_at.present?
+  end
+
+  def saved_photos
+    photos_attachments.includes(:blob).order(:id)
   end
 
   def still_wanted?

@@ -1,11 +1,9 @@
-<% suggesting = @item.suggestion? && !Current.user.looks_after?(@person) %>
-<% content_for :title, suggesting ? t(".suggest_title", name: @person.name) : t(".title") %>
-<% heading = if suggesting then t(".suggest_heading", name: @person.name) elsif @item.little? then t(".little_heading") else t(".heading") end %>
+<% content_for :title, @item.surprise? ? t(".suggest_title", name: @person.name) : t(".title") %>
 
 <div class="page page--single">
-  <%= page_header heading, crumbs: [ [ t("layouts.header.home"), root_path ], [ @person.name, person_path(@person) ] ], subtitle: t(".intro") %>
+  <%= page_header new_item_heading(@item), crumbs: [ [ t("layouts.header.home"), root_path ], [ @person.name, person_path(@person) ] ], subtitle: t(".intro") %>
 
   <div class="card">
-    <%= render "items/form", item: @item, url: person_items_path(@person), submit: suggesting ? t(".suggest_submit") : t(".submit") %>
+    <%= render "items/form", item: @item, url: person_items_path(@person), submit: @item.surprise? ? t(".suggest_submit") : t(".submit") %>
   </div>
 </div>

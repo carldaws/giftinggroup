@@ -60,6 +60,10 @@ class Group < ApplicationRecord
     memberships.by_name.includes(:user).map(&:user)
   end
 
+  def chat_for(viewer)
+    Message::Chat.new(messages.for_everyone, viewer:)
+  end
+
   def chat_readers
     members.where.not(email_address: nil).by_name
   end

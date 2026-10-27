@@ -70,6 +70,14 @@ class User < ApplicationRecord
     name.split.first
   end
 
+  def setting_up?
+    email_address_in_database.blank?
+  end
+
+  def groups_by_name
+    @groups_by_name ||= groups.by_name.to_a
+  end
+
   def avatar_tone_name
     AVATAR_TONES[avatar_tone.presence_in(0...AVATAR_TONES.size) || id % AVATAR_TONES.size]
   end

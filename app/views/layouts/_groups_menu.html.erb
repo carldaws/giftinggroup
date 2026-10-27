@@ -1,4 +1,3 @@
-<% groups = Current.user.groups.order(:name) %>
 <details class="relative" data-controller="menu" data-action="toggle->menu#toggled">
   <summary class="button button--secondary button--small list-none border-transparent bg-transparent [&::-webkit-details-marker]:hidden">
     <%= t(".groups") %>
@@ -6,10 +5,10 @@
   </summary>
 
   <div class="menu">
-    <% groups.each do |group| %>
+    <% Current.user.groups_by_name.each do |group| %>
       <%= link_to group.name, group, class: "menu-item" %>
     <% end %>
-    <% if groups.any? %>
+    <% if Current.user.groups_by_name.any? %>
       <div class="menu-divider"></div>
     <% end %>
     <%= link_to t(".start"), new_group_path, class: "menu-item" %>

@@ -20,6 +20,14 @@ module User::Deletable
     end
   end
 
+  def picked_items_count
+    Reservation.where(item: items.listed).count
+  end
+
+  def other_guardians(than:)
+    guardians.where.not(id: than.id).by_name.to_a
+  end
+
   def dependants_nobody_else_looks_after
     dependants.includes(:guardians).select { it.guardians == [ self ] }
   end

@@ -1,23 +1,15 @@
-<% name = @person.name %>
-<% picked = Reservation.where(item: @person.items.listed).count %>
-<% other_guardians = @person.guardians.where.not(id: Current.user.id).by_name.to_a %>
-<% content_for :title, t(".title", name:) %>
+<% content_for :title, t(".title", name: @person.name) %>
 
 <div class="page page--single">
-  <%= page_header t(".title", name:), crumbs: [ [ t("layouts.header.home"), root_path ], [ name, person_path(@person) ] ], subtitle: t(".intro") %>
+  <%= page_header t(".title", name: @person.name), crumbs: [ [ t("layouts.header.home"), root_path ], [ @person.name, person_path(@person) ] ], subtitle: t(".intro") %>
 
   <div class="card">
     <ul class="grid list-disc gap-2 pl-5 text-base">
-      <li><%= t(".list", name:) %></li>
-      <li><%= t(".chats", name:) %></li>
-      <% if picked.positive? %>
-        <li><%= t(".picked", count: picked) %></li>
-      <% end %>
-      <% if other_guardians.any? %>
-        <li><%= t(".guardians", names: other_guardians.map(&:name).to_sentence, count: other_guardians.size, name:) %></li>
+      <% deletion_consequences_for(@person).each do |consequence| %>
+        <li><%= consequence %></li>
       <% end %>
     </ul>
 
-    <%= button_to t(".submit", name:), person_deletion_path(@person), class: "button button--danger button--wide mt-6" %>
+    <%= button_to t(".submit", name: @person.name), person_deletion_path(@person), class: "button button--danger button--wide mt-6" %>
   </div>
 </div>

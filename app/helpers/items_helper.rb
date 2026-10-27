@@ -10,6 +10,14 @@ module ItemsHelper
     end
   end
 
+  def new_item_heading(item)
+    case
+    when item.surprise? then t("people.items.new.suggest_heading", name: item.owner.name)
+    when item.little? then t("people.items.new.little_heading")
+    else t("people.items.new.heading")
+    end
+  end
+
   def item_title_link(item)
     if item.removed?
       tag.p(item.title, class: "row-title")

@@ -2,7 +2,7 @@
   <%= page_header @wishlist.person.name, crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: next_birthday_of(@wishlist.person),
         avatar: avatar_tag(@wishlist.person, tooltip: false) do %>
     <% unless @wishlist.surprises_hidden? %>
-      <%= render "people/chats", person: @wishlist.person %>
+      <%= render "people/chats", wishlist: @wishlist %>
     <% end %>
     <% if @wishlist.looked_after? %>
       <%= link_to edit_person_profile_path(@wishlist.person), class: "icon-button icon-button--outlined group", aria: { label: details_label_for(@wishlist) } do %>

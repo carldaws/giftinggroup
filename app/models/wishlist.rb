@@ -61,6 +61,14 @@ class Wishlist
     @passed_occasion
   end
 
+  def chats
+    @chats ||= person.memberships.with_chat_visible_to(viewer).includes(:group).sort_by { it.group.name.downcase }
+  end
+
+  def unread_count_in(chat)
+    unread_counts.fetch(chat.id, 0)
+  end
+
   def occasion_choices
     @occasion_choices ||= surprises_hidden? ? [] : Occasion.for_gifts_to(person, from: viewer).upcoming.soonest_first.includes(:person).to_a
   end
@@ -70,6 +78,10 @@ class Wishlist
   end
 
   private
+    def unread_counts
+      @unread_counts ||= Message.unread_by(viewer).where(subject: chats).group(:subject_id).count
+    end
+
     def items
       @items ||= begin
         items = person.items.listed.visible_to(viewer).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order

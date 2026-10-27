@@ -29,6 +29,10 @@ class Membership < ApplicationRecord
     other != user && (!dependant? || other.looks_after?(user))
   end
 
+  def chat_for(viewer)
+    Message::Chat.new(messages_about, viewer:)
+  end
+
   def chat_readers
     group.chat_readers.where.not(id: user_id)
   end
