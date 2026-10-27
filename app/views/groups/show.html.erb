@@ -1,33 +1,27 @@
-<% admin = @group.admin?(Current.user) %>
-<% memberships = @group.memberships.by_name.includes(user: :guardians) %>
-
 <div class="page">
-  <%= page_header @group.name, crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: t(".people", count: memberships.size) do %>
-    <% unread = @group.messages.for_everyone.unread_by(Current.user).count %>
-    <%= link_to group_messages_path(@group, anchor: (unread.positive? ? "new" : "latest")), data: { turbo_prefetch: false },
-          class: "icon-button icon-button--outlined group", aria: { label: t(".chat", count: unread) } do %>
+  <%= page_header @overview.group.name, crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: t(".people", count: @overview.rows.size) do %>
+    <%= link_to group_messages_path(@overview.group, anchor: chat_anchor(@overview.unread_count)), data: { turbo_prefetch: false },
+          class: "icon-button icon-button--outlined group", aria: { label: t(".chat", count: @overview.unread_count) } do %>
       <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/></svg>
-      <% if unread.positive? %>
-        <span class="count absolute -top-1 -right-1 ring-2 ring-surface" aria-hidden="true"><%= unread %></span>
+      <% if @overview.unread_count.positive? %>
+        <span class="count absolute -top-1 -right-1 ring-2 ring-surface" aria-hidden="true"><%= @overview.unread_count %></span>
       <% end %>
       <span class="tooltip" aria-hidden="true"><%= t(".chat_tooltip") %></span>
     <% end %>
-    <%= link_to t(".rename"), edit_group_path(@group), class: "button button--secondary" %>
+    <%= link_to t(".rename"), edit_group_path(@overview.group), class: "button button--secondary" %>
   <% end %>
 
   <div class="columns">
     <div class="min-w-0">
-      <%= render "groups/coming_up", group: @group %>
+      <%= render "groups/coming_up", overview: @overview %>
 
       <section aria-labelledby="people-heading" class="section">
         <%= section_header t(".people_heading"), id: "people-heading" %>
 
         <ul class="card card--flush list">
-          <% memberships.each do |membership| %>
-            <%= render "groups/membership", membership:, admin: %>
-          <% end %>
+          <%= render partial: "groups/membership", collection: @overview.rows, as: :row %>
           <li>
-            <%= link_to new_group_dependant_path(@group), class: "row row--link" do %>
+            <%= link_to new_group_dependant_path(@overview.group), class: "row row--link" do %>
               <%= render "shared/add_icon" %>
               <span class="min-w-0">
                 <span class="row-title block text-clay"><%= t(".add_dependant") %></span>
@@ -46,10 +40,9 @@
         <div class="card">
           <p class="text-base text-muted"><%= t(".invite_intro") %></p>
 
-          <% invite_url = join_url(@group.join_code) %>
-          <div class="mt-4" data-controller="share" data-share-url-value="<%= invite_url %>"
-               data-share-title-value="<%= t(".share_title", group: @group.name) %>" data-share-copied-value="<%= t(".copied") %>">
-            <p class="inset font-mono text-sm break-words"><%= invite_url.delete_suffix(@group.join_code) %><wbr><span class="whitespace-nowrap"><%= @group.join_code %></span></p>
+          <div class="mt-4" data-controller="share" data-share-url-value="<%= invite_url_for(@overview.group) %>"
+               data-share-title-value="<%= t(".share_title", group: @overview.group.name) %>" data-share-copied-value="<%= t(".copied") %>">
+            <p class="inset font-mono text-sm break-words"><%= invite_url_text_for(@overview.group) %></p>
             <div class="mt-3 grid gap-2">
               <button type="button" class="button" hidden data-share-target="shareButton" data-action="share#share"><%= t(".share") %></button>
               <button type="button" class="button button--secondary" data-share-target="copyButton" data-action="share#copy"><%= t(".copy") %></button>
@@ -57,11 +50,11 @@
           </div>
 
           <p class="mt-4 text-base text-muted">
-            <%= t(".or_code_html", code: tag.strong(@group.formatted_join_code, class: "font-mono font-semibold tracking-wider text-ink")) %>
+            <%= t(".or_code_html", code: tag.strong(@overview.group.formatted_join_code, class: "font-mono font-semibold tracking-wider text-ink")) %>
           </p>
 
-          <% if admin %>
-            <%= button_to t(".new_code"), group_join_code_path(@group), method: :patch,
+          <% if @overview.admin? %>
+            <%= button_to t(".new_code"), group_join_code_path(@overview.group), method: :patch,
                   class: "link mt-3 cursor-pointer text-base", form: { data: { turbo_confirm: t(".new_code_confirm") } } %>
           <% end %>
         </div>

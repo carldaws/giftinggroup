@@ -6,6 +6,7 @@ class GroupsController < ApplicationController
   end
 
   def show
+    @overview = Group::Overview.new(@group, viewer: Current.user)
   end
 
   def new

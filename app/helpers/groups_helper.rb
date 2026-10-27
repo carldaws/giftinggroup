@@ -1,6 +1,23 @@
 module GroupsHelper
   def guardian_names(person)
-    person.guardians.map { it == Current.user ? t("groups.membership.you_lowercase") : it.name }.to_sentence
+    names_with_you(person.guardians)
+  end
+
+  def names_with_you(people)
+    people.map { it == Current.user ? t("groups.membership.you_lowercase") : it.name }.to_sentence
+  end
+
+  def invite_url_for(group)
+    join_url(group.join_code)
+  end
+
+  def invite_url_text_for(group)
+    safe_join([ invite_url_for(group).delete_suffix(group.join_code), tag.wbr, tag.span(group.join_code, class: "whitespace-nowrap") ])
+  end
+
+  def occasion_people_for(occasion, group)
+    people = occasion.people_in(group)
+    people.any? ? t("groups.coming_up.for_people", names: names_with_you(people)) : t("groups.coming_up.for_no_one_yet")
   end
 
   def your_list_title_for(wishlist)

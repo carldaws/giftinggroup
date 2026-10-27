@@ -7,6 +7,10 @@ module MessagesHelper
     end
   end
 
+  def chat_anchor(unread_count)
+    unread_count.positive? ? "new" : "latest"
+  end
+
   def sent_ago(time)
     if time > 1.minute.ago
       t("messages.just_now")
