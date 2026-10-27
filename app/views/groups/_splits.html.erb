@@ -1,0 +1,37 @@
+<% splits = Current.user.splits_waiting %>
+
+<% if splits.any? %>
+  <section id="splits" aria-labelledby="splits-heading" class="section">
+    <%= section_header t(".heading"), id: "splits-heading" %>
+
+    <ul class="card card--flush list">
+      <% splits.each do |split| %>
+        <% item = split.item %>
+        <li class="row">
+          <%= avatar_tag item.owner %>
+          <div class="min-w-0 flex-1">
+            <% if item.removed? %>
+              <p class="row-title"><%= item.title %></p>
+            <% else %>
+              <%= link_to item.title, person_path(item.owner, anchor: dom_id(item)), class: "row-title link text-ink" %>
+            <% end %>
+            <p class="row-meta"><%= t(".for", name: item.owner.name) %></p>
+            <p class="row-meta"><%= status_for(split) %></p>
+            <% if !item.still_wanted? %>
+              <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".no_longer_wanted", name: item.owner.name) %></p>
+            <% elsif split.user == Current.user && !split.fillable? %>
+              <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".not_enough_people") %></p>
+            <% end %>
+          </div>
+          <% if split.user == Current.user %>
+            <%= button_to t(".call_off"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
+          <% elsif split.sharers.include?(Current.user) %>
+            <%= button_to t(".leave"), item_split_share_path(item, split), method: :delete, class: "button button--secondary button--small" %>
+          <% elsif split.joinable_by?(Current.user) %>
+            <%= button_to t(".join"), item_split_share_path(item, split), class: "button button--small" %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

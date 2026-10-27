@@ -8,12 +8,15 @@ class Reservation < ApplicationRecord
   validate :occasion_is_for_gifts_to_the_owner, if: -> { will_save_change_to_occasion_id? && occasion_id.present? && errors.none? }
   validate :given_gifts_keep_their_occasion, on: :update, if: :will_save_change_to_occasion_id?
 
+  include Splittable
+
   after_create :clear_release_note, if: -> { item.released_by_name.present? }
   after_destroy :forget_removed_item, unless: :destroyed_with_item?
 
   scope :visible_to, ->(user) do
     where(item: Item.visible_to(user)).where.not(item: Item.where(owner: user))
   end
+  scope :unbought, -> { where(bought_at: nil) }
 
   def bought?
     bought_at.present?
@@ -24,7 +27,7 @@ class Reservation < ApplicationRecord
   end
 
   def buy
-    update!(bought_at: Time.current)
+    with_lock { update(bought_at: Time.current) }
   end
 
   def unbuy

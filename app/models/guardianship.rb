@@ -17,7 +17,7 @@ class Guardianship < ApplicationRecord
       if removable?
         destroy!
         leave_groups_nobody_else_looks_after
-        guardian.reservations.where.not(item: Item.visible_to(guardian)).destroy_all
+        guardian.drop_gifts_no_longer_visible
       else
         errors.add(:base, :last_guardian)
         false

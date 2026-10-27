@@ -253,11 +253,11 @@
     @apply rounded-b-[inherit];
   }
 
-  .card--flush :is(.row--link, summary) {
+  .card--flush .row--link {
     @apply rounded-[inherit];
   }
 
-  .card--flush details[open] > summary {
+  .card--flush details[open] > .row--link {
     @apply rounded-b-none;
   }
 

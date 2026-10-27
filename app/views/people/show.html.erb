@@ -1,124 +1,85 @@
-<% yours = @person == Current.user %>
-<% manages = Current.user.looks_after?(@person) %>
-<% guardian = manages && !yours %>
-<% surprises_shown = guardian && params[:surprises] == "shown" %>
-<% surprises_hidden = manages && !surprises_shown %>
-<% items = @person.items.listed.visible_to(Current.user).includes(:suggested_by, photos_attachments: { blob: { variant_records: { image_attachment: :blob } } }).in_list_order %>
-<% items = items.where(suggested_by: nil) if surprises_hidden %>
-<% wanted = items.wanted %>
-<% little_only = params[:show] == "little" %>
-<% shown = little_only ? wanted.little : wanted %>
-<% reservations = surprises_hidden ? {} : Reservation.visible_to(Current.user).where(item: shown).includes(:user, occasion: :person).group_by(&:item_id) %>
-<% still_wanted, given = shown.partition { !it.given_with?(reservations.fetch(it.id, [])) } %>
-<% occasion_choices = surprises_hidden ? [] : Occasion.for_gifts_to(@person, from: Current.user).upcoming.soonest_first.includes(:person).to_a %>
-<% birthday = (t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) if @person.birthday?) %>
-
 <div class="page">
-  <%= page_header @person.name, crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: birthday,
-        avatar: avatar_tag(@person, tooltip: false) do %>
-    <% unless surprises_hidden %>
-      <%= render "people/chats", person: @person %>
+  <%= page_header @wishlist.person.name, crumbs: [ [ t("layouts.header.home"), root_path ] ], subtitle: next_birthday_of(@wishlist.person),
+        avatar: avatar_tag(@wishlist.person, tooltip: false) do %>
+    <% unless @wishlist.surprises_hidden? %>
+      <%= render "people/chats", person: @wishlist.person %>
     <% end %>
-    <% if manages %>
-      <% details = yours ? t(".your_details") : t(".edit_details") %>
-      <%= link_to edit_person_profile_path(@person), class: "icon-button icon-button--outlined group", aria: { label: details } do %>
+    <% if @wishlist.looked_after? %>
+      <%= link_to edit_person_profile_path(@wishlist.person), class: "icon-button icon-button--outlined group", aria: { label: details_label_for(@wishlist) } do %>
         <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5Z"/></svg>
-        <span class="tooltip" aria-hidden="true"><%= details %></span>
+        <span class="tooltip" aria-hidden="true"><%= details_label_for(@wishlist) %></span>
       <% end %>
     <% end %>
-    <% if guardian %>
-      <% toggle = surprises_hidden ? t(".show_surprises") : t(".hide_surprises") %>
-      <%= link_to person_path(@person, show: ("little" if little_only), surprises: ("shown" if surprises_hidden)),
-            class: "icon-button icon-button--outlined group", aria: { label: toggle }, data: { turbo_action: "replace" } do %>
-        <% if surprises_hidden %>
+    <% if @wishlist.surprises_toggle? %>
+      <%= link_to wishlist_path(@wishlist, surprises_shown: @wishlist.surprises_hidden?),
+            class: "icon-button icon-button--outlined group", aria: { label: surprises_toggle_label_for(@wishlist) }, data: { turbo_action: "replace" } do %>
+        <% if @wishlist.surprises_hidden? %>
           <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5c2 3 4.5 4.5 7.5 4.5s5.5-1.5 7.5-4.5M10 13v2.5M5.5 11.8l-1.4 2M14.5 11.8l1.4 2"/></svg>
         <% else %>
           <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10s3-5.5 8-5.5 8 5.5 8 5.5-3 5.5-8 5.5S2 10 2 10Z"/><circle cx="10" cy="10" r="2.5"/></svg>
         <% end %>
-        <span class="tooltip" aria-hidden="true"><%= toggle %></span>
+        <span class="tooltip" aria-hidden="true"><%= surprises_toggle_label_for(@wishlist) %></span>
       <% end %>
     <% end %>
   <% end %>
 
   <div class="columns">
     <section id="list" aria-labelledby="list-heading" class="section min-w-0">
-      <%= section_header (yours ? t(".your_list") : t(".their_list", name: @person.name)), id: "list-heading" do %>
-        <%= link_to (manages ? t(".add_item") : t(".suggest_item")), new_person_item_path(@person, little: (1 if little_only)), class: "button button--small" %>
+      <%= section_header list_heading_for(@wishlist), id: "list-heading" do %>
+        <%= link_to add_item_label_for(@wishlist), new_person_item_path(@wishlist.person, little: (1 if @wishlist.little_only?)), class: "button button--small" %>
       <% end %>
 
       <nav aria-label="<%= t(".filter") %>" class="tabs mb-4">
-        <%= link_to person_path(@person, surprises: ("shown" if surprises_shown), anchor: "list"), class: "tab", aria: { current: ("page" unless little_only) } do %>
-          <%= t(".everything") %> <span class="text-muted"><%= wanted.size %></span>
+        <%= link_to wishlist_path(@wishlist, little: false, anchor: "list"), class: "tab", aria: { current: ("page" unless @wishlist.little_only?) } do %>
+          <%= t(".everything") %> <span class="text-muted"><%= @wishlist.wanted_count %></span>
         <% end %>
-        <%= link_to person_path(@person, show: "little", surprises: ("shown" if surprises_shown), anchor: "list"), class: "tab", aria: { current: ("page" if little_only) } do %>
-          <%= t(".little_things") %> <span class="text-muted"><%= wanted.little.size %></span>
+        <%= link_to wishlist_path(@wishlist, little: true, anchor: "list"), class: "tab", aria: { current: ("page" if @wishlist.little_only?) } do %>
+          <%= t(".little_things") %> <span class="text-muted"><%= @wishlist.little_count %></span>
         <% end %>
       </nav>
 
-      <% if little_only %>
+      <% if @wishlist.little_only? %>
         <p class="mb-4 text-base text-muted"><%= t(".little_things_intro") %></p>
       <% end %>
 
-      <% if manages %>
-        <% passed = Occasion.applying_to(@person).recent.order(date: :desc).first %>
-        <% if passed.present? %>
-          <p class="notice notice--honey mb-4">
-            <% if yours %>
-              <%= passed.birthday? ? t(".birthday_passed") : t(".occasion_passed", name: passed.title) %>
-            <% else %>
-              <%= t(".occasion_passed_for", occasion: passed.title, name: @person.name) %>
-            <% end %>
-          </p>
-        <% end %>
+      <% if @wishlist.passed_occasion.present? %>
+        <p class="notice notice--honey mb-4"><%= passed_occasion_notice_for(@wishlist) %></p>
       <% end %>
 
-      <% if shown.any? %>
+      <% if @wishlist.cards.any? %>
         <ul class="grid gap-4">
-          <% still_wanted.each do |item| %>
-            <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), surprises_hidden:, occasion_choices: %>
-          <% end %>
+          <%= render partial: "items/item", collection: @wishlist.still_wanted_cards, as: :card %>
         </ul>
 
-        <% if given.any? %>
+        <% if @wishlist.given_cards.any? %>
           <details class="card card--flush mt-4">
-            <summary class="row row--link cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden"><%= t(".given", count: given.size) %></summary>
+            <summary class="row row--link cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden"><%= t(".given", count: @wishlist.given_cards.size) %></summary>
             <ul class="grid gap-4 border-t border-line p-4">
-              <% given.each do |item| %>
-                <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), surprises_hidden:, occasion_choices: %>
-              <% end %>
+              <%= render partial: "items/item", collection: @wishlist.given_cards, as: :card %>
             </ul>
           </details>
         <% end %>
-      <% elsif little_only %>
-        <p class="card empty"><%= manages ? t(".little_empty_yours") : t(".little_empty", name: @person.name) %></p>
-      <% elsif yours %>
-        <p class="card empty"><%= t(".list_empty_yours") %></p>
-      <% elsif manages %>
-        <p class="card empty"><%= t(".list_empty_looked_after", name: @person.name) %></p>
       <% else %>
-        <p class="card empty"><%= t(".list_empty", name: @person.name) %></p>
+        <p class="card empty"><%= empty_list_message_for(@wishlist) %></p>
       <% end %>
     </section>
 
     <aside class="min-w-0">
-      <%= render "people/interests", person: @person, yours:, manages: %>
-      <%= render "people/sizes", person: @person, manages: %>
+      <%= render "people/interests", person: @wishlist.person, yours: @wishlist.yours?, manages: @wishlist.looked_after? %>
+      <%= render "people/sizes", person: @wishlist.person, manages: @wishlist.looked_after? %>
 
-      <% if manages %>
-        <% received = items.received.where(suggested_by: nil) %>
-        <% if received.any? %>
-          <section aria-labelledby="received-heading" class="section">
-            <%= section_header t(".received", count: received.size), id: "received-heading" %>
-            <ul class="card card--flush list">
-              <% received.each do |item| %>
-                <li class="row">
-                  <span class="min-w-0 flex-1 text-muted line-through"><%= item.title %></span>
-                  <%= button_to t(".put_back"), item_receipt_path(item), method: :delete, class: "button button--secondary button--small" %>
-                </li>
-              <% end %>
-            </ul>
-          </section>
-        <% end %>
+      <% if @wishlist.received.any? %>
+        <section aria-labelledby="received-heading" class="section">
+          <%= section_header t(".received", count: @wishlist.received.size), id: "received-heading" %>
+          <ul class="card card--flush list">
+            <% @wishlist.received.each do |item| %>
+              <li class="row">
+                <span class="min-w-0 flex-1 text-muted line-through"><%= item.title %></span>
+                <%= button_to t(".put_back"), item_receipt_path(item), method: :delete, class: "button button--secondary button--small" %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
       <% end %>
     </aside>
   </div>

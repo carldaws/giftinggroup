@@ -1,17 +1,57 @@
 module ItemsHelper
   def status_for(reservation, with_occasion: true)
-    who = reservation.user == Current.user ? "you" : "they"
-    what =
-      case
-      when reservation.given? then "gave"
-      when reservation.bought? then "bought"
-      else "getting"
-      end
+    occasion = with_occasion ? reservation.occasion : nil
 
-    if with_occasion && reservation.occasion.present?
-      t("items.item.status.#{who}_#{what}_for", name: reservation.user.name, occasion: reservation.occasion.title)
+    if reservation.waiting? || reservation.sharers.any?
+      split_status_for(reservation, occasion:)
     else
-      t("items.item.status.#{who}_#{what}", name: reservation.user.name)
+      who = reservation.user == Current.user ? "you" : "they"
+      translate_for_occasion("items.item.status.#{who}_#{stage_of(reservation)}", occasion, name: reservation.user.name)
     end
+  end
+
+  def item_details_tag(item)
+    quantity = item.unlimited? ? t("items.item.as_many_as_you_like") : (t("items.item.wants", count: item.quantity) if item.quantity > 1)
+    details = [ item.price.presence, quantity ].compact
+
+    tag.p(details.join(" · "), class: "row-meta mt-0.5") if details.any?
+  end
+
+  def split_options_for(card)
+    (1..card.split_limit).map { [ t("items.item.split_others", count: it), it ] }
+  end
+
+  def splitting_with(reservation)
+    t("items.item.splitting_with", names: names_of(reservation.people - [ Current.user ]))
+  end
+
+  def split_status_for(reservation, occasion:)
+    translate_for_occasion("items.item.split_status.#{split_state_of(reservation)}", occasion,
+      name: reservation.user.name, names: names_of(reservation.people), others: names_of(reservation.people - [ Current.user ]), count: reservation.places_left).upcase_first
+  end
+
+  def split_state_of(reservation)
+    case
+    when reservation.waiting? && reservation.user == Current.user then "you_waiting"
+    when reservation.waiting? && reservation.sharers.include?(Current.user) then "joined_waiting"
+    when reservation.waiting? then "they_waiting"
+    else stage_of(reservation)
+    end
+  end
+
+  def stage_of(reservation)
+    case
+    when reservation.given? then "gave"
+    when reservation.bought? then "bought"
+    else "getting"
+    end
+  end
+
+  def names_of(people)
+    people.map { it == Current.user ? t("items.item.you") : it.name }.to_sentence
+  end
+
+  def translate_for_occasion(key, occasion, **options)
+    occasion.present? ? t("#{key}_for", occasion: occasion.title, **options) : t(key, **options)
   end
 end

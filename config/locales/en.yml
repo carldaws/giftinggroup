@@ -101,6 +101,14 @@ en:
         other: "%{count} things on it"
       empty_yours: Nothing here yet. Add the things you'd love, big or small.
       empty_theirs: Nothing here yet. Add the things %{name} would love, big or small.
+    splits:
+      heading: Splits
+      for: For %{name}
+      no_longer_wanted: "%{name} doesn't want this any more."
+      not_enough_people: Not enough people are left to fill this split. Call it off, or ask someone new to join the group.
+      call_off: Call off
+      leave: Leave
+      join: Join
     shopping_list:
       heading: Your shopping list
       for: For %{name}
@@ -110,6 +118,7 @@ en:
       removed: No longer on the list.
       bought: Bought
       let_go: Let it go
+      leave_split: Leave the split
       all_bought: You've bought everything on your list.
       bought_count:
         one: 1 bought
@@ -472,6 +481,41 @@ en:
       no_occasion: No particular occasion
       save_occasion: Save
       reserve: I'll get this
+      split: I'll split this
+      split_with: I'll split this with
+      split_others:
+        one: 1 other person
+        other: "%{count} other people"
+      start_split: Suggest
+      join_split: Join %{name}'s split
+      leave_split: Leave the split
+      call_off_split: Call off the split
+      splitting_with: Splitting with %{names}
+      split_status:
+        you_waiting:
+          one: You're splitting this, waiting for 1 more person
+          other: You're splitting this, waiting for %{count} more people
+        you_waiting_for:
+          one: You're splitting this for %{occasion}, waiting for 1 more person
+          other: You're splitting this for %{occasion}, waiting for %{count} more people
+        joined_waiting:
+          one: You're splitting this with %{others}, waiting for 1 more person
+          other: You're splitting this with %{others}, waiting for %{count} more people
+        joined_waiting_for:
+          one: You're splitting this with %{others} for %{occasion}, waiting for 1 more person
+          other: You're splitting this with %{others} for %{occasion}, waiting for %{count} more people
+        they_waiting:
+          one: "%{name} wants to split this with 1 more person"
+          other: "%{name} wants to split this with %{count} more people"
+        they_waiting_for:
+          one: "%{name} wants to split this for %{occasion} with 1 more person"
+          other: "%{name} wants to split this for %{occasion} with %{count} more people"
+        getting: "%{names} are splitting this"
+        getting_for: "%{names} are splitting this for %{occasion}"
+        bought: "%{names} bought this together"
+        bought_for: "%{names} bought this together for %{occasion}"
+        gave: "%{names} gave this together"
+        gave_for: "%{names} gave this together for %{occasion}"
       bought_it: I've bought it
       not_bought: I haven't bought it yet
       let_go: Let someone else get it
@@ -684,6 +728,8 @@ en:
         password: Password
         password_challenge: Current password
         avatar_tone: Colour
+      reservation:
+        split_with: Number of other people
     errors:
       messages:
         owns_the_list: can't be the person whose list this is
@@ -707,6 +753,13 @@ en:
         for_no_one: Pick at least one person it's for.
         too_many: can't be more than %{count}
         not_an_image: need to be JPEG, PNG, WebP, AVIF, GIF or HEIC images
+        not_a_split: That isn't a split.
+        cannot_split_it: You can't join this split.
+        split_full: That split already has everyone it needs.
+        already_bought: It's already been bought, so the split can't change.
+        no_longer_wanted: They don't want this any more.
+        already_getting_it: You're already getting this.
+        split_incomplete: Wait until everyone has joined the split before buying it.
         too_large: must be smaller than %{size}
         name_or_link: Add a name or a link, so everyone knows what it is.
       models:

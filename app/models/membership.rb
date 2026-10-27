@@ -13,7 +13,7 @@ class Membership < ApplicationRecord
   validate :group_keeps_an_admin, on: :update, if: :will_save_change_to_admin?
 
   before_destroy :ensure_group_keeps_an_admin, unless: :destroyed_with_group?
-  after_destroy :cancel_reservations_on_lists_no_longer_visible
+  after_destroy :drop_gifts_on_lists_no_longer_visible
   after_destroy :remove_dependants_nobody_else_looks_after, unless: :destroyed_with_group?
   after_destroy :remove_empty_group, unless: :destroyed_with_group?
 
@@ -61,8 +61,8 @@ class Membership < ApplicationRecord
       end
     end
 
-    def cancel_reservations_on_lists_no_longer_visible
-      user.reservations.where.not(item: Item.visible_to(user)).destroy_all
+    def drop_gifts_on_lists_no_longer_visible
+      user.drop_gifts_no_longer_visible
     end
 
     def remove_dependants_nobody_else_looks_after
