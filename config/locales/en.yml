@@ -617,22 +617,25 @@ en:
           body: Invite people with a link or a code. Anyone who swaps presents can be a group, from old friends to a Secret Santa at work.
         list:
           heading: Make your list
-          body: Add the things you'd love, with a link, photos and notes. Mark what you want most, and add your sizes and the things you love so people have ideas.
+          body: Add the things you'd love. Paste a link and we'll try our best to fill in the name and photo. Mark what you want most, keep some little things for when money's tight, and add your sizes and the things you love so people have ideas.
         pick:
           heading: Pick something for someone
           body: Say you'll get it, then tick it off once it's bought. Everyone else sees it's taken, so nothing gets bought twice.
+        split:
+          heading: Split something bigger
+          body: Going halves? Say you'll split it and choose how many people to share it with. Everyone else is asked to join, and once enough have, it's on everyone's shopping list.
         ideas:
           heading: Add surprise ideas
           body: Spotted something they'd love that isn't on their list? Add it as an idea. Everyone else can see it and pick it, but they can't.
         chat:
           heading: Plan presents together
-          body: Each person has a chat where everyone else can plan for them, so the surprise stays a surprise. Share an idea, team up on something bigger, or check a size.
+          body: Each person has a chat where everyone else can plan for them, so the surprise stays a surprise. There's a chat for the whole group too, for everything else.
         occasions:
           heading: Keep track of occasions
           body: Choose the holidays your group celebrates, add your own, and birthdays appear by themselves. You'll see who you still need to pick something for.
         looked_after:
           heading: Run a list for someone else
-          body: Add a child, or anyone who won't sign in, and look after their list for them. When they're ready, give them their own account.
+          body: Add a child, or anyone who won't sign in, and look after their list with anyone else who helps. What you add stays a surprise unless they asked for it. When they're ready, give them their own account.
         shopping:
           heading: Keep your shopping straight
           body: Everything you've picked, from every group, in one list you tick off as you buy.
@@ -652,9 +655,11 @@ en:
         for_alice: On Alice's list
         hidden_from: "%{name} never sees who's getting what."
         gloves: Matching gloves
+        telescope: Telescope
+        telescope_price: About £150
         book: Dinosaur book
         chat_question: Does anyone know her glove size?
-        chat_answer: Medium! Want to go halves on the scarf?
+        chat_answer: Medium! I'll get the gloves to go with it.
 
   privacy:
     show:
