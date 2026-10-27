@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#MISE description="Run Kamal with secrets from 1Password"
+set -euo pipefail
+
+exports=$(
+  jq -n '{
+    DEPLOY_HOST: "op://Personal/GiftingLists/DEPLOY_HOST",
+    RAILS_MASTER_KEY: "op://Personal/GiftingLists/RAILS_MASTER_KEY",
+    POSTGRES_PASSWORD: "op://Personal/GiftingLists/POSTGRES_PASSWORD",
+    RESTIC_PASSWORD: "op://Personal/GiftingLists/RESTIC_PASSWORD",
+    STORAGE_BOX: "op://Personal/GiftingLists/STORAGE_BOX",
+    STORAGE_BOX_SSH_KEY_BASE64: "op://Personal/GiftingLists Storage Box SSH Key/private key?ssh-format=openssh"
+  }' |
+    curl -sS --fail-with-body --unix-socket "/run/user/$UID/keyhole-personal.sock" --json @- http://keyhole/ |
+    jq -r '
+      if .error then error(.error) end
+      | .STORAGE_BOX_SSH_KEY_BASE64 |= @base64
+      | to_entries[]
+      | "export \(.key)=\(.value | @sh)"
+    '
+)
+eval "$exports"
+
+exec bin/kamal "$@"
