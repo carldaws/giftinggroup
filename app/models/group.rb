@@ -56,6 +56,10 @@ class Group < ApplicationRecord
     group_holidays.any? { it.key == key }
   end
 
+  def members_by_name
+    memberships.by_name.includes(:user).map(&:user)
+  end
+
   def chat_readers
     members.where.not(email_address: nil).by_name
   end

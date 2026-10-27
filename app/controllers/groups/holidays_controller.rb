@@ -2,6 +2,7 @@ class Groups::HolidaysController < ApplicationController
   include GroupScoped
 
   def edit
+    @choices = Group::HolidayChoices.new(@group, welcome: params[:welcome].present?)
   end
 
   def update
