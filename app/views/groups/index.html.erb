@@ -1,19 +1,19 @@
 <% content_for :title, t(".title") %>
 
 <div class="page page--single">
-  <%= page_header t(".heading", name: @dashboard.user.first_name), crumb: t("layouts.header.home") %>
+  <%= page_header t(".heading", name: Current.user.first_name), crumb: t("layouts.header.home") %>
 
-  <%= render "groups/your_lists", dashboard: @dashboard %>
-  <%= render "messages/unread", dashboard: @dashboard %>
-  <%= render "occasions/gifts_to_choose", dashboard: @dashboard %>
-  <%= render "groups/splits", dashboard: @dashboard %>
-  <%= render "groups/shopping_list", dashboard: @dashboard %>
+  <%= render "groups/your_lists", lists: Current.user.lists %>
+  <%= render "messages/unread", chats: Current.user.unread_chats %>
+  <%= render "occasions/gifts_to_choose", choices: Current.user.gifts_to_choose %>
+  <%= render "groups/splits", splits: Current.user.splits_waiting %>
+  <%= render "groups/shopping_list", shopping_list: Current.user.shopping_list %>
 
   <section aria-labelledby="groups-heading" class="section">
     <%= section_header t(".groups_heading"), id: "groups-heading" %>
 
     <ul class="card card--flush list">
-      <% if @dashboard.groups.none? %>
+      <% if @groups.none? %>
         <li class="row">
           <div>
             <p class="row-title"><%= t(".empty_heading") %></p>
@@ -21,7 +21,7 @@
           </div>
         </li>
       <% end %>
-      <% @dashboard.groups.each do |group| %>
+      <% @groups.each do |group| %>
         <li>
           <%= link_to group, class: "row row--link" do %>
             <div class="min-w-0 flex-1">

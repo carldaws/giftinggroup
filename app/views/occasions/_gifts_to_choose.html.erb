@@ -1,10 +1,10 @@
-<%# locals: (dashboard:) %>
-<% if dashboard.gifts_to_choose.any? %>
+<%# locals: (choices:) %>
+<% if choices.any? %>
   <section aria-labelledby="gifts-to-choose-heading" class="section">
     <%= section_header t(".heading"), id: "gifts-to-choose-heading" %>
 
     <ul class="card card--flush list">
-      <% dashboard.gifts_to_choose.each do |choice| %>
+      <% choices.each do |choice| %>
         <li>
           <article aria-label="<%= t(".label", occasion: occasion_title(choice.occasion)) %>" class="px-5 py-4 sm:px-6">
             <div class="flex items-center gap-4">

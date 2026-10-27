@@ -76,6 +76,6 @@ class ShoppingListTest < ActionDispatch::IntegrationTest
     sock_reservation = items(:socks).reservations.create!(user: users(:bob), occasion: soon)
     kite_reservation = kite.reservations.create!(user: users(:bob))
 
-    assert_equal [ sock_reservation, reservations(:bob_reserved_scarf), kite_reservation ], users(:bob).shopping_list
+    assert_equal [ sock_reservation, reservations(:bob_reserved_scarf), kite_reservation ], users(:bob).shopping_list.to_a
   end
 end

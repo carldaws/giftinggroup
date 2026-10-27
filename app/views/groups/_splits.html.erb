@@ -1,10 +1,10 @@
-<%# locals: (dashboard:) %>
-<% if dashboard.splits.any? %>
+<%# locals: (splits:) %>
+<% if splits.any? %>
   <section id="splits" aria-labelledby="splits-heading" class="section">
     <%= section_header t(".heading"), id: "splits-heading" %>
 
     <ul class="card card--flush list">
-      <% dashboard.splits.each do |split| %>
+      <% splits.each do |split| %>
         <li class="row">
           <%= avatar_tag split.item.owner %>
           <div class="min-w-0 flex-1">

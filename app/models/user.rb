@@ -101,10 +101,18 @@ class User < ApplicationRecord
   end
 
   def shopping_list
-    reservations = Reservation.visible_to(self).involving(self).includes(:user, :shares, :sharers, occasion: :person, item: :owner).reject(&:waiting?)
-    dated, undated = reservations.partition { it.occasion.present? }
+    ShoppingList.new(self)
+  end
 
-    dated.sort_by { [ it.occasion.date, it.item.owner.name.downcase ] } + undated.sort_by { it.item.owner.name.downcase }
+  def lists
+    [ self, *dependants.by_name ].map { Wishlist.new(it, viewer: self) }
+  end
+
+  def unread_chats
+    Message.unread_by(self).includes(:author, :group, subject: :user).chronologically
+      .group_by { [ it.group, it.subject ] }
+      .map { |(group, subject), messages| Message::UnreadChat.new(group:, subject:, messages:) }
+      .sort_by { it.latest.created_at }.reverse
   end
 
   def splits_waiting

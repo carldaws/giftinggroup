@@ -1,10 +1,10 @@
-<%# locals: (dashboard:) %>
-<% if dashboard.unread_chats.any? %>
+<%# locals: (chats:) %>
+<% if chats.any? %>
   <section aria-labelledby="unread-heading" class="section">
     <%= section_header t(".heading"), id: "unread-heading" %>
 
     <ul class="card card--flush list">
-      <% dashboard.unread_chats.each do |chat| %>
+      <% chats.each do |chat| %>
         <li>
           <%= link_to polymorphic_path([ chat.group, chat.subject, :messages ].compact, anchor: "new"), data: { turbo_prefetch: false }, class: "row row--link" do %>
             <% if chat.about_someone? %>

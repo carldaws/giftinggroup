@@ -1,9 +1,9 @@
-<%# locals: (dashboard:) %>
+<%# locals: (lists:) %>
 <section id="your-lists" aria-labelledby="your-lists-heading" class="section">
   <%= section_header t(".heading"), id: "your-lists-heading" %>
 
   <ul class="card card--flush list">
-    <% dashboard.lists.each do |list| %>
+    <% lists.each do |list| %>
       <li>
         <%= link_to person_path(list.person), class: "row row--link" do %>
           <%= avatar_tag list.person, size: :sm, tooltip: false %>
