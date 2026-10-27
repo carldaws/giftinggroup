@@ -4,12 +4,14 @@ class People::ProfilesController < ApplicationController
   before_action :ensure_looks_after_person
 
   def edit
+    @profile = Profile.new(@person, viewer: Current.user)
   end
 
   def update
     if @person.update(profile_params)
       redirect_to person_path(@person), notice: t(".saved")
     else
+      @profile = Profile.new(@person, viewer: Current.user)
       render :edit, status: :unprocessable_content
     end
   end

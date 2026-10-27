@@ -1,18 +1,14 @@
-<% yours = @person == Current.user %>
-<% name = @person.name_was %>
-<% heading = yours ? t(".your_details") : t(".their_details", name:) %>
-
 <div class="page page--single">
-  <%= page_header heading, crumbs: [ [ t("layouts.header.home"), root_path ], [ name, person_path(@person) ] ] %>
+  <%= page_header (@profile.yours? ? t(".your_details") : t(".their_details", name: @profile.saved_name)), crumbs: [ [ t("layouts.header.home"), root_path ], [ @profile.saved_name, person_path(@profile.person) ] ] %>
 
   <div class="card">
-    <%= form_with model: @person, url: person_profile_path(@person), method: :patch do |form| %>
-      <%= render "shared/errors", record: @person %>
+    <%= form_with model: @profile.person, url: person_profile_path(@profile.person), method: :patch do |form| %>
+      <%= render "shared/errors", record: @profile.person %>
 
       <div class="fields">
         <div class="field">
           <%= form.label :name, t(".name"), class: "label" %>
-          <%= form.text_field :name, required: true, autocomplete: (yours ? "given-name" : "off"), class: "input" %>
+          <%= form.text_field :name, required: true, autocomplete: (@profile.yours? ? "given-name" : "off"), class: "input" %>
         </div>
 
         <fieldset class="field">
@@ -20,8 +16,8 @@
           <div class="flex flex-wrap gap-3">
             <% User::AVATAR_TONES.each_with_index do |tone, index| %>
               <label class="cursor-pointer rounded-full p-1 ring-2 ring-transparent has-checked:ring-clay has-focus-visible:outline-2 has-focus-visible:outline-clay">
-                <%= form.radio_button :avatar_tone, index, checked: @person.avatar_tone_name == tone, class: "sr-only" %>
-                <%= avatar_tag @person, tone:, tooltip: false, ring: false %>
+                <%= form.radio_button :avatar_tone, index, checked: @profile.person.avatar_tone_name == tone, class: "sr-only" %>
+                <%= avatar_tag @profile.person, tone:, tooltip: false, ring: false %>
                 <span class="sr-only"><%= t(".tones.#{tone}") %></span>
               </label>
             <% end %>
@@ -33,8 +29,8 @@
           <div class="flex flex-wrap gap-3">
             <% [ nil, *User::AVATAR_CHARACTERS ].each do |character| %>
               <label class="group relative cursor-pointer rounded-full p-1 ring-2 ring-transparent has-checked:ring-clay has-focus-visible:outline-2 has-focus-visible:outline-clay">
-                <%= form.radio_button :avatar_character, character.to_s, checked: @person.avatar_character_name == character, class: "sr-only" %>
-                <%= avatar_tag @person, character:, tooltip: false, ring: false %>
+                <%= form.radio_button :avatar_character, character.to_s, checked: @profile.person.avatar_character_name == character, class: "sr-only" %>
+                <%= avatar_tag @profile.person, character:, tooltip: false, ring: false %>
                 <span class="tooltip"><%= character.present? ? t(".characters.#{character}") : t(".initials") %></span>
               </label>
             <% end %>
@@ -51,10 +47,10 @@
             <%= form.label :birth_year, t(".year"), class: "sr-only" %>
             <%= form.number_field :birth_year, placeholder: t(".year"), min: 1900, max: Date.current.year, inputmode: "numeric", class: "input" %>
           </div>
-          <p id="birthday-hint" class="hint"><%= yours ? t(".birthday_hint_yours") : t(".birthday_hint", name:) %></p>
+          <p id="birthday-hint" class="hint"><%= @profile.yours? ? t(".birthday_hint_yours") : t(".birthday_hint", name: @profile.saved_name) %></p>
         </fieldset>
 
-        <% if yours %>
+        <% if @profile.yours? %>
           <div class="field">
             <%= form.label :email_address, t(".email_address"), class: "label" %>
             <%= form.email_field :email_address, required: true, autocomplete: "username", class: "input" %>
@@ -73,49 +69,44 @@
       </div>
     <% end %>
 
-    <% if yours %>
+    <% if @profile.yours? %>
       <div class="mt-6 border-t border-line pt-6">
         <%= link_to t(".delete_account"), new_account_deletion_path, class: "button button--danger button--wide" %>
       </div>
     <% end %>
   </div>
 
-  <% unless yours %>
-    <% guardianships = @person.guardianships_as_dependant.includes(:guardian).by_name.to_a %>
-    <% possible_guardians = @person.possible_guardians.by_name.to_a %>
-
+  <% unless @profile.yours? %>
     <section id="guardians" aria-labelledby="guardians-heading" class="section mt-10">
-      <%= section_header t(".guardians_heading", name:), id: "guardians-heading" %>
+      <%= section_header t(".guardians_heading", name: @profile.saved_name), id: "guardians-heading" %>
 
       <ul class="card card--flush list">
-        <% guardianships.each do |guardianship| %>
-          <% guardian = guardianship.guardian %>
-          <% you = guardian == Current.user %>
+        <% @profile.guardianships.each do |guardianship| %>
           <li class="row">
-            <%= avatar_tag guardian, size: :sm, tooltip: false %>
-            <span class="row-title min-w-0 flex-1"><%= you ? t(".you") : guardian.name %></span>
-            <% if guardianships.size > 1 %>
-              <%= button_to (you ? t(".stop_looking_after") : t(".remove_guardian")), person_guardianship_path(@person, guardianship), method: :delete,
+            <%= avatar_tag guardianship.guardian, size: :sm, tooltip: false %>
+            <span class="row-title min-w-0 flex-1"><%= @profile.you?(guardianship) ? t(".you") : guardianship.guardian.name %></span>
+            <% if @profile.several_guardians? %>
+              <%= button_to (@profile.you?(guardianship) ? t(".stop_looking_after") : t(".remove_guardian")), person_guardianship_path(@profile.person, guardianship), method: :delete,
                     class: "button button--secondary button--small",
-                    form: { data: { turbo_confirm: (you ? t(".stop_confirm", name:) : t(".remove_confirm", guardian: guardian.name, name:)) } } %>
+                    form: { data: { turbo_confirm: (@profile.you?(guardianship) ? t(".stop_confirm", name: @profile.saved_name) : t(".remove_confirm", guardian: guardianship.guardian.name, name: @profile.saved_name)) } } %>
             <% end %>
           </li>
         <% end %>
 
-        <% if possible_guardians.any? %>
+        <% if @profile.possible_guardians.any? %>
           <li class="row">
-            <%= form_with model: Guardianship.new, url: person_guardianships_path(@person), class: "flex w-full flex-wrap gap-2" do |form| %>
-              <%= form.label :guardian_id, t(".add_guardian_label", name:), class: "sr-only" %>
-              <%= form.select :guardian_id, possible_guardians.map { [ it.name, it.id ] }, { prompt: t(".add_guardian_prompt") },
+            <%= form_with model: Guardianship.new, url: person_guardianships_path(@profile.person), class: "flex w-full flex-wrap gap-2" do |form| %>
+              <%= form.label :guardian_id, t(".add_guardian_label", name: @profile.saved_name), class: "sr-only" %>
+              <%= form.collection_select :guardian_id, @profile.possible_guardians, :id, :name, { prompt: t(".add_guardian_prompt") },
                     required: true, class: "input select min-w-0 flex-1" %>
               <%= form.submit t(".add_guardian"), class: "button button--secondary" %>
             <% end %>
           </li>
         <% end %>
       </ul>
-      <p class="hint mt-3"><%= t(".guardians_hint", name:) %></p>
+      <p class="hint mt-3"><%= t(".guardians_hint", name: @profile.saved_name) %></p>
     </section>
 
-    <%= link_to t(".delete_person", name:), new_person_deletion_path(@person), class: "button button--danger button--wide" %>
+    <%= link_to t(".delete_person", name: @profile.saved_name), new_person_deletion_path(@profile.person), class: "button button--danger button--wide" %>
   <% end %>
 </div>
