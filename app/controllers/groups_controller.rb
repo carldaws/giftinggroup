@@ -2,10 +2,11 @@ class GroupsController < ApplicationController
   before_action :set_group, only: %i[ show edit update ]
 
   def index
-    @groups = Current.user.groups.includes(:members).order(:name)
+    @groups = Current.user.groups.includes(:members).by_name
   end
 
   def show
+    @overview = Group::Overview.new(@group, viewer: Current.user)
   end
 
   def new

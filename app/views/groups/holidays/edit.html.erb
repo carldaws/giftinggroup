@@ -1,24 +1,18 @@
-<% welcome = params[:welcome].present? %>
-<% members = @group.memberships.by_name.includes(:user).map(&:user) %>
-<% celebrated = @group.group_holidays.includes(:recipients).index_by(&:key) %>
-<% holidays = welcome ? Holiday.all.select(&:for_everyone?) : Holiday.all %>
 <% content_for :title, t(".title") %>
 
 <div class="page page--single">
-  <%= page_header (welcome ? t(".welcome_heading", group: @group.name) : t(".heading")),
-        crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ], subtitle: t(".intro") %>
+  <%= page_header (@choices.welcome? ? t(".welcome_heading", group: @choices.group.name) : t(".heading")),
+        crumbs: [ [ t("layouts.header.home"), root_path ], [ @choices.group.name, @choices.group ] ], subtitle: t(".intro") %>
 
-  <%= form_with url: group_holidays_path(@group, welcome: (1 if welcome)), method: :patch do |form| %>
+  <%= form_with url: group_holidays_path(@choices.group, welcome: (1 if @choices.welcome?)), method: :patch do |form| %>
     <%= hidden_field_tag "keys[]", "" %>
 
     <div class="card card--flush">
       <ul class="list">
-        <% holidays.sort_by(&:next_date).each do |holiday| %>
-          <% group_holiday = celebrated[holiday.key] %>
-          <% checked = group_holiday.present? || (welcome && celebrated.empty? && holiday.key == "christmas_day") %>
+        <% @choices.holidays.each do |holiday| %>
           <li class="group/holiday">
             <label class="row row--link cursor-pointer">
-              <%= check_box_tag "keys[]", holiday.key, checked, id: "holiday_#{holiday.key}", class: "checkbox holiday-toggle mt-0" %>
+              <%= check_box_tag "keys[]", holiday.key, @choices.checked?(holiday), id: "holiday_#{holiday.key}", class: "checkbox holiday-toggle mt-0" %>
               <span class="min-w-0 flex-1">
                 <span class="row-title block"><%= holiday.name %></span>
                 <span class="row-meta block"><%= l(holiday.next_date, format: "%A %-d %B %Y") %></span>
@@ -30,9 +24,9 @@
                 <legend class="sr-only"><%= t(".who_for", holiday: holiday.name) %></legend>
                 <p class="mb-2 text-base text-muted" aria-hidden="true"><%= t(".who_for", holiday: holiday.name) %></p>
                 <div class="flex flex-wrap gap-2">
-                  <% members.each do |member| %>
+                  <% @choices.members.each do |member| %>
                     <label class="chip chip--toggle">
-                      <%= check_box_tag "people[#{holiday.key}][]", member.id, group_holiday.present? && group_holiday.recipients.include?(member),
+                      <%= check_box_tag "people[#{holiday.key}][]", member.id, @choices.celebrating?(holiday, member),
                             id: "holiday_#{holiday.key}_#{member.id}", class: "sr-only" %>
                       <%= avatar_tag member, size: :sm, tooltip: false, ring: false %>
                       <%= member.name %>
@@ -46,9 +40,9 @@
       </ul>
 
       <div class="card-footer">
-        <p class="hint"><%= welcome ? t(".welcome_hint") : t(".custom_hint") %></p>
+        <p class="hint"><%= @choices.welcome? ? t(".welcome_hint") : t(".custom_hint") %></p>
         <div class="form-actions mt-4">
-          <%= form.submit welcome ? t(".continue") : t(".save"), class: "button button--wide" %>
+          <%= form.submit @choices.welcome? ? t(".continue") : t(".save"), class: "button button--wide" %>
         </div>
       </div>
     </div>

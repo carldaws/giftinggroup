@@ -36,6 +36,10 @@ class Message < ApplicationRecord
     author.nil?
   end
 
+  def authored_by?(user)
+    author == user
+  end
+
   private
     def take_group_from_subject
       self.group = subject.group

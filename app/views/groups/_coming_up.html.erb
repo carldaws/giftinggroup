@@ -1,17 +1,14 @@
-<%# locals: (group:) %>
-<% upcoming = Occasion.visible_to(Current.user).for_group(group).upcoming.soonest_first.includes(:person, :recipients) %>
-<% occasions = upcoming.coming_up.presence || upcoming.limit(1) %>
-<% gifts_to_choose = Current.user.gifts_to_choose(in_group: group).to_h { |occasion, people, everyone| [ occasion, { people:, everyone: } ] } %>
+<%# locals: (overview:) %>
 
 <section aria-labelledby="occasions-heading" class="section">
   <%= section_header t(".heading"), id: "occasions-heading" do %>
-    <%= link_to t(".holidays"), edit_group_holidays_path(group), class: "button button--secondary button--small" %>
-    <%= link_to t(".add"), new_group_occasion_path(group), class: "button button--secondary button--small" %>
+    <%= link_to t(".holidays"), edit_group_holidays_path(overview.group), class: "button button--secondary button--small" %>
+    <%= link_to t(".add"), new_group_occasion_path(overview.group), class: "button button--secondary button--small" %>
   <% end %>
 
-  <% if occasions.any? %>
+  <% if overview.occasions.any? %>
     <ul class="card card--flush list">
-      <% occasions.each do |occasion| %>
+      <% overview.occasions.each do |occasion| %>
         <li class="px-5 py-4 sm:px-6">
           <div class="flex items-center gap-4">
             <%= render "occasions/date_badge", date: occasion.date %>
@@ -20,19 +17,18 @@
               <p class="row-meta">
                 <%= countdown_to(occasion.date) %>
                 <% unless occasion.birthday? || occasion.for_everyone_in_group? %>
-                  <% people = occasion.people_in(group) %>
-                  · <%= people.any? ? t(".for_people", names: people.map { it == Current.user ? t("groups.membership.you_lowercase") : it.name }.to_sentence) : t(".for_no_one_yet") %>
+                  · <%= occasion_people_for(occasion, overview.group) %>
                 <% end %>
               </p>
             </div>
             <% if occasion.custom? %>
-              <%= link_to t(".edit"), edit_group_occasion_path(group, occasion), class: "button button--secondary button--small",
+              <%= link_to t(".edit"), edit_group_occasion_path(overview.group, occasion), class: "button button--secondary button--small",
                     aria: { label: t(".edit_label", name: occasion.title) } %>
             <% end %>
           </div>
 
-          <% if gifts_to_choose.key?(occasion) %>
-            <%= render "occasions/still_to_choose", **gifts_to_choose[occasion] %>
+          <% if overview.choice_for(occasion).present? %>
+            <%= render "occasions/still_to_choose", choice: overview.choice_for(occasion) %>
           <% end %>
         </li>
       <% end %>

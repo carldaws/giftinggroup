@@ -13,6 +13,8 @@ class Group < ApplicationRecord
 
   validates :name, presence: true
 
+  scope :by_name, -> { order(:name) }
+
   before_validation :assign_join_code, on: :create
 
   class << self
@@ -52,6 +54,14 @@ class Group < ApplicationRecord
 
   def celebrates?(key)
     group_holidays.any? { it.key == key }
+  end
+
+  def members_by_name
+    memberships.by_name.includes(:user).map(&:user)
+  end
+
+  def chat_for(viewer)
+    Message::Chat.new(messages.for_everyone, viewer:)
   end
 
   def chat_readers

@@ -66,6 +66,18 @@ class User < ApplicationRecord
     email_address.present?
   end
 
+  def first_name
+    name.split.first
+  end
+
+  def setting_up?
+    email_address_in_database.blank?
+  end
+
+  def groups_by_name
+    @groups_by_name ||= groups.by_name.to_a
+  end
+
   def avatar_tone_name
     AVATAR_TONES[avatar_tone.presence_in(0...AVATAR_TONES.size) || id % AVATAR_TONES.size]
   end
@@ -89,10 +101,18 @@ class User < ApplicationRecord
   end
 
   def shopping_list
-    reservations = Reservation.visible_to(self).involving(self).includes(:user, :shares, :sharers, occasion: :person, item: :owner).reject(&:waiting?)
-    dated, undated = reservations.partition { it.occasion.present? }
+    ShoppingList.new(self)
+  end
 
-    dated.sort_by { [ it.occasion.date, it.item.owner.name.downcase ] } + undated.sort_by { it.item.owner.name.downcase }
+  def lists
+    [ self, *dependants.by_name ].map { Wishlist.new(it, viewer: self) }
+  end
+
+  def unread_chats
+    Message.unread_by(self).includes(:author, :group, subject: :user).chronologically
+      .group_by { [ it.group, it.subject ] }
+      .map { |(group, subject), messages| Message::UnreadChat.new(group:, subject:, messages:) }
+      .sort_by { it.latest.created_at }.reverse
   end
 
   def splits_waiting
@@ -117,8 +137,8 @@ class User < ApplicationRecord
       .select { |_, recipients| recipients.any? }
       .with_index
       .take_while { |(occasion, _), index| index.zero? || occasion.date <= Date.current + within }
-      .map { |(occasion, recipients), _| [ occasion, recipients - people_chosen_for(occasion), recipients ] }
-      .select { |_, still_to_choose, _| still_to_choose.any? }
+      .map { |(occasion, recipients), _| Occasion::Choice.new(occasion:, still_to_choose: recipients - people_chosen_for(occasion), everyone: recipients) }
+      .select { it.still_to_choose.any? }
       .to_a
   end
 

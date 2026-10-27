@@ -119,7 +119,11 @@ class Occasion < ApplicationRecord
   end
 
   def chosen_member_ids
-    @member_ids || (for_everyone? ? group.member_ids : recipient_ids)
+    @member_ids || (@chosen_member_ids ||= for_everyone? ? group.member_ids : recipient_ids)
+  end
+
+  def chosen_member?(user)
+    chosen_member_ids.include?(user.id)
   end
 
   def title

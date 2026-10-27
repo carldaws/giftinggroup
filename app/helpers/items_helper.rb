@@ -10,6 +10,34 @@ module ItemsHelper
     end
   end
 
+  def new_item_heading(item)
+    case
+    when item.surprise? then t("people.items.new.suggest_heading", name: item.owner.name)
+    when item.little? then t("people.items.new.little_heading")
+    else t("people.items.new.heading")
+    end
+  end
+
+  def item_title_link(item)
+    if item.removed?
+      tag.p(item.title, class: "row-title")
+    else
+      link_to item.title, person_path(item.owner, anchor: dom_id(item)), class: "row-title link text-ink"
+    end
+  end
+
+  def split_note_tag(split)
+    if !split.item.still_wanted?
+      note_tag t("groups.splits.no_longer_wanted", name: split.item.owner.name)
+    elsif split.started_by?(Current.user) && !split.fillable?
+      note_tag t("groups.splits.not_enough_people")
+    end
+  end
+
+  def note_tag(text)
+    tag.p(text, class: "mt-1 text-base font-medium text-honey-ink")
+  end
+
   def item_details_tag(item)
     quantity = item.unlimited? ? t("items.item.as_many_as_you_like") : (t("items.item.wants", count: item.quantity) if item.quantity > 1)
     details = [ item.price.presence, quantity ].compact

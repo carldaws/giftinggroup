@@ -1,6 +1,4 @@
 <% content_for :title, t(".title") %>
-<% dependants = Current.user.dependants_nobody_else_looks_after %>
-<% groups = Current.user.groups_without_another_adult %>
 
 <div class="page page--single">
   <%= page_header t(".title"), crumbs: [ [ t("layouts.header.home"), root_path ], [ t(".your_details"), edit_person_profile_path(Current.user) ] ],
@@ -8,15 +6,8 @@
 
   <div class="card">
     <ul class="grid list-disc gap-2 pl-5 text-base">
-      <li><%= t(".your_list") %></li>
-      <li><%= t(".reservations") %></li>
-      <li><%= t(".ideas") %></li>
-      <li><%= t(".messages") %></li>
-      <% if dependants.any? %>
-        <li><%= t(".dependants_html", names: to_sentence(dependants.map { tag.strong(it.name) }), count: dependants.size) %></li>
-      <% end %>
-      <% if groups.any? %>
-        <li><%= t(".groups_html", names: to_sentence(groups.map { tag.strong(it.name) }), count: groups.size) %></li>
+      <% account_deletion_consequences_for(Current.user).each do |consequence| %>
+        <li><%= consequence %></li>
       <% end %>
     </ul>
 

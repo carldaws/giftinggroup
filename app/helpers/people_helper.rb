@@ -9,6 +9,30 @@ module PeopleHelper
     end
   end
 
+  def deletion_consequences_for(person)
+    picked, other_guardians = person.picked_items_count, person.other_guardians(than: Current.user)
+
+    [
+      t("people.deletions.new.list", name: person.name),
+      t("people.deletions.new.chats", name: person.name),
+      (t("people.deletions.new.picked", count: picked) if picked.positive?),
+      (t("people.deletions.new.guardians", names: other_guardians.map(&:name).to_sentence, count: other_guardians.size, name: person.name) if other_guardians.any?)
+    ].compact
+  end
+
+  def account_deletion_consequences_for(user)
+    dependants, groups = user.dependants_nobody_else_looks_after, user.groups_without_another_adult
+
+    [
+      t("account_deletions.new.your_list"),
+      t("account_deletions.new.reservations"),
+      t("account_deletions.new.ideas"),
+      t("account_deletions.new.messages"),
+      (t("account_deletions.new.dependants_html", names: to_sentence(dependants.map { tag.strong(it.name) }), count: dependants.size) if dependants.any?),
+      (t("account_deletions.new.groups_html", names: to_sentence(groups.map { tag.strong(it.name) }), count: groups.size) if groups.any?)
+    ].compact
+  end
+
   def details_label_for(wishlist)
     t(wishlist.yours? ? "people.show.your_details" : "people.show.edit_details")
   end

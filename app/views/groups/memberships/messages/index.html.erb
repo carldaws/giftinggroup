@@ -1,14 +1,12 @@
-<% person = @membership.user %>
-<% content_for :title, t(".title", name: person.name) %>
+<% content_for :title, t(".title", name: @membership.user.name) %>
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
 <%= turbo_stream_from @membership %>
 
 <div class="page page--single">
-  <%= page_header t(".heading", name: person.name), subtitle: render("messages/readers", group: @group, readers: @membership.chat_readers.to_a),
-        avatar: avatar_tag(person, tooltip: false),
-        crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ], [ person.name, person_path(person) ] ] %>
+  <%= page_header t(".heading", name: @membership.user.name), subtitle: render("messages/readers", group: @group, readers: @membership.chat_readers.to_a),
+        avatar: avatar_tag(@membership.user, tooltip: false),
+        crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ], [ @membership.user.name, person_path(@membership.user) ] ] %>
 
-  <%= render "messages/chat", messages: @membership.messages_about.includes(:author).chronologically,
-        first_unread: @membership.messages_about.unread_by(Current.user).chronologically.first,
-        message: @message, url: group_membership_messages_path(@group, @membership), label: t(".label", name: person.name) %>
+  <%= render "messages/chat", chat: @membership.chat_for(Current.user), message: @message,
+        url: group_membership_messages_path(@group, @membership), label: t(".label", name: @membership.user.name) %>
 </div>

@@ -1,10 +1,9 @@
 <% content_for :title, t(".title") %>
 <% content_for :head, tag.meta(name: "turbo-cache-control", content: "no-cache") %>
-<% person = @membership.user %>
 
 <div class="page page--single">
-  <%= page_header t(".heading", name: person.name), crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ],
-        subtitle: (@membership.dependant? ? t(".set_up_intro", name: person.name) : t(".reset_intro", name: person.name)) %>
+  <%= page_header t(".heading", name: @membership.user.name), crumbs: [ [ t("layouts.header.home"), root_path ], [ @group.name, @group ] ],
+        subtitle: (@membership.dependant? ? t(".set_up_intro", name: @membership.user.name) : t(".reset_intro", name: @membership.user.name)) %>
 
   <div class="card" data-controller="share" data-share-url-value="<%= @sign_in_link %>"
        data-share-title-value="<%= t(".share_title") %>" data-share-copied-value="<%= t(".copied") %>">
@@ -12,6 +11,6 @@
       <button type="button" class="button button--wide" hidden data-share-target="shareButton" data-action="share#share"><%= t(".share") %></button>
       <button type="button" class="button button--secondary button--wide" data-share-target="copyButton" data-action="share#copy"><%= t(".copy") %></button>
     </div>
-    <p class="hint mt-5"><%= @membership.dependant? ? t(".set_up_expiry") : t(".reset_expiry", name: person.name) %></p>
+    <p class="hint mt-5"><%= @membership.dependant? ? t(".set_up_expiry") : t(".reset_expiry", name: @membership.user.name) %></p>
   </div>
 </div>

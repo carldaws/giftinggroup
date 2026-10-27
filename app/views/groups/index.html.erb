@@ -1,13 +1,13 @@
 <% content_for :title, t(".title") %>
 
 <div class="page page--single">
-  <%= page_header t(".heading", name: Current.user.name.split.first), crumb: t("layouts.header.home") %>
+  <%= page_header t(".heading", name: Current.user.first_name), crumb: t("layouts.header.home") %>
 
-  <%= render "groups/your_lists" %>
-  <%= render "messages/unread" %>
-  <%= render "occasions/gifts_to_choose" %>
-  <%= render "groups/splits" %>
-  <%= render "groups/shopping_list" %>
+  <%= render "groups/your_lists", lists: Current.user.lists %>
+  <%= render "messages/unread", chats: Current.user.unread_chats %>
+  <%= render "occasions/gifts_to_choose", choices: Current.user.gifts_to_choose %>
+  <%= render "groups/splits", splits: Current.user.splits_waiting %>
+  <%= render "groups/shopping_list", shopping_list: Current.user.shopping_list %>
 
   <section aria-labelledby="groups-heading" class="section">
     <%= section_header t(".groups_heading"), id: "groups-heading" %>

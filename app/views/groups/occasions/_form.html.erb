@@ -25,15 +25,14 @@
       </div>
 
       <%= hidden_field_tag "occasion[member_ids][]", "" %>
-      <% chosen = occasion.chosen_member_ids %>
       <div class="flex flex-wrap gap-2">
-        <% occasion.group.memberships.by_name.includes(:user).each do |membership| %>
+        <% occasion.group.members_by_name.each do |member| %>
           <label class="chip chip--toggle">
-            <%= check_box_tag "occasion[member_ids][]", membership.user_id, chosen.include?(membership.user_id),
-                  id: "occasion_member_#{membership.user_id}", class: "sr-only",
+            <%= check_box_tag "occasion[member_ids][]", member.id, occasion.chosen_member?(member),
+                  id: "occasion_member_#{member.id}", class: "sr-only",
                   data: { checkboxes_target: "checkbox", action: "checkboxes#update" } %>
-            <%= avatar_tag membership.user, size: :sm, tooltip: false, ring: false %>
-            <%= membership.user.name %>
+            <%= avatar_tag member, size: :sm, tooltip: false, ring: false %>
+            <%= member.name %>
           </label>
         <% end %>
       </div>

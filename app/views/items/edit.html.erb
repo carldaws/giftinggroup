@@ -1,15 +1,14 @@
 <% content_for :title, t(".title") %>
-<% saved_photos = @item.photos_attachments.includes(:blob).order(:id) %>
 
 <div class="page page--single">
   <%= page_header @item.saved_title, crumb: @item.saved_title, crumbs: [ [ t("layouts.header.home"), root_path ], [ @item.owner.name, list_path_for(@item) ] ] %>
 
   <div class="card">
-    <% if saved_photos.any? %>
+    <% if @item.saved_photos.any? %>
       <div class="mb-6">
         <h2 class="label mb-2"><%= t(".photos") %></h2>
         <ul class="flex flex-wrap gap-3">
-          <% saved_photos.each do |photo| %>
+          <% @item.saved_photos.each do |photo| %>
             <li class="relative">
               <%= image_tag photo.variant(:thumb), alt: "", class: "size-20 rounded-xl object-cover" %>
               <%= button_to item_photo_path(@item, photo), method: :delete, form_class: "absolute -top-2 -right-2",
