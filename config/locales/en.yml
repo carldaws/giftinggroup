@@ -684,6 +684,8 @@ en:
         password: Password
         password_challenge: Current password
         avatar_tone: Colour
+      reservation:
+        split_with: Number of other people
     errors:
       messages:
         owns_the_list: can't be the person whose list this is
@@ -707,6 +709,13 @@ en:
         for_no_one: Pick at least one person it's for.
         too_many: can't be more than %{count}
         not_an_image: need to be JPEG, PNG, WebP, AVIF, GIF or HEIC images
+        not_a_split: That isn't a split.
+        cannot_split_it: You can't join this split.
+        split_full: That split already has everyone it needs.
+        already_bought: It's already been bought, so the split can't change.
+        no_longer_wanted: They don't want this any more.
+        already_getting_it: You're already getting this.
+        split_incomplete: Wait until everyone has joined the split before buying it.
         too_large: must be smaller than %{size}
         name_or_link: Add a name or a link, so everyone knows what it is.
       models:

@@ -68,6 +68,10 @@ class Item < ApplicationRecord
     removed_at.present?
   end
 
+  def still_wanted?
+    !removed? && !received?
+  end
+
   def remove
     with_lock do
       if reservations.exists?
@@ -102,10 +106,16 @@ class Item < ApplicationRecord
     end
   end
 
-  def reserve_for(user)
-    with_lock { reservations.create(user:, occasion: Occasion.next_for_gifts_to(owner, from: user)) }
+  def reserve_for(user, split_with: nil)
+    with_lock { reservations.create(user:, split_with:, occasion: Occasion.next_for_gifts_to(owner, from: user)) }
   rescue ActiveRecord::RecordNotUnique
     reservations.find_by!(user:)
+  end
+
+  def people_to_split_with(organiser)
+    User.who_can_split_gifts_to(owner, with: organiser)
+      .where.not(id: reservations.select(:user_id))
+      .where.not(id: Share.where(reservation: reservations).select(:user_id))
   end
 
   def receivable_by?(user)

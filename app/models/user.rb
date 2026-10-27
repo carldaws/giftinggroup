@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :interests, dependent: :destroy
   has_many :sizes, dependent: :destroy
   has_many :reservations, dependent: :destroy
+  has_many :shares, dependent: :destroy
   has_many :readings, dependent: :destroy
   has_many :suggestions, class_name: "Item", foreign_key: :suggested_by_id, inverse_of: :suggested_by, dependent: :destroy
   has_many :authored_messages, class_name: "Message", foreign_key: :author_id, inverse_of: :author
@@ -50,6 +51,12 @@ class User < ApplicationRecord
       .or(where(id: user.id))
       .or(where(id: user.guardianships.select(:dependant_id)))
   end
+  scope :who_can_split_gifts_to, ->(owner, with:) do
+    where(id: Membership.where(group_id: owner.memberships.select(:group_id)).select(:user_id))
+      .or(where(id: owner.guardianships_as_dependant.select(:guardian_id)))
+      .where.not(email_address: nil)
+      .where.not(id: [ owner.id, with.id ])
+  end
 
   def visible_to?(user)
     User.visible_to(user).exists?(id)
@@ -82,10 +89,21 @@ class User < ApplicationRecord
   end
 
   def shopping_list
-    reservations = Reservation.visible_to(self).where(user: self).includes(occasion: :person, item: :owner)
+    reservations = Reservation.visible_to(self).involving(self).includes(:user, :shares, :sharers, occasion: :person, item: :owner).reject(&:waiting?)
     dated, undated = reservations.partition { it.occasion.present? }
 
     dated.sort_by { [ it.occasion.date, it.item.owner.name.downcase ] } + undated.sort_by { it.item.owner.name.downcase }
+  end
+
+  def splits_waiting
+    splits = Reservation.visible_to(self).splits.unbought
+    splits.involving(self).or(splits.where.not(item: Item.where(owner: dependants)))
+      .includes(:user, :shares, :sharers, item: [ :owner, { reservations: %i[ user sharers ] } ]).order(:created_at).select(&:waiting?)
+  end
+
+  def drop_gifts_no_longer_visible
+    reservations.where.not(item: Item.visible_to(self)).find_each(&:give_up)
+    shares.where.not(reservation: Reservation.visible_to(self)).destroy_all
   end
 
   def gifts_to_choose(within: 6.weeks, in_group: nil)
@@ -105,7 +123,7 @@ class User < ApplicationRecord
   end
 
   def people_chosen_for(occasion)
-    picks = reservations.where(occasion:).joins(:item)
+    picks = Reservation.involving(self).where(occasion:).joins(:item)
     User.where(id: picks.merge(Item.listed).or(picks.where.not(bought_at: nil)).select("items.owner_id"))
   end
 

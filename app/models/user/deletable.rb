@@ -13,6 +13,7 @@ module User::Deletable
       dependants_nobody_else_looks_after.each(&:delete_account)
       groups_without_another_adult.each(&:destroy!)
       hand_over_admin
+      hand_over_splits
       settle_reservations
       take_back_suggestions
       destroy!
@@ -38,6 +39,10 @@ module User::Deletable
         successor = others.joins(:user).where.not(users: { email_address: nil }).order(:created_at).first
         successor.update!(admin: true) if successor.present? && others.admins.none?
       end
+    end
+
+    def hand_over_splits
+      reservations.splits.find_each(&:hand_over)
     end
 
     def settle_reservations

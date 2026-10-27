@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_27_135227) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -175,6 +175,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "occasion_id"
+    t.integer "split_with"
     t.index ["item_id", "user_id"], name: "index_reservations_on_item_id_and_user_id", unique: true
     t.index ["occasion_id"], name: "index_reservations_on_occasion_id"
     t.index ["user_id"], name: "index_reservations_on_user_id"
@@ -187,6 +188,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "shares", force: :cascade do |t|
+    t.bigint "reservation_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_id", "user_id"], name: "index_shares_on_reservation_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_shares_on_user_id"
   end
 
   create_table "sizes", force: :cascade do |t|
@@ -239,5 +249,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_212325) do
   add_foreign_key "reservations", "occasions", on_delete: :nullify
   add_foreign_key "reservations", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "shares", "reservations"
+  add_foreign_key "shares", "users"
   add_foreign_key "sizes", "users"
 end
