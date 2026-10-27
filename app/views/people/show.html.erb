@@ -8,7 +8,8 @@
 <% wanted = items.wanted %>
 <% little_only = params[:show] == "little" %>
 <% shown = little_only ? wanted.little : wanted %>
-<% reservations = surprises_hidden ? {} : Reservation.visible_to(Current.user).where(item: shown).includes(:user, occasion: :person).group_by(&:item_id) %>
+<% reservations = surprises_hidden ? {} : Reservation.visible_to(Current.user).where(item: shown).includes(:user, :shares, :sharers, occasion: :person).group_by(&:item_id) %>
+<% split_candidates = surprises_hidden ? [] : User.who_can_split_gifts_to(@person, with: Current.user).to_a %>
 <% still_wanted, given = shown.partition { !it.given_with?(reservations.fetch(it.id, [])) } %>
 <% occasion_choices = surprises_hidden ? [] : Occasion.for_gifts_to(@person, from: Current.user).upcoming.soonest_first.includes(:person).to_a %>
 <% birthday = (t(".birthday", date: l(@person.next_birthday, format: "%-d %B"), countdown: countdown_to(@person.next_birthday).downcase_first) if @person.birthday?) %>
@@ -75,7 +76,7 @@
       <% if shown.any? %>
         <ul class="grid gap-4">
           <% still_wanted.each do |item| %>
-            <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), surprises_hidden:, occasion_choices: %>
+            <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), surprises_hidden:, occasion_choices:, split_candidates: %>
           <% end %>
         </ul>
 
@@ -84,7 +85,7 @@
             <summary class="row row--link cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden"><%= t(".given", count: given.size) %></summary>
             <ul class="grid gap-4 border-t border-line p-4">
               <% given.each do |item| %>
-                <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), surprises_hidden:, occasion_choices: %>
+                <%= render "items/item", item:, reservations: reservations.fetch(item.id, []), surprises_hidden:, occasion_choices:, split_candidates: %>
               <% end %>
             </ul>
           </details>

@@ -28,13 +28,18 @@
                     <%= t(".for", name: item.owner.name) %>
                   <% end %>
                 </p>
+                <% if reservation.split? %>
+                  <p class="row-meta"><%= splitting_with(reservation) %></p>
+                <% end %>
                 <% if item.removed? %>
                   <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".removed") %></p>
                 <% elsif item.received? %>
                   <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".already_has", name: item.owner.name) %></p>
                 <% end %>
               </div>
-              <% if item.removed? || item.received? %>
+              <% if reservation.user != Current.user %>
+                <%= button_to t(".leave_split"), item_split_share_path(item, reservation), method: :delete, class: "button button--secondary button--small" %>
+              <% elsif item.removed? || item.received? %>
                 <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
               <% else %>
                 <%= button_to item_purchase_path(item), class: "button button--secondary button--small" do %>
@@ -61,14 +66,19 @@
                 <div class="min-w-0 flex-1">
                   <p class="text-muted line-through"><%= item.title %></p>
                   <p class="row-meta"><%= t(".for", name: item.owner.name) %></p>
+                  <% if reservation.split? %>
+                    <p class="row-meta"><%= splitting_with(reservation) %></p>
+                  <% end %>
                   <% if item.removed? %>
                     <p class="mt-1 text-base font-medium text-honey-ink"><%= t(".removed") %></p>
                   <% end %>
                 </div>
-                <% if item.removed? %>
-                  <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
-                <% else %>
-                  <%= button_to t(".put_back"), item_purchase_path(item), method: :delete, class: "button button--secondary button--small" %>
+                <% if reservation.user == Current.user %>
+                  <% if item.removed? %>
+                    <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
+                  <% else %>
+                    <%= button_to t(".put_back"), item_purchase_path(item), method: :delete, class: "button button--secondary button--small" %>
+                  <% end %>
                 <% end %>
               </li>
             <% end %>

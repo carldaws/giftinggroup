@@ -2,7 +2,7 @@ class Items::ReservationsController < ApplicationController
   include ItemScoped
 
   def create
-    reservation = @item.reserve_for(Current.user)
+    reservation = @item.reserve_for(Current.user, split_with: params.dig(:reservation, :split_with))
 
     if reservation.persisted?
       redirect_back_or_to_list

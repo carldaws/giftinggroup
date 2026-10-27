@@ -1,5 +1,9 @@
-<%# locals: (item:, reservations:, surprises_hidden:, occasion_choices:) %>
+<%# locals: (item:, reservations:, surprises_hidden:, occasion_choices:, split_candidates:) %>
 <% mine = reservations.find { it.user == Current.user } %>
+<% joined = reservations.find { it.sharers.include?(Current.user) } %>
+<% involved = reservations.any? { it.people.include?(Current.user) } %>
+<% joinable = involved ? [] : reservations.select(&:waiting?) %>
+<% split_limit = (split_candidates - reservations.flat_map(&:people)).size %>
 <% others = reservations - [ mine ] %>
 <% picking_occasion = mine.present? && !mine.given? && occasion_choices.any? %>
 <% editable = item.editable_by?(Current.user) %>
@@ -62,7 +66,9 @@
           <ul class="flex flex-wrap gap-2">
             <% reservations.each do |reservation| %>
               <li class="chip">
-                <%= avatar_tag reservation.user, size: :sm, tooltip: false, ring: false %>
+                <% reservation.people.each do |person| %>
+                  <%= avatar_tag person, size: :sm, tooltip: false, ring: false %>
+                <% end %>
                 <%= status_for(reservation, with_occasion: !(picking_occasion && reservation == mine)) %>
               </li>
             <% end %>
@@ -85,14 +91,33 @@
 
       <div class="flex flex-wrap gap-2">
         <% unless surprises_hidden %>
-          <% if mine.nil? %>
+          <% if joined.present? %>
+            <% unless joined.bought? %>
+              <%= button_to t(".leave_split"), item_split_share_path(item, joined), method: :delete, class: "button button--secondary button--small" %>
+            <% end %>
+          <% elsif mine.nil? %>
+            <% joinable.each do |split| %>
+              <%= button_to t(".join_split", name: split.user.name), item_split_share_path(item, split), class: "button button--small" %>
+            <% end %>
             <% if item.unlimited? || others.size < item.quantity %>
               <%= button_to t(".reserve"), item_reservation_path(item), class: "button button--small" %>
+              <% if split_limit.positive? %>
+                <details class="group/split">
+                  <summary class="button button--secondary button--small list-none group-open/split:hidden [&::-webkit-details-marker]:hidden"><%= t(".split") %></summary>
+                  <%= form_with url: item_reservation_path(item), scope: :reservation, class: "flex flex-wrap items-center gap-2" do |form| %>
+                    <%= form.label :split_with, t(".split_with"), class: "text-base font-semibold" %>
+                    <%= form.select :split_with, (1..split_limit).map { [ t(".split_others", count: it), it ] }, {}, class: "input select h-9 w-auto text-base" %>
+                    <%= form.submit t(".start_split"), class: "button button--small" %>
+                  <% end %>
+                </details>
+              <% end %>
             <% end %>
           <% elsif mine.bought? %>
             <% unless mine.given? %>
               <%= button_to t(".not_bought"), item_purchase_path(item), method: :delete, class: "button button--secondary button--small" %>
             <% end %>
+          <% elsif mine.waiting? %>
+            <%= button_to t(".call_off_split"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
           <% else %>
             <%= button_to t(".bought_it"), item_purchase_path(item), class: "button button--small" %>
             <%= button_to t(".let_go"), item_reservation_path(item), method: :delete, class: "button button--secondary button--small" %>
