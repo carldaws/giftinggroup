@@ -610,7 +610,7 @@ en:
       invited: Been sent an invite? Open the link to join.
       how_heading: How it works
       free_heading: Free, with no catch
-      free_body: No ads, no tracking and no emails. It's open source, and made as a gift.
+      free_body: It's free, open source and made as a gift. We charge nothing, run no ads and earn nothing from affiliate links.
       steps:
         group:
           heading: Start a group
@@ -673,13 +673,14 @@ en:
         body: People in your groups see your list, your birthday, the things you love and your sizes. A chat is seen by everyone in the group except the person it's about.
       not_done:
         heading: What's done with it
-        body: Nothing else. It isn't read, sold, shared, analysed or used for any other purpose. There are no ads, no tracking, no analytics and no emails. Cookies are only used to keep you signed in and to protect forms, and nothing is loaded from anyone else's servers. Visits pass through Cloudflare, which protects the site from attacks.
+        body: Nothing else. Gifting Lists is free, open source and made as a gift. We charge nothing, run no ads and earn nothing from affiliate links, so nothing you put in is sold or shared, and we never look at your lists, your messages or anything else you add. We do keep an eye on how the site gets used, like how many people sign up, whether groups come back for more than one occasion and which features go unused, so we can work out how to make it better. That's counted without cookies, and nothing in it says who you are. We're not hiding anything, and everything we count is listed in the code, linked below. Cookies are only used to keep you signed in and to protect forms, and nothing is loaded from anyone else's servers. Visits pass through Cloudflare, which protects the site from attacks.
       leaving:
         heading: Leaving
         body: You can delete your account from Your details at any time. Your list goes. Your chat messages stay, under your name, so the conversation still makes sense.
       check:
         heading: Check for yourself
-        body_html: The %{code}, so anyone can see exactly what it does. If you have a question, %{issue}.
+        body_html: The %{code}, so anyone can see exactly what it does, including %{counted}. If you have a question, %{issue}.
+        counted: everything we count
         code: code is open source
         issue: open an issue on GitHub
 
