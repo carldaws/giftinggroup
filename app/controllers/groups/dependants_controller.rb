@@ -11,6 +11,7 @@ class Groups::DependantsController < ApplicationController
     @dependant = @group.add_dependant(params.expect(user: [ :name ]), guardian: Current.user)
 
     if @dependant.persisted?
+      track_event "dependant-added", existing: false, group_age: @group.created_at
       redirect_to @group, notice: t(".added", name: @dependant.name)
     else
       render :new, status: :unprocessable_content

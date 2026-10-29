@@ -6,7 +6,8 @@ class Groups::MembershipsController < ApplicationController
   before_action :ensure_removable, only: :destroy
 
   def create
-    @group.join(dependant)
+    membership = @group.join(dependant)
+    track_event "dependant-added", existing: true, group_age: @group.created_at if membership.previously_new_record?
     redirect_to @group, notice: t(".added", name: dependant.name)
   end
 
@@ -41,8 +42,10 @@ class Groups::MembershipsController < ApplicationController
 
     def redirect_after_removal
       if @membership.user == Current.user
+        track_event "group-left", group_age: @group.created_at
         redirect_to root_path, notice: t(".left", group: @group.name)
       else
+        track_event "member-removed", group_age: @group.created_at
         redirect_to @group, notice: t(".removed", name: @membership.user.name)
       end
     end

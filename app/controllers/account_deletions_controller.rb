@@ -8,6 +8,7 @@ class AccountDeletionsController < ApplicationController
     if Current.user.authenticate(params.expect(:password)).present?
       Current.user.delete_account
       terminate_session
+      track_event "account-deleted"
       redirect_to new_session_path, notice: t(".deleted")
     else
       flash.now[:alert] = t(".wrong_password")

@@ -13,6 +13,7 @@ class SessionsController < ApplicationController
 
     if user.present?
       sign_in user
+      track_event "sign-in"
     else
       flash.now[:alert] = t(".invalid")
       render :new, status: :unprocessable_content

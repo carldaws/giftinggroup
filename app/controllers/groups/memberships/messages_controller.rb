@@ -12,6 +12,7 @@ class Groups::Memberships::MessagesController < ApplicationController
     @message = @membership.messages_about.new(message_params.merge(author: Current.user))
 
     if @message.save
+      track_event "message-sent", chat: "person", group_age: @group.created_at
       redirect_to group_membership_messages_path(@group, @membership)
     else
       render :index, status: :unprocessable_content

@@ -14,7 +14,8 @@ class JoinsController < ApplicationController
     group = Group.find_by(join_code: params.expect(:join_code))
 
     if group.present?
-      group.join(Current.user)
+      membership = group.join(Current.user)
+      track_event "group-joined", group_age: group.created_at if membership.previously_new_record?
       redirect_to group, notice: t(".joined", group: group.name)
     else
       redirect_to new_join_path, alert: t(".not_found")

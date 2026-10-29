@@ -9,6 +9,7 @@ class People::ProfilesController < ApplicationController
 
   def update
     if @person.update(profile_params)
+      track_event "profile-saved", birthday: @person.birthday?
       redirect_to person_path(@person), notice: t(".saved")
     else
       @profile = Profile.new(@person, viewer: Current.user)

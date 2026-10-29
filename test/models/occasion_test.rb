@@ -1,6 +1,14 @@
 require "test_helper"
 
 class OccasionTest < ActiveSupport::TestCase
+  test "an occasion is a birthday, a holiday or one of the group's own" do
+    users(:carol).update!(birthday_month: 3, birthday_day: 12)
+
+    assert_equal :birthday, users(:carol).birthdays.first.kind
+    assert_equal :holiday, Occasion.new(holiday_key: "christmas_day").kind
+    assert_equal :custom, occasions(:christmas).kind
+  end
+
   test "a birthday makes one birthday occasion, whatever groups you're in" do
     users(:carol).update!(birthday_month: 3, birthday_day: 12)
 

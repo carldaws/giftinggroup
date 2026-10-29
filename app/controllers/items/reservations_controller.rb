@@ -5,6 +5,7 @@ class Items::ReservationsController < ApplicationController
     reservation = @item.reserve_for(Current.user, split_with: params.dig(:reservation, :split_with))
 
     if reservation.persisted?
+      track_event "item-reserved", split: reservation.split?, occasion: reservation.occasion_kind
       redirect_back_or_to_list
     else
       redirect_back_or_to_list alert: reservation.errors.full_messages.to_sentence
@@ -23,6 +24,7 @@ class Items::ReservationsController < ApplicationController
 
   def destroy
     Current.user.reservations.find_by!(item: @item).destroy
+    track_event "reservation-cancelled"
     redirect_back_or_to_list
   end
 end

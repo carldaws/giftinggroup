@@ -11,13 +11,20 @@ class RegistrationsController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save(context: :registration)
+      invited = invited?
       sign_in @user
+      track_event "sign-up", invited:
     else
       render :new, status: :unprocessable_content
     end
   end
 
   private
+    def invited?
+      return_to = session[:return_to_after_authenticating]
+      return_to.present? && Rails.application.routes.recognize_path(return_to)[:controller] == "joins"
+    end
+
     def user_params
       params.expect(user: [ :name, :email_address, :password ])
     end

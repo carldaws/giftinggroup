@@ -11,6 +11,7 @@ class Groups::OccasionsController < ApplicationController
     @occasion = @group.occasions.new(occasion_params.merge(creator: Current.user))
 
     if @occasion.save
+      track_event "occasion-added", group_age: @group.created_at
       redirect_to @group, notice: t(".added", name: @occasion.title)
     else
       render :new, status: :unprocessable_content

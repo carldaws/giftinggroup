@@ -7,6 +7,7 @@ class Items::Splits::SharesController < ApplicationController
     share = @split.join(Current.user)
 
     if share.persisted?
+      track_event "split-joined"
       redirect_back_or_to_list
     else
       redirect_back_or_to_list alert: share.errors.full_messages.to_sentence
@@ -18,6 +19,7 @@ class Items::Splits::SharesController < ApplicationController
     share.leave
 
     if share.destroyed?
+      track_event "split-left"
       redirect_back_or_to_list
     else
       redirect_back_or_to_list alert: share.errors.full_messages.to_sentence

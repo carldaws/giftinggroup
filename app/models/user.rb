@@ -104,6 +104,10 @@ class User < ApplicationRecord
     ShoppingList.new(self)
   end
 
+  def occasions_bought_for
+    reservations.where.not(bought_at: nil).distinct.count(:occasion_id)
+  end
+
   def lists
     [ self, *dependants.by_name ].map { Wishlist.new(it, viewer: self) }
   end

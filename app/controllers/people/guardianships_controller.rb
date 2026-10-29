@@ -5,7 +5,8 @@ class People::GuardianshipsController < ApplicationController
 
   def create
     guardian = @person.possible_guardians.find(params.expect(guardianship: [ :guardian_id ]).fetch(:guardian_id))
-    @person.guardianships_as_dependant.create_or_find_by!(guardian:)
+    guardianship = @person.guardianships_as_dependant.create_or_find_by!(guardian:)
+    track_event "guardian-added" if guardianship.previously_new_record?
     redirect_to edit_person_profile_path(@person, anchor: "guardians"), notice: t(".added", name: guardian.name, dependant: @person.name)
   end
 

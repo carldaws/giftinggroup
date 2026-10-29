@@ -5,6 +5,7 @@ class People::SizesController < ApplicationController
 
   def create
     size = @person.sizes.create(params.expect(size: [ :label, :value ]))
+    track_event "size-added" if size.persisted?
     redirect_to person_path(@person, anchor: "sizes"), alert: size.errors.full_messages.to_sentence.presence
   end
 

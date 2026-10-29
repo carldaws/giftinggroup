@@ -38,6 +38,25 @@ module ApplicationHelper
     render "shared/page_header", title:, crumbs:, crumb: crumb || content_for(:title), subtitle:, avatar:, actions: (capture(&actions) if block_given?)
   end
 
+  def analytics_tags
+    safe_join [ page_view_tag, *event_tags ] if analytics?
+  end
+
+  def page_view_tag
+    analytics_tag({ url: route_pattern, tag: authenticated? ? "signed-in" : "signed-out" }) if response.successful?
+  end
+
+  def event_tags
+    Array(flash[:analytics_events]).map { analytics_tag(it, once: true) }
+  end
+
+  def analytics_tag(payload, once: false)
+    umami = Rails.configuration.x.umami
+    tag.div hidden: true, data: { controller: "analytics", analytics_url_value: URI.join(umami.fetch(:host_url), "/api/send").to_s,
+      analytics_payload_value: payload.merge(website: umami.fetch(:website_id)),
+      analytics_once_value: once }
+  end
+
   def section_header(title, id:, &actions)
     render "shared/section_header", title:, id:, actions: (capture(&actions) if block_given?)
   end
