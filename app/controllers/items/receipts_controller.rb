@@ -5,6 +5,7 @@ class Items::ReceiptsController < ApplicationController
 
   def create
     @item.receive
+    track_event "item-received"
     redirect_to person_path(@item.owner), notice: t(".received", name: @item.title)
   end
 

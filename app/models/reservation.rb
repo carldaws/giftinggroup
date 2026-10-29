@@ -3,6 +3,8 @@ class Reservation < ApplicationRecord
   belongs_to :user
   belongs_to :occasion, optional: true
 
+  delegate :kind, to: :occasion, prefix: true, allow_nil: true
+
   validate :user_can_see_the_item, :user_is_not_the_owner, if: -> { item.present? && user.present? }
   validate :item_is_still_listed, :item_is_still_wanted, :item_is_still_available, on: :create, if: -> { item.present? && errors.none? }
   validate :occasion_is_for_gifts_to_the_owner, if: -> { will_save_change_to_occasion_id? && occasion_id.present? && errors.none? }

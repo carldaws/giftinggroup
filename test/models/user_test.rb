@@ -190,4 +190,12 @@ class UserTest < ActiveSupport::TestCase
   test "there's nothing on your shopping list until you've picked something" do
     assert_not users(:erin).shopping_list.any?
   end
+
+  test "counts the different occasions someone has bought gifts for" do
+    assert_equal 0, users(:carol).occasions_bought_for
+
+    reservations(:carol_bought_lego).update!(occasion: occasions(:christmas))
+
+    assert_equal 1, users(:carol).occasions_bought_for
+  end
 end

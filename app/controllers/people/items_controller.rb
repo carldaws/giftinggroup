@@ -9,6 +9,7 @@ class People::ItemsController < ApplicationController
     @item = @person.build_item(item_params, by: Current.user, asked_for: params.dig(:item, :asked_for) == "1")
 
     if @item.save
+      track_event "item-added", suggestion: @item.suggestion?, link: @item.url.present?
       redirect_to person_path(@person), notice: added_notice
     else
       render :new, status: :unprocessable_content

@@ -1,0 +1,28 @@
+page_views: Each page someone opens, by kind of page, like /groups/:id but never which one, and whether they're signed in.
+every_visit: Each page view and event also says which site you came from (just its address, like google.com), your language and your screen size. Your internet address and browser are used to work out roughly where you are (down to the town or city), your browser, operating system and kind of device, and to link visits from the same browser within a month. The address itself isn't kept.
+rounding: Ages are rounded to the first week, first month, first six months or older, and counts to 0, 1, 2 or 3+. Every event from someone signed in also says roughly how old their account is.
+
+events:
+  sign-up: Someone made an account, and whether they came from an invite.
+  sign-in: Someone signed in.
+  account-deleted: Someone deleted their account.
+  group-created: Someone started a group.
+  group-joined: Someone joined a group, and how old the group is.
+  group-left: Someone left a group, and how old the group is.
+  member-removed: Someone was removed from a group, and how old the group is.
+  dependant-added: Someone added a child or other dependant to a group, whether they were new, and how old the group is.
+  guardian-added: Someone shared looking after a dependant.
+  holidays-chosen: A group chose which holidays it celebrates, how many, whether it was while setting up, and how old the group is.
+  occasion-added: A group added an occasion of its own, and how old the group is.
+  message-sent: Someone sent a chat message, whether it was in the group chat or a chat about one person, and how old the group is.
+  profile-saved: Someone saved their details or a dependant's, and whether a birthday is set.
+  interest-added: Someone added something they love.
+  size-added: Someone added a size.
+  item-added: Something was added to a list, whether someone else suggested it, and whether it came from a link.
+  item-reserved: Someone picked something to give, whether they're splitting it, and what kind of occasion it's for.
+  reservation-cancelled: Someone changed their mind about something they'd picked.
+  split-joined: Someone joined a split.
+  split-left: Someone left a split.
+  item-bought: Someone bought something they'd picked, what kind of occasion it's for, and how many occasions they've bought for.
+  purchase-undone: Someone marked something as not bought after all.
+  item-received: Someone said they'd received something.

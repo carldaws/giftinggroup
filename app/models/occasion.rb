@@ -86,6 +86,13 @@ class Occasion < ApplicationRecord
     !birthday? && !holiday?
   end
 
+  def kind
+    if birthday? then :birthday
+    elsif holiday? then :holiday
+    else :custom
+    end
+  end
+
   def holiday
     Holiday.find(holiday_key)
   end

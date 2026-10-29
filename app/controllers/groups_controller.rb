@@ -17,6 +17,7 @@ class GroupsController < ApplicationController
     @group = Current.user.start_group(group_params)
 
     if @group.persisted?
+      track_event "group-created"
       redirect_to edit_group_holidays_path(@group, welcome: 1)
     else
       render :new, status: :unprocessable_content

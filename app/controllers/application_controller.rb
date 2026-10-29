@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Authentication
+  include Analytics
 
   stale_when_importmap_changes
 
